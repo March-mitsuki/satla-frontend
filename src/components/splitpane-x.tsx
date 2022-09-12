@@ -14,15 +14,12 @@ const PaneX: ParentComponent<{
   let onMouseDownHandler = (e: MouseEvent) => {
     onmousemove = (e: MouseEvent) => {
       e.preventDefault()
-      console.log('on mouse move', e.clientX);
       setWidth(e.clientX)
     }
     onmouseup = (e: MouseEvent) => {
-      console.log('mouse up', e.clientX)
       onmousemove = () => null
       onmouseup = () => null
     }
-    console.log('on mouse down', e.clientX);
   }
 
   onMount(() => {
