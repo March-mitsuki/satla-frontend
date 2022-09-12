@@ -13,6 +13,7 @@ const PaneY: ParentComponent<{
 
   let onMouseDownHandler = (e: MouseEvent) => {
     onmousemove = (e: MouseEvent) => {
+      e.preventDefault()
       console.log('on mouse move', e.clientY);
       setHeight(e.clientY)
     }
