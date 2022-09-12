@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js';
 import { Title } from '@solidjs/meta';
-import { PaneX, PaneY } from '../components';
+import { PaneX, PaneY } from '@/components';
 
 const Somepage: Component = () => {
   return (
