@@ -1,11 +1,15 @@
 import type { Component } from 'solid-js';
+import { Title } from '@solidjs/meta';
 
-const App: Component = () => {
+const Home: Component = () => {
   return (
-    <div class='text-4xl'>
-      Home Page HERE!
-    </div>
+    <>
+      <Title>vvvorld</Title>
+      <div class='text-4xl'>
+        Home Page HERE!
+      </div>
+    </>
   );
 };
 
-export default App;
+export default Home;
