@@ -8,6 +8,7 @@ const Home: Component = () => {
       <div class='text-4xl'>
         Home Page HERE!
       </div>
+      <a href="somepage">Go somepage</a>
     </>
   );
 };
