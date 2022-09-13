@@ -12,7 +12,11 @@ const FloatingPage = () => {
         some contents
       </div>
       <FloatingWindow
-        wrapperClass="w-[200px] h-[200px]"
+        defaultWindowSize={{
+          height: 0,
+          width: 200,
+        }}
+        wrapperClass=""
         controllerWarpper="flex justify-between items-center border-2 rounded-lg mb-1 bg-red-200"
         floatingControlClass="w-fit"
         floatingControlContent={
@@ -28,16 +32,19 @@ const FloatingPage = () => {
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         }
+        contentsWrapperClass="border-2 rounded-lg bg-red-200"
       >
-        <div
-          class="border-2 rounded-lg bg-red-200 w-full h-full"
-        >
+        <div>
           Floating Contents 02
         </div>
       </FloatingWindow>
       <FloatingWindow
-        wrapperClass="w-[200px] h-[200px]"
-        controllerWarpper="flex justify-between items-center border-2 rounded-lg mb-1 bg-red-200"
+        defaultWindowSize={{
+          height: 200,
+          width: 200,
+        }}
+        wrapperClass=""
+        controllerWarpper="flex justify-between items-center border-2 rounded-lg mb-1 bg-sky-200"
         floatingControlClass="w-fit"
         floatingControlContent={
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -52,10 +59,9 @@ const FloatingPage = () => {
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         }
+        contentsWrapperClass="border-2 rounded-lg bg-sky-200"
       >
-        <div
-          class="border-2 rounded-lg bg-red-200 w-full h-full"
-        >
+        <div>
           Floating Contents 01
         </div>
       </FloatingWindow>
