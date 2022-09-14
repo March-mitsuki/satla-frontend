@@ -10,7 +10,7 @@ const FloatingWindow: ParentComponent<{
   cancelControlContent: JSXElement,
   cancelControlClass?: string,
   contentsWrapperClass?: string,
-  wrapperClass?: string,
+  wrapperClass: string, // 当不需要初始值的时候需要给个空字符串
   defaultWindowSize: {
     width: number | "",
     height: number | "",
@@ -128,7 +128,7 @@ const FloatingWindow: ParentComponent<{
         "left": `${elemMovement().x}px`,
         "top": `${elemMovement().y}px`,
       }}
-      class={props.wrapperClass}
+      classList={{[props.wrapperClass]: floatingElem().isFloating === false}}
     >
       <div
         style={{

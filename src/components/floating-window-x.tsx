@@ -10,7 +10,7 @@ const FloatingWindow: ParentComponent<{
   cancelControlContent: JSXElement,
   cancelControlClass?: string,
   contentsWrapperClass?: string,
-  wrapperClass?: string,
+  wrapperClass: string,
   defaultWindowSize: {
     width: number | "",
   },
@@ -124,7 +124,7 @@ const FloatingWindow: ParentComponent<{
         "left": `${elemMovement().x}px`,
         "top": `${elemMovement().y}px`,
       }}
-      class={props.wrapperClass}
+      classList={{[props.wrapperClass]: floatingElem().isFloating === false}}
     >
       <div
         style={{
