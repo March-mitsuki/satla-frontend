@@ -16,7 +16,7 @@ const FloatingWindow: ParentComponent<{
     height: number | "",
   }
 }> = (props) => {
-  const [mouseCoordinates, setMouseCoordinates] = createSignal({
+  const [elemMovement, setElemMovement] = createSignal({
     x: 0,
     y: 0,
   })
@@ -40,6 +40,14 @@ const FloatingWindow: ParentComponent<{
   let resizeElemRef: HTMLDivElement | undefined;;
 
   let startDragHandler = (e: MouseEvent) => {
+    let shiftX: number;
+    let shiftY: number;
+    if (floatingElemRef) {
+      shiftX = e.clientX - floatingElemRef.getBoundingClientRect().left;
+      shiftY = e.clientY - floatingElemRef.getBoundingClientRect().top; 
+    }
+    const docHeight = document.documentElement.clientHeight;
+    const docWidth = document.documentElement.clientWidth;
     onmousemove = (e: MouseEvent) => {
       e.preventDefault()
 
@@ -48,10 +56,22 @@ const FloatingWindow: ParentComponent<{
         position: "fixed",
         isFloating: true,
       })
-      setMouseCoordinates({
-        x: e.clientX,
-        y: e.clientY,
-      })
+      if (wrapperElemRef) {
+        const moveX = e.pageX - shiftX
+        const moveY = e.pageY - shiftY
+        if (
+          moveX + wrapperElemRef.offsetWidth <= docWidth
+          && moveY + wrapperElemRef.offsetHeight <= docHeight
+          && moveX >= 0
+          && moveY >= 0
+        ) {
+          setElemMovement({
+            x: moveX,
+            y: moveY,
+          })
+        }
+
+      }
     }
 
     onmouseup = () => {
@@ -93,7 +113,7 @@ const FloatingWindow: ParentComponent<{
       isFloating: false,
     })
     if (floatingElemRef) {
-      setMouseCoordinates({
+      setElemMovement({
         x: 0,
         y: 0,
       })
@@ -106,8 +126,8 @@ const FloatingWindow: ParentComponent<{
       style={{
         "z-index": floatingElem().zIndex,
         "position": `${floatingElem().position}`,
-        "left": `${floatingElemRef ? mouseCoordinates().x - floatingElemRef.offsetWidth/2 : ""}px`,
-        "top": `${floatingElemRef ? mouseCoordinates().y - floatingElemRef.offsetHeight/2 : ""}px`,
+        "left": `${elemMovement().x}px`,
+        "top": `${elemMovement().y}px`,
       }}
       class={props.wrapperClass}
     >
