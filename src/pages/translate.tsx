@@ -20,11 +20,11 @@ const TranslatePage = () => {
     <>
       <FloatingWindow
         defaultWindowSize={{
-          height: 0,
+          height: "",
           width: 200,
         }}
         wrapperClass=""
-        controllerWarpper="flex justify-between items-center border-2 rounded-lg mb-1 bg-red-200"
+        controllerWrapperClass="flex justify-between items-center border-2 rounded-lg mb-1 bg-red-200"
         floatingControlClass="w-fit"
         floatingControlContent={
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
