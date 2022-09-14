@@ -87,14 +87,12 @@ const FloatingWindow: ParentComponent<{
     onmousemove = (e: MouseEvent) => {
       e.preventDefault()
       if (wrapperElemRef && contentsWrapperElemRef && floatingElemRef && resizeElemRef) {
-        console.log(e.clientY);
         setWindowSize({
-          width: e.clientX - (wrapperElemRef.offsetLeft - resizeElemRef.offsetWidth),
+          width: e.pageX - (wrapperElemRef.offsetLeft - resizeElemRef.offsetWidth),
         })
       }
     }
     onmouseup = () => {
-      console.log("stop resize");
       onmousemove = () => null
       onmouseup = () => null
     }
