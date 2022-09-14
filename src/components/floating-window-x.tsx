@@ -13,6 +13,9 @@ const FloatingWindow: ParentComponent<{
   wrapperClass?: string,
   defaultWindowSize: {
     width: number | "",
+  },
+  minWindowSize?: {
+    width: number | "",
   }
 }> = (props) => {
   const [elemMovement, setElemMovement] = createSignal({
@@ -125,6 +128,7 @@ const FloatingWindow: ParentComponent<{
     >
       <div
         style={{
+          "min-width": props.minWindowSize?.width+"px",
           "width": floatingElem().isFloating ? windowSize().width+"px" : "",
         }}
         class={props.controllerWrapperClass}
@@ -151,6 +155,7 @@ const FloatingWindow: ParentComponent<{
         ref={contentsWrapperElemRef}
         style={{
           "position": "relative",
+          "min-width": props.minWindowSize?.width+"px",
           "width": floatingElem().isFloating ? windowSize().width+"px" : "",
         }}
         class={props.contentsWrapperClass}
