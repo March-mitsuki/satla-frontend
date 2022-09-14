@@ -64,16 +64,12 @@ const FloatingWindowX: ParentComponent<{
   }
 
   const startResize = (e: MouseEvent) => {
-    console.log("wrapper offset height", wrapperElemRef?.offsetHeight)
-    console.log("mouse client y height", e.clientY)
-
     onmousemove = (e: MouseEvent) => {
       e.preventDefault()
       if (wrapperElemRef && contentsWrapperElemRef && floatingElemRef && resizeElemRef) {
         console.log(e.clientY);
         setWindowSize({
           width: e.clientX - (wrapperElemRef.offsetLeft - resizeElemRef.offsetWidth),
-          height: e.clientY - (wrapperElemRef.offsetTop + floatingElemRef.offsetHeight),
         })
       }
     }
