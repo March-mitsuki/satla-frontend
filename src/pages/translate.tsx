@@ -1,7 +1,7 @@
 import { VideoJS } from "@/components"
 import videojs from "video.js"
 
-import { FloatingWindow } from "@/components";
+import { FloatingWindowX } from "@/components";
 
 
 const TranslatePage = () => {
@@ -18,9 +18,8 @@ const TranslatePage = () => {
 
   return (
     <>
-      <FloatingWindow
+      <FloatingWindowX
         defaultWindowSize={{
-          height: "",
           width: 200,
         }}
         wrapperClass=""
@@ -42,7 +41,7 @@ const TranslatePage = () => {
         contentsWrapperClass="border-2 rounded-lg bg-red-200"
       >
         <VideoJS {...videoJSOption}></VideoJS>
-      </FloatingWindow>
+      </FloatingWindowX>
     </>
   )
 }
