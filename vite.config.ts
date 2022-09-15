@@ -8,7 +8,7 @@ export default defineConfig({
     Pages(),
   ],
   server: {
-    port: 3000,
+    port: 3131,
   },
   build: {
     target: 'esnext',
