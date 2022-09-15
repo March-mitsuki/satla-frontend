@@ -7,12 +7,11 @@ import { FloatingWindowX, FloatingWindow } from "@/components";
 import subtitiles from "@/assets/dummy-subtitles";
 import { For } from "solid-js";
 
-const TranslatePage = () => {
+const CheckPage = () => {
   const videoJSOption: videojs.PlayerOptions = {
     controls: true,
     responsive: true,
     fluid: true,
-    liveui: true,
     autoplay: true,
     sources: [
       {
@@ -65,7 +64,7 @@ const TranslatePage = () => {
                 </svg>
               }
               floatingContent={
-                <div>翻译输入区</div>
+                <div>校对工具</div>
               }
               cancelControlContent={
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -75,7 +74,7 @@ const TranslatePage = () => {
               contentsWrapperClass="border-2 rounded-lg bg-red-200 flex-auto"
             >
               <div>
-                InputForm Here
+                Check Tools Here
               </div>
             </FloatingWindow>
           </div>
@@ -94,4 +93,4 @@ const TranslatePage = () => {
   )
 }
 
-export default TranslatePage
+export default CheckPage
