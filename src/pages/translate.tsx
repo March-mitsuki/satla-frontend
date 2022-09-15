@@ -1,5 +1,6 @@
 import { VideoJS } from "@/components"
 import videojs from "video.js"
+import { Title } from "@solidjs/meta";
 
 import { FloatingWindowX, FloatingWindow } from "@/components";
 
@@ -18,6 +19,7 @@ const TranslatePage = () => {
 
   return (
     <>
+      <Title>翻译页面</Title>
       <div class="h-full flex flex-col">
         <div class="bg-sky-100">Tool Bar</div>
         <div class="flex flex-auto">
