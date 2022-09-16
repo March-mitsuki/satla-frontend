@@ -1,5 +1,6 @@
 export interface Subtitle {
   // 前端用的Subtitle Type
+  id: number,
   input_time: number,
   send_time: number | null, // 为null则为未发送
   project_id: number,

@@ -2,6 +2,7 @@ import type { Subtitle } from "@/interfaces"
 
 const subtitiles: Subtitle[] = [
   {
+    id: 1,
     input_time: Date.now(),
     send_time: null,
     project_id: 1,
@@ -14,6 +15,7 @@ const subtitiles: Subtitle[] = [
     origin: "テストです。もしこの行がずっと表示されるままだとサーバーに接続に失敗することを示している。",
   },
   {
+    id: 2,
     input_time: Date.now(),
     send_time: null,
     project_id: 1,
@@ -26,6 +28,7 @@ const subtitiles: Subtitle[] = [
     origin: "Test 02",
   },
   {
+    id: 3,
     input_time: Date.now(),
     send_time: Date.now(),
     project_id: 1,
@@ -38,6 +41,7 @@ const subtitiles: Subtitle[] = [
     origin: "",
   },
   {
+    id: 4,
     input_time: Date.now(),
     send_time: null,
     project_id: 1,
