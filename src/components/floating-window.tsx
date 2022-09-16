@@ -11,6 +11,7 @@ const FloatingWindow: ParentComponent<{
   cancelControlClass?: string,
   contentsWrapperClass?: string,
   wrapperClass: string, // 当不需要初始值的时候需要给个空字符串
+  risizerClass?: string,
   defaultWindowSize: {
     width: number | "",
     height: number | "",
@@ -149,6 +150,9 @@ const FloatingWindow: ParentComponent<{
         </div>
         {props.floatingContent}
         <div
+          style={{
+            "cursor": "pointer"
+          }}
           onClick={cancelFloating}
           class={props.cancelControlClass}
         >
@@ -160,7 +164,7 @@ const FloatingWindow: ParentComponent<{
         style={{
           "position": "relative",
           "min-width": props.minWindowSize?.width+"px",
-          "min-height": props.minWindowSize?.width+"px",
+          "min-height": props.minWindowSize?.height+"px",
           "width": floatingElem().isFloating ? windowSize().width+"px" : "",
           "height": floatingElem().isFloating ? windowSize().height+"px" : "",  
         }}
@@ -175,10 +179,10 @@ const FloatingWindow: ParentComponent<{
           "right": "0",
           "bottom": "0",
           "z-index": floatingElem().zIndex,
-          "background-color": "#e6e6fa",
           "cursor": "nwse-resize",
           }}
           onMouseDown={startResize}
+          class={props.risizerClass}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 4.5l15 15m0 0V8.25m0 11.25H8.25" />
