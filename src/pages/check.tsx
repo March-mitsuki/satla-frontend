@@ -4,8 +4,8 @@ import { Title } from "@solidjs/meta";
 
 import { FloatingWindowX, FloatingWindow } from "@/components";
 
-import subtitiles from "@/assets/dummy-subtitles";
-import { For } from "solid-js";
+import dummySub from "@/assets/dummy-subtitles";
+import { CheckArea } from "@/components/pages";
 
 const CheckPage = () => {
   const videoJSOption: videojs.PlayerOptions = {
@@ -79,13 +79,7 @@ const CheckPage = () => {
             </FloatingWindow>
           </div>
           <div class="bg-neutral-300 w-full">
-            <ul>
-            <For each={subtitiles}>{(elem, idx) => 
-              <li>
-                {elem.subtitle}
-              </li>
-            }</For>
-            </ul>
+            <CheckArea subtitles={dummySub}></CheckArea>
           </div>
         </div>
       </div>

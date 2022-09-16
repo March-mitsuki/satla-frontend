@@ -4,8 +4,8 @@ import { Title } from "@solidjs/meta";
 
 import { FloatingWindowX, FloatingWindow } from "@/components";
 
-import subtitiles from "@/assets/dummy-subtitles";
-import { For } from "solid-js";
+import dummySub from "@/assets/dummy-subtitles";
+import { CheckArea, TranslatePane } from "@/components/pages";
 
 const TranslatePage = () => {
   const videoJSOption: videojs.PlayerOptions = {
@@ -31,9 +31,9 @@ const TranslatePage = () => {
           <div class="flex flex-col">
             <FloatingWindowX
               defaultWindowSize={{
-                width: 400,
+                width: 500,
               }}
-              wrapperClass="w-[400px] flex-initial"
+              wrapperClass="w-[500px] flex-initial"
               controllerWrapperClass="flex justify-between items-center border-2 rounded-lg mb-1 bg-red-200"
               floatingControlContent={
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -54,10 +54,10 @@ const TranslatePage = () => {
             </FloatingWindowX>
             <FloatingWindow
               defaultWindowSize={{
-                width: 400,
-                height: 200,
+                width: 500,
+                height: 100,
               }}
-              wrapperClass="w-[400px] flex flex-col flex-auto"
+              wrapperClass="w-[500px] flex flex-col flex-auto"
               controllerWrapperClass="flex justify-between items-center border-2 rounded-lg mb-1 bg-red-200"
               floatingControlContent={
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -74,19 +74,11 @@ const TranslatePage = () => {
               }
               contentsWrapperClass="border-2 rounded-lg bg-red-200 flex-auto"
             >
-              <div>
-                InputForm Here
-              </div>
+              <TranslatePane></TranslatePane>
             </FloatingWindow>
           </div>
           <div class="bg-neutral-300 w-full">
-            <ul>
-            <For each={subtitiles}>{(elem, idx) => 
-              <li>
-                {elem.subtitle}
-              </li>
-            }</For>
-            </ul>
+            <CheckArea subtitles={dummySub}></CheckArea>
           </div>
         </div>
       </div>
