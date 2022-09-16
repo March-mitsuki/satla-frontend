@@ -5,7 +5,7 @@ import { Title } from "@solidjs/meta";
 import { FloatingWindowX, FloatingWindow } from "@/components";
 
 import dummySub from "@/assets/dummy-subtitles";
-import { CheckArea, TranslatePane } from "@/components/pages";
+import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 
 const TranslatePage = () => {
   const videoJSOption: videojs.PlayerOptions = {
@@ -25,16 +25,21 @@ const TranslatePage = () => {
   return (
     <>
       <Title>翻译页面</Title>
-      <div class="h-full flex flex-col">
-        <div class="bg-sky-100">Tool Bar</div>
+      <div class="h-full flex flex-col bg-neutral-700 text-white">
+        <div class="shadow-lg mb-2 text-xl py-3 px-5">
+          <Navi></Navi>
+        </div>
         <div class="flex flex-auto">
           <div class="flex flex-col">
             <FloatingWindowX
               defaultWindowSize={{
                 width: 500,
               }}
-              wrapperClass="w-[500px] flex-initial"
-              controllerWrapperClass="flex justify-between items-center border-2 rounded-lg mb-1 bg-red-200"
+              minWindowSize={{
+                width: 200,
+              }}
+              wrapperClass="w-[500px] flex-initial mb-1"
+              controllerWrapperClass="flex justify-between items-center border-x-2 border-t-2 border-gray-500 rounded-t-lg bg-neutral-800"
               floatingControlContent={
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
@@ -48,7 +53,8 @@ const TranslatePage = () => {
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               }
-              contentsWrapperClass="border-2 rounded-lg bg-red-200"
+              contentsWrapperClass="border-2 border-gray-500 rounded-b-sm bg-neutral-700"
+              risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
               <VideoJS {...videoJSOption}></VideoJS>
             </FloatingWindowX>
@@ -57,8 +63,12 @@ const TranslatePage = () => {
                 width: 500,
                 height: 100,
               }}
+              minWindowSize={{
+                width: 435,
+                height: 80,
+              }}
               wrapperClass="w-[500px] flex flex-col flex-auto"
-              controllerWrapperClass="flex justify-between items-center border-2 rounded-lg mb-1 bg-red-200"
+              controllerWrapperClass="flex justify-between items-center border-x-2 border-t-2 border-gray-500 rounded-t-lg bg-neutral-800"
               floatingControlContent={
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
@@ -72,12 +82,13 @@ const TranslatePage = () => {
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               }
-              contentsWrapperClass="border-2 rounded-lg bg-red-200 flex-auto"
+              contentsWrapperClass="border-2 border-gray-500 rounded-b-lg flex-auto bg-neutral-700"
+              risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
               <TranslatePane></TranslatePane>
             </FloatingWindow>
           </div>
-          <div class="bg-neutral-300 w-full">
+          <div class="w-full">
             <CheckArea subtitles={dummySub}></CheckArea>
           </div>
         </div>
