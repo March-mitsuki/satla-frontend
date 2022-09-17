@@ -7,6 +7,9 @@ const PaneY: ParentComponent<{
   bottomElem: JSXElement,
   minTopELem?: string,
   minBottomElem?: string,
+  topElemWrapperClass?: string,
+  bottomElemWrapperClass?: string,
+  dragLineClass?: string,
 }> = (props) => {
   const [height, setHeight] = createSignal(0)
   let paneContainerRef: HTMLDivElement | undefined;
@@ -38,11 +41,13 @@ const PaneY: ParentComponent<{
           'height': '100%',
         }}
       >
-        <div style={{
+        <div
+          style={{
           'height': `${paneContainerRef ? (height() / paneContainerRef.clientHeight)*100 : 50}%`,
-          'background-color': 'rgba(120, 120, 230, 0.2)',
           'min-height': `${props.minTopELem}`,
-        }}>
+          }}
+          class={props.topElemWrapperClass}
+        >
           {props.topElem}
         </div>
         <div
@@ -53,13 +58,14 @@ const PaneY: ParentComponent<{
             background-color: #c0c0c0;
             cursor: row-resize;
           '
+          class={props.dragLineClass}
         ></div>
         <div
           style={{
             'height': `${paneContainerRef ? (100 - (height() / paneContainerRef?.clientHeight)*100) : 50}%`,
-            'background-color': 'rgba(120, 230, 120, 0.2)',
             'min-height': `${props.minBottomElem}`,
           }}
+          class={props.bottomElemWrapperClass}
         >
           {props.bottomElem}
         </div>
