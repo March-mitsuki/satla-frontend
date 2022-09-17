@@ -19,10 +19,8 @@ const VideoJS: Component<videojs.PlayerOptions> = (props) => {
   })
 
   return (
-    <div class="c-player">
-      <div data-vjs-player class="c-player__screen">
-        <video id={videoNodeId} class="video-js" />
-      </div>
+    <div data-vjs-player>
+      <video id={videoNodeId} class="video-js" />
     </div>
   )
 }
