@@ -1,11 +1,16 @@
 import { VideoJS } from "@/components"
 import videojs from "video.js"
 import { Title } from "@solidjs/meta";
+import { createEffect } from "solid-js";
 
 import { FloatingWindowX, FloatingWindow } from "@/components";
 
 import dummySub from "@/assets/dummy-subtitles";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
+// import { useSocket } from "@/components/context";
+import ws from "@/components/websocket"
+
+// const ws = useSocket()
 
 const TranslatePage = () => {
   const videoJSOption: videojs.PlayerOptions = {
@@ -21,6 +26,25 @@ const TranslatePage = () => {
       },
     ],
   }
+
+  createEffect(() => {
+    ws.onopen = () => {
+      console.log("connected");
+    }
+    ws.onmessage = (evt) => {
+      console.log("on msg:", evt.data);
+    }
+    ws.onclose = () => {
+      console.log("ws close");
+    }
+    ws.onerror = (evt) => {
+      console.log("ws err", evt);
+    }
+    setInterval(() => {
+      ws.send('Hello, Server!')
+      console.log("msg send");
+    }, 20000)
+  })
 
   return (
     <>
