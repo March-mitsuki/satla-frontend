@@ -7,6 +7,7 @@ const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-5
 
 const CheckArea: ParentComponent<{
   subtitles: Subtitle[]
+  ws: WebSocket
 }> = (props) => {
   const postChange = (subtitle: Subtitle) => {
 
@@ -23,8 +24,11 @@ const CheckArea: ParentComponent<{
     if (e.key === "Enter") {
       e.preventDefault()
       const formElem = e.currentTarget
+
       console.log("key down", e.key);
       console.log("", formElem.subtitle.value, formElem.origin.value);
+      
+      props.ws.send(formElem.subtitle.value)
     } else {
       return
     }

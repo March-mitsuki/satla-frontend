@@ -8,10 +8,7 @@ import { FloatingWindowX, FloatingWindow } from "@/components";
 
 import dummySub from "@/assets/dummy-subtitles";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
-// import { useSocket } from "@/components/context";
-// import ws from "@/components/websocket"
 
-// const ws = useSocket()
 
 const TranslatePage = () => {
   const videoJSOption: videojs.PlayerOptions = {
@@ -28,21 +25,12 @@ const TranslatePage = () => {
     ],
   }
 
-  let ws: WebSocket;
-
-  onMount(() => {
-    const baseUrl = "ws://192.168.64.3:8080/ws/"
-
-    const param = useParams<{
-      roomid: string
-    }>()
-    console.log("param is:", param.roomid);
-
-    const url = baseUrl + param.roomid
-    console.log("url is:", url);
-
-    ws = new WebSocket(url)
-  })
+  const baseUrl = "ws://192.168.64.3:8080/ws/"
+  const param = useParams<{
+    roomid: string
+  }>()
+  const url = baseUrl + param.roomid
+  const ws = new WebSocket(url)
 
   let timer: number; 
   createEffect(() => {
@@ -68,16 +56,6 @@ const TranslatePage = () => {
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
           <Navi></Navi>
-          <form onSubmit={(e) => {
-            e.preventDefault()
-            const formElem = e.currentTarget
-            const input = formElem.inputValue.value
-            console.log("input is:", input);
-            ws.send(input)
-          }}>
-            <input type="text" name="inputValue" class="bg-gray-500" />
-            <button type="submit">Submit</button>
-          </form>
         </div>
         <div class="flex flex-auto">
           <div class="flex flex-col">
@@ -139,7 +117,7 @@ const TranslatePage = () => {
             </FloatingWindow>
           </div>
           <div class="w-full">
-            <CheckArea subtitles={dummySub}></CheckArea>
+            <CheckArea subtitles={dummySub} ws={ws}></CheckArea>
           </div>
         </div>
       </div>
