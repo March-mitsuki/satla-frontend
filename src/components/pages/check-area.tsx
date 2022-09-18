@@ -1,7 +1,9 @@
-import { For } from "solid-js"
+import { createSignal, For, Match, Switch } from "solid-js"
 
 import type { ParentComponent } from "solid-js"
 import type { Subtitle } from "@/interfaces"
+import _pagetype from "../contexts/page-type"
+
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 
@@ -9,6 +11,10 @@ const CheckArea: ParentComponent<{
   subtitles: Subtitle[]
   ws: WebSocket
 }> = (props) => {
+  // pagetype: false = 翻译, true = 校对, default = false
+  const { pagetype, switchPagetype } = _pagetype
+  const [slist, setSlist] = createSignal(props.subtitles)
+
   const postChange = (subtitle: Subtitle) => {
 
   }
@@ -27,7 +33,7 @@ const CheckArea: ParentComponent<{
 
       console.log("key down", e.key);
       console.log("", formElem.subtitle.value, formElem.origin.value);
-      
+
       props.ws.send(formElem.subtitle.value)
     } else {
       return
@@ -47,20 +53,39 @@ const CheckArea: ParentComponent<{
   }
 
   return (
-    <ul>
-      <For each={props.subtitles}>{(elem, idx) =>
-        <li>
+    <div
+      class={
+        pagetype()
+        ? "h-full pb-4 overflow-auto flex flex-col"
+        : "h-full pb-4 overflow-auto flex flex-col-reverse"
+      }
+    >
+      <For each={slist()}>{(elem, idx) =>
+        <div class="mt-2">
           <form
             onKeyDown={(e) => formKeyDownHander(e)}
             onSubmit={(e) => onSubmitHandler(e)}
-            class="flex px-2 gap-2 mt-2 items-center"
+            class="flex px-2 gap-2 items-center"
           >
             <div class="px-1 rounded-md bg-sky-500/75 select-none">
               14:34:54
             </div>
-            <div class="px-1 rounded-md bg-orange-500/75 select-none">
-              已翻译
-            </div>
+            <Switch fallback={
+              <div class="px-1 rounded-md bg-orange-500/75 select-none">
+                已翻译
+              </div>
+            }>
+              <Match when={elem.send_time !== null}>
+                <div class="px-1 rounded-md bg-gray-500/75 select-none">
+                  已发送
+                </div>
+              </Match>
+              <Match when={elem.checked_by !== null}>
+                <div class="px-1 rounded-md bg-green-500/75 select-none">
+                  已校对
+                </div>
+              </Match>
+            </Switch>
             <input
               type="text"
               name="subtitle"
@@ -105,9 +130,9 @@ const CheckArea: ParentComponent<{
               </svg>
             </button>
           </form>
-        </li>
+        </div>
       }</For>
-    </ul>
+    </div>
   )
 }
 

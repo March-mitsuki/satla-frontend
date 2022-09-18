@@ -1,4 +1,5 @@
 import { createSignal, Match, Switch } from "solid-js"
+import _pagetype from "../contexts/page-type"
 
 import type { Component } from "solid-js"
 
@@ -7,7 +8,8 @@ const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-2 border-2 border-gra
 const TranslatePane: Component = () => {
   const [isBilingual, setIsBilingual] = createSignal(true)
   const [canOrder, setCanOrder] = createSignal(true)
-  const [inputType, setInputType] = createSignal(false) // true = 发送, false = 输入 
+  // pagetype: false = 翻译, true = 校对, default = false
+  const { pagetype, switchPagetype } = _pagetype
 
   const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
     e.stopPropagation()
@@ -29,11 +31,11 @@ const TranslatePane: Component = () => {
   }
 
   const inputToggerHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
-    setInputType(!inputType())
-    if (inputType()) {
-      console.log("发送");
+    switchPagetype()
+    if (!pagetype()) {
+      console.log("page now is 翻译");
     } else {
-      console.log("输入");
+      console.log("page now is 校对");
     }
   }
 
@@ -85,7 +87,7 @@ const TranslatePane: Component = () => {
           <div class="relative flex items-center">
             <input
               type="checkbox"
-              checked={inputType()}
+              checked={pagetype()}
               onChange={(e) => inputToggerHandler(e)}
               class="peer sr-only"
             />
@@ -94,7 +96,7 @@ const TranslatePane: Component = () => {
               class="absolute -left-1 peer-checked:translate-x-6 transition"
             >
               <Switch>
-                <Match when={!inputType()}>
+                <Match when={!pagetype()}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="2 0 24 24"
@@ -104,7 +106,7 @@ const TranslatePane: Component = () => {
                     <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
                   </svg>
                 </Match>
-                <Match when={inputType()}>
+                <Match when={pagetype()}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="-2 0 24 24"

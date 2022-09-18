@@ -1,16 +1,20 @@
 import { VideoJS } from "@/components"
 import videojs from "video.js"
 import { Title } from "@solidjs/meta";
-import { createEffect, onMount } from "solid-js";
+import { createEffect } from "solid-js";
 import { useParams } from "@solidjs/router";
 
 import { FloatingWindowX, FloatingWindow } from "@/components";
 
 import dummySub from "@/assets/dummy-subtitles";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
+import _pagetype from "@/components/contexts/page-type"
 
 
 const TranslatePage = () => {
+  // pagetype: false = 翻译, true = 校对, default = false
+  const { pagetype, switchPagetype } = _pagetype
+
   const videoJSOption: videojs.PlayerOptions = {
     controls: true,
     responsive: true,
@@ -25,14 +29,12 @@ const TranslatePage = () => {
     ],
   }
 
+  // 每个page连接不一样的ws room
   const baseUrl = "ws://192.168.64.3:8080/ws/"
-  const param = useParams<{
-    roomid: string
-  }>()
+  const param = useParams<{ roomid: string }>()
   const url = baseUrl + param.roomid
   const ws = new WebSocket(url)
 
-  let timer: number; 
   createEffect(() => {
     ws.onopen = () => {
       console.log("connected");
@@ -43,7 +45,6 @@ const TranslatePage = () => {
     }
     ws.onclose = () => {
       console.log("ws close");
-      clearInterval(timer)
     }
     ws.onerror = (evt) => {
       console.log("ws err", evt);
@@ -116,7 +117,9 @@ const TranslatePage = () => {
               <TranslatePane></TranslatePane>
             </FloatingWindow>
           </div>
-          <div class="w-full">
+          <div
+            class="flex-auto h-[calc(100vh-70px)]"
+          >
             <CheckArea subtitles={dummySub} ws={ws}></CheckArea>
           </div>
         </div>
