@@ -81,7 +81,7 @@ const TranslatePane: Component = () => {
         </label>
         <div class="border-l-2"></div>
         <label class="flex items-center gap-2 cursor-pointer select-none">
-          输入
+          翻译
           <div class="relative flex items-center">
             <input
               type="checkbox"
@@ -94,30 +94,30 @@ const TranslatePane: Component = () => {
               class="absolute -left-1 peer-checked:translate-x-6 transition"
             >
               <Switch>
-                <Match when={inputType()}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="-2 0 24 24"
-                    fill="currentColor"
-                    class="w-4 h-4 bg-red-500/75 rounded-full drop-shadow"
-                  >
-                    <path fill-rule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clip-rule="evenodd" />
-                  </svg>
-                </Match>
                 <Match when={!inputType()}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="2 0 24 24"
                     fill="currentColor"
-                    class="w-4 h-4 bg-green-500/75 rounded-full drop-shadow"
+                    class="w-4 h-4 bg-orange-500/75 rounded-full drop-shadow"
                   >
                     <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
+                  </svg>
+                </Match>
+                <Match when={inputType()}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="-2 0 24 24"
+                    fill="currentColor"
+                    class="w-4 h-4 bg-green-500/75 rounded-full drop-shadow"
+                  >
+                    <path fill-rule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clip-rule="evenodd" />
                   </svg>
                 </Match>
               </Switch>
             </div>
           </div>
-          发送
+          校对
         </label>
       </div>
       <form
