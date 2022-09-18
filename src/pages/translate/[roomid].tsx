@@ -1,14 +1,15 @@
 import { VideoJS } from "@/components"
 import videojs from "video.js"
 import { Title } from "@solidjs/meta";
-import { createEffect } from "solid-js";
+import { createEffect, onMount } from "solid-js";
+import { useParams } from "@solidjs/router";
 
 import { FloatingWindowX, FloatingWindow } from "@/components";
 
 import dummySub from "@/assets/dummy-subtitles";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 // import { useSocket } from "@/components/context";
-import ws from "@/components/websocket"
+// import ws from "@/components/websocket"
 
 // const ws = useSocket()
 
@@ -27,23 +28,38 @@ const TranslatePage = () => {
     ],
   }
 
+  let ws: WebSocket;
+
+  onMount(() => {
+    const baseUrl = "ws://192.168.64.3:8080/ws/"
+
+    const param = useParams<{
+      roomid: string
+    }>()
+    console.log("param is:", param.roomid);
+
+    const url = baseUrl + param.roomid
+    console.log("url is:", url);
+
+    ws = new WebSocket(url)
+  })
+
+  let timer: number; 
   createEffect(() => {
     ws.onopen = () => {
       console.log("connected");
+      ws.send('hello init!')
     }
     ws.onmessage = (evt) => {
       console.log("on msg:", evt.data);
     }
     ws.onclose = () => {
       console.log("ws close");
+      clearInterval(timer)
     }
     ws.onerror = (evt) => {
       console.log("ws err", evt);
     }
-    setInterval(() => {
-      ws.send('Hello, Server!')
-      console.log("msg send");
-    }, 20000)
   })
 
   return (
@@ -52,6 +68,16 @@ const TranslatePage = () => {
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
           <Navi></Navi>
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            const formElem = e.currentTarget
+            const input = formElem.inputValue.value
+            console.log("input is:", input);
+            ws.send(input)
+          }}>
+            <input type="text" name="inputValue" class="bg-gray-500" />
+            <button type="submit">Submit</button>
+          </form>
         </div>
         <div class="flex flex-auto">
           <div class="flex flex-col">
