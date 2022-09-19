@@ -45,7 +45,6 @@ const CheckArea: ParentComponent<{
 
     if (e.shiftKey) {
       // shift + 小键盘上下 快捷键新建字幕
-      e.preventDefault()
       if (e.key === "ArrowUp") {
         e.preventDefault()
         const newSub: Subtitle = new Subtitle()
@@ -64,21 +63,20 @@ const CheckArea: ParentComponent<{
       if (e.key === "Enter") {
         e.preventDefault()
         if (document.activeElement?.getAttribute("name") === "subtitle") {
-          document.getElementById(`${subtitle.id+1}-sub`)?.focus()
+          document.getElementById(`${idx+1}-sub`)?.focus()
         } else {
-          document.getElementById(`${subtitle.id+1}-ori`)?.focus()
+          document.getElementById(`${idx+1}-ori`)?.focus()
         }
       }
     }
     if (e.ctrlKey) {
       // ctrl + enter 移动到上一行
-      e.preventDefault()
       if (e.key === "Enter") {
         e.preventDefault()
         if (document.activeElement?.getAttribute("name") === "subtitle") {
-          document.getElementById(`${subtitle.id-1}-sub`)?.focus()
+          document.getElementById(`${idx-1}-sub`)?.focus()
         } else {
-          document.getElementById(`${subtitle.id-1}-ori`)?.focus()
+          document.getElementById(`${idx-1}-ori`)?.focus()
         }
       }
     }
@@ -157,7 +155,7 @@ const CheckArea: ParentComponent<{
                 </Match>
               </Switch>
               <input
-                id={elem.id + "-sub"}
+                id={idx() + "-sub"}
                 type="text"
                 name="subtitle"
                 autocomplete="off"
@@ -166,7 +164,7 @@ const CheckArea: ParentComponent<{
                 class={inputStyle}
               />
               <input
-                id={elem.id + "-ori"}
+                id={idx() + "-ori"}
                 type="text"
                 name="origin"
                 autocomplete="off"

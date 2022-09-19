@@ -30,7 +30,7 @@ const TranslatePane: Component = () => {
     setSubtitles(deepcopy)
     formElem.subtitle.value = ""
     formElem.origin.value = ""
-    document.getElementById(subtitles()[subtitles().length - 1].id + "-sub")?.scrollIntoView()
+    document.getElementById((subtitles().length-1).toString() + "-sub")?.scrollIntoView()
   }
 
   const bilingualToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
@@ -102,6 +102,7 @@ const TranslatePane: Component = () => {
               class="absolute -left-1 peer-checked:translate-x-6 transition"
             >
               <Switch>
+                {/* 切换toggle的左右箭头 */}
                 <Match when={!pagetype()}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
