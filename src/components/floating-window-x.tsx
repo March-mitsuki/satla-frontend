@@ -19,18 +19,18 @@ const FloatingWindow: ParentComponent<{
     width: number | "",
   }
 }> = (props) => {
-  const [elemMovement, setElemMovement] = createSignal({
-    x: 0,
-    y: 0,
-  })
   const [floatingElem, setFloatingElem] = createSignal<{
     zIndex: number | "auto" | "",
     position: "static" | "relative" | "absolute" | "sticky" | "fixed",
     isFloating: boolean,
+    x: number,
+    y: number,
   }>({
     zIndex: "auto",
     position: "static",
     isFloating: false,
+    x: 0,
+    y: 0,
   })
   const [windowSize, setWindowSize] = createSignal({
     width: props.defaultWindowSize.width,
@@ -53,11 +53,6 @@ const FloatingWindow: ParentComponent<{
     onmousemove = (e: MouseEvent) => {
       e.preventDefault()
 
-      setFloatingElem({
-        zIndex: 1000,
-        position: "fixed",
-        isFloating: true,
-      })
       if (wrapperElemRef) {
         const moveX = e.pageX - shiftX
         const moveY = e.pageY - shiftY
@@ -67,12 +62,14 @@ const FloatingWindow: ParentComponent<{
           && moveX >= 0
           && moveY >= 0
         ) {
-          setElemMovement({
+          setFloatingElem({
+            zIndex: 1000,
+            position: "fixed",
+            isFloating: true,
             x: moveX,
             y: moveY,
           })
         }
-
       }
     }
 
@@ -81,6 +78,8 @@ const FloatingWindow: ParentComponent<{
         zIndex: 1000,
         position: "absolute",
         isFloating: true,
+        x: floatingElem().x,
+        y: floatingElem().y
       })
       onmousemove = () => null
       onmouseup = () => null
@@ -107,13 +106,9 @@ const FloatingWindow: ParentComponent<{
       zIndex: "auto",
       position: "static",
       isFloating: false,
+      x: 0,
+      y: 0,
     })
-    if (floatingElemRef) {
-      setElemMovement({
-        x: 0,
-        y: 0,
-      })
-    }
   }
 
   return (
@@ -122,8 +117,8 @@ const FloatingWindow: ParentComponent<{
       style={{
         "z-index": floatingElem().zIndex,
         "position": `${floatingElem().position}`,
-        "left": `${elemMovement().x}px`,
-        "top": `${elemMovement().y}px`,
+        "left": `${floatingElem().x}px`,
+        "top": `${floatingElem().y}px`,
       }}
       classList={{[props.wrapperClass]: floatingElem().isFloating === false}}
     >
