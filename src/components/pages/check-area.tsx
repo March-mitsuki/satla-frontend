@@ -6,14 +6,14 @@ import _subtitles from "../contexts/subtitles"
 import type { ParentComponent } from "solid-js"
 import { Subtitle } from "@/interfaces"
 
-const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const CheckArea: ParentComponent<{
   subtitles: Subtitle[]
   ws: WebSocket
 }> = (props) => {
   // pagetype: false = 翻译, true = 校对, default = false
-  const { pagetype } = _pagetype
+  const { pagetype, isBilingual } = _pagetype
   const { subtitles, setSubtitles } = _subtitles
 
   const postChange = (subtitle: Subtitle) => {
@@ -146,11 +146,14 @@ const CheckArea: ParentComponent<{
                 autocomplete="off"
                 placeholder="请输入原文"
                 value={elem.origin}
-                class={inputStyle}
+                classList={{
+                  [inputStyle]: isBilingual() === true,
+                  "hidden": isBilingual() === false,
+                }}
               />
               <button
                 type="submit"
-                class="rounded-md p-1 bg-green-500/70"
+                class="rounded-md p-1 bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70"
               >
                 {/* submit btn */}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -159,7 +162,7 @@ const CheckArea: ParentComponent<{
               </button>
               <button
                 onClick={(e) => addClickHandler(e, idx(), elem)}
-                class="rounded-md p-1 bg-amber-500/70"
+                class="rounded-md p-1 bg-amber-500/70 hover:bg-amber-700/70 active:bg-amber-500/70"
               >
                 {/* add btn */}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -168,7 +171,7 @@ const CheckArea: ParentComponent<{
               </button>
               <button
                 onClick={(e) => delClickHandler(e, idx(), elem)}
-                class="rounded-md p-1 bg-red-500/70"
+                class="rounded-md p-1 bg-red-500/70 hover:bg-red-700/70 active:bg-red-500/70"
               >
                 {/* del btn */}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">

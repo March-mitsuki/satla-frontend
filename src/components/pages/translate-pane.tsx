@@ -4,13 +4,16 @@ import _subtitles from "../contexts/subtitles"
 
 import type { Component } from "solid-js"
 
-const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm"
+const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const TranslatePane: Component = () => {
-  const [isBilingual, setIsBilingual] = createSignal(true)
   const [canOrder, setCanOrder] = createSignal(true)
-  // pagetype: false = 翻译, true = 校对, default = false
-  const { pagetype, switchPagetype } = _pagetype
+  const {
+    // pagetype: false = 翻译, true = 校对, default = false
+    pagetype, switchPagetype,
+    // bilingual: 是否显示双语
+    isBilingual, switchBilingual,
+  } = _pagetype
   const { setSubtitles } = _subtitles
 
   const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
@@ -23,7 +26,7 @@ const TranslatePane: Component = () => {
   }
 
   const bilingualToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
-    setIsBilingual(!isBilingual())
+    switchBilingual()
     console.log("显示双语 change:", isBilingual());
   }
 
