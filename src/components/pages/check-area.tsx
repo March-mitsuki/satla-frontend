@@ -1,4 +1,4 @@
-import { For, Match, Switch } from "solid-js"
+import { For, Match, Switch, createSignal } from "solid-js"
 
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
@@ -8,6 +8,14 @@ import { Subtitle } from "@/interfaces"
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
+type FloatingElem = {
+  zIndex: number | "auto",
+  position: "static" | "relative" | "absolute" | "sticky" | "fixed",
+  isFloating: boolean,
+  x: number,
+  y: number,
+}
+
 const CheckArea: ParentComponent<{
   subtitles: Subtitle[]
   ws: WebSocket
@@ -15,6 +23,20 @@ const CheckArea: ParentComponent<{
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype, isBilingual } = _pagetype
   const { subtitles, setSubtitles } = _subtitles
+
+  let initialFloatingElem: FloatingElem[] = [];
+  for (let i = 0; i < subtitles().length; i++) {
+    const floatingElem: FloatingElem = {
+      zIndex: "auto",
+      position: "static",
+      isFloating: false,
+      x: 0,
+      y: 0,
+    }
+    initialFloatingElem.push(floatingElem)
+  }
+  const [floatingElem, setFloatingElem] = createSignal<FloatingElem[]>(initialFloatingElem)
+
 
   const postChange = (subtitle: Subtitle) => {
     const sendData = new TextEncoder().encode(JSON.stringify(subtitle))
@@ -110,6 +132,59 @@ const CheckArea: ParentComponent<{
     setSubtitles(subtitles().filter(elem => elem.id !== subtitle.id))
   }
 
+  const startDragHandler = (
+    e: MouseEvent & { currentTarget: HTMLDivElement },
+    idx: number,
+    elem: Subtitle
+  ) => {
+    let belowElem: Element | null
+    const currentForm = document.getElementById(elem.id.toString() + "-form")
+
+    let shiftX: number;
+    let shiftY: number;
+    shiftX = e.clientX - (currentForm as HTMLFormElement).getBoundingClientRect().left;
+    shiftY = e.clientY - (currentForm as HTMLFormElement).getBoundingClientRect().top; 
+    const docHeight = document.documentElement.clientHeight;
+    const docWidth = document.documentElement.clientWidth;
+
+    onmousemove = (e: MouseEvent) => {
+      e.preventDefault()
+
+      const moveX = e.pageX - shiftX
+      const moveY = e.pageY - shiftY
+      if (
+        moveX + (currentForm as HTMLFormElement).offsetWidth <= docWidth
+        && moveY + (currentForm as HTMLFormElement).offsetHeight <= docHeight
+        && moveX >= 0
+        && moveY >= 0
+      ) {
+        const deepcopy = floatingElem().map(x => x)
+        deepcopy[idx] = {
+          zIndex: 1000,
+          position: "absolute",
+          isFloating: true,
+          x: moveX,
+          y: moveY,
+        }
+        setFloatingElem(deepcopy)
+      }
+    }
+    onmouseup = () => {
+      const deepcopy = floatingElem().map(x => x)
+      deepcopy[idx] = {
+        zIndex: "auto",
+        position: "static",
+        isFloating: false,
+        x: 0,
+        y: 0,
+      }
+      setFloatingElem(deepcopy)
+
+      onmousemove = () => null
+      onmouseup = () => null
+    }
+  }
+
   return (
     <div
       class="h-full pb-4 overflow-auto flex flex-col"
@@ -117,14 +192,27 @@ const CheckArea: ParentComponent<{
       <For each={subtitles()}>{(elem, idx) => {
         console.log("creat For!");
         return (
-          <div class="mt-2">
+          <div
+            id={`${elem.id}-form`}
+            style={{
+              "z-index": floatingElem()[idx()].zIndex,
+              "position": `${floatingElem()[idx()].position}`,
+              "left": `${floatingElem()[idx()].x}px`,
+              "top": `${floatingElem()[idx()].y}px`,
+            }}
+            class="mt-2"
+          >
             <form
               onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}
               onSubmit={(e) => onSubmitHandler(e, idx(), elem)}
               class="flex px-2 gap-2 items-center"
             >
+              {/* <button onClick={() => console.log(formRefs[idx()])}>ClickMe</button> */}
               <Switch fallback={
-                <div class="flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none">
+                <div
+                  onMouseDown={(e) => startDragHandler(e, idx(), elem)}
+                  class="cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none"
+                >
                   <div class="flex-1">
                     12:50:23
                   </div>
