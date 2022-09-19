@@ -114,11 +114,7 @@ const CheckArea: ParentComponent<{
 
   return (
     <div
-      class={
-        pagetype()
-        ? "h-full pb-4 overflow-auto flex flex-col"
-        : "h-full pb-4 overflow-auto flex flex-col-reverse"
-      }
+      class="h-full pb-4 overflow-auto flex flex-col"
     >
       <For each={subtitles()}>{(elem, idx) => {
         console.log("creat For!");
@@ -130,32 +126,32 @@ const CheckArea: ParentComponent<{
               class="flex px-2 gap-2 items-center"
             >
               <Switch fallback={
-                <div class="flex gap-3 items-center px-1 rounded-md bg-orange-500/70 select-none">
-                  <div>
+                <div class="flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none">
+                  <div class="flex-1">
                     12:50:23
                   </div>
-                  <div>
+                  <div class="flex-1 truncate text-center">
                     翻译
                   </div>
                 </div>
               }>
                 <Match when={elem.send_time !== null}>
-                  <div class="flex gap-3 items-center px-1 rounded-md bg-gray-500/70 select-none">
-                    <div>
+                  <div class="flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none">
+                    <div class="flex-1">
                       12:50:23
                     </div>
-                    <div>
-                      发送aaaaa
+                    <div class="flex-1 truncate text-center">
+                      发送aaasd
                     </div>
                   </div>
                 </Match>
                 <Match when={elem.checked_by !== null}>
-                  <div class="flex gap-3 items-center px-1 rounded-md bg-green-500/70 select-none">
-                    <div>
+                  <div class="flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none">
+                    <div class="flex-1">
                       12:50:23
                     </div>
-                    <div>
-                      校对
+                    <div class="flex-1 truncate text-center">
+                      校对asdadsssasdasd
                     </div>
                   </div>
                 </Match>
