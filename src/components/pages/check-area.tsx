@@ -14,6 +14,7 @@ type FloatingElem = {
   isFloating: boolean,
   x: number,
   y: number,
+  hidden: boolean,
 }
 
 const CheckArea: ParentComponent<{
@@ -32,6 +33,7 @@ const CheckArea: ParentComponent<{
       isFloating: false,
       x: 0,
       y: 0,
+      hidden: false
     }
     initialFloatingElem.push(floatingElem)
   }
@@ -158,6 +160,7 @@ const CheckArea: ParentComponent<{
         && moveX >= 0
         && moveY >= 0
       ) {
+        // 开始拖拽
         const deepcopy = floatingElem().map(x => x)
         deepcopy[idx] = {
           zIndex: 1000,
@@ -165,10 +168,32 @@ const CheckArea: ParentComponent<{
           isFloating: true,
           x: moveX,
           y: moveY,
+          hidden: true,
+        }
+        setFloatingElem(deepcopy)
+      }
+      // 瞬间设置拖动为hidden, 获取下方要素
+      belowElem = document.elementFromPoint(e.clientX, e.clientY)
+      if (
+        moveX + (currentForm as HTMLFormElement).offsetWidth <= docWidth
+        && moveY + (currentForm as HTMLFormElement).offsetHeight <= docHeight
+        && moveX >= 0
+        && moveY >= 0
+      ) {
+        // 成功获取之后再设置hidden为false, 展现元素给用户
+        const deepcopy = floatingElem().map(x => x)
+        deepcopy[idx] = {
+          zIndex: 1000,
+          position: "absolute",
+          isFloating: true,
+          x: moveX,
+          y: moveY,
+          hidden: false,
         }
         setFloatingElem(deepcopy)
       }
     }
+
     onmouseup = () => {
       const deepcopy = floatingElem().map(x => x)
       deepcopy[idx] = {
@@ -177,6 +202,7 @@ const CheckArea: ParentComponent<{
         isFloating: false,
         x: 0,
         y: 0,
+        hidden: false,
       }
       setFloatingElem(deepcopy)
 
@@ -201,6 +227,7 @@ const CheckArea: ParentComponent<{
               "top": `${floatingElem()[idx()].y}px`,
             }}
             class="mt-2"
+            hidden={floatingElem()[idx()].hidden}
           >
             <form
               onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}
