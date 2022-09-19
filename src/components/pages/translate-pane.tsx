@@ -1,5 +1,6 @@
 import { createSignal, Match, Switch } from "solid-js"
 import _pagetype from "../contexts/page-type"
+import _subtitles from "../contexts/subtitles"
 
 import type { Component } from "solid-js"
 
@@ -10,6 +11,7 @@ const TranslatePane: Component = () => {
   const [canOrder, setCanOrder] = createSignal(true)
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype, switchPagetype } = _pagetype
+  const { setSubtitles } = _subtitles
 
   const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
     e.stopPropagation()
@@ -142,7 +144,7 @@ const TranslatePane: Component = () => {
         />
         <button
           type="submit"
-          class="bg-green-500/70 hover:bg-green-700/70 active:bg-green-500 rounded-full px-3 border-2 border-gray-300 text-white"
+          class="bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-full px-3 text-white"
         >输入</button>
       </form>
     </div>

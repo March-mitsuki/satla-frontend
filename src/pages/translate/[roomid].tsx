@@ -117,9 +117,7 @@ const TranslatePage = () => {
               <TranslatePane></TranslatePane>
             </FloatingWindow>
           </div>
-          <div
-            class="flex-auto h-[calc(100vh-70px)]"
-          >
+          <div class="flex-auto h-[calc(100vh-70px)]" >
             <CheckArea subtitles={dummySub} ws={ws}></CheckArea>
           </div>
         </div>
