@@ -35,21 +35,14 @@ const TranslatePane: Component = () => {
 
   const bilingualToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
     switchBilingual()
-    console.log("显示双语 change:", isBilingual());
   }
 
   const orderToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
     setCanOrder(!canOrder())
-    console.log("拖动排序 change:", canOrder());
   }
 
   const inputToggerHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
     switchPagetype()
-    if (!pagetype()) {
-      console.log("page now is 翻译");
-    } else {
-      console.log("page now is 校对");
-    }
   }
 
   return (

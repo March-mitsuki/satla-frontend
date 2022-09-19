@@ -41,8 +41,6 @@ const CheckArea: ParentComponent<{
     idx: number,
     subtitle: Subtitle
   ) => {
-    console.log(e.key);
-    
     const formElem = e.currentTarget
 
     if (e.shiftKey) {
@@ -87,7 +85,6 @@ const CheckArea: ParentComponent<{
     // 按回车提交
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault()
-      console.log(e.key, "sigle");
 
       subtitle.subtitle = formElem.subtitle.value
       subtitle.origin = formElem.origin.value
