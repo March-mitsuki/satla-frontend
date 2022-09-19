@@ -1,4 +1,5 @@
 import { For, Match, Switch } from "solid-js"
+
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
 
@@ -21,7 +22,11 @@ const CheckArea: ParentComponent<{
     // props.ws.send(sendData)
   }
 
-  const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}, idx: number, subtitle: Subtitle) => {
+  const onSubmitHandler = (
+    e: SubmitEvent & { currentTarget: HTMLFormElement},
+    idx: number,
+    subtitle: Subtitle
+  ) => {
     e.stopPropagation()
     e.preventDefault()
     const formElem = e.currentTarget
@@ -31,16 +36,47 @@ const CheckArea: ParentComponent<{
     postChange(subtitle)
   }
 
-  const formKeyDownHander = (e: KeyboardEvent & { currentTarget: HTMLFormElement}, idx: number, subtitle: Subtitle) => {
-    if (e.key === "Enter") {
+  const formKeyDownHander = (
+    e: KeyboardEvent & { currentTarget: HTMLFormElement},
+    idx: number,
+    subtitle: Subtitle
+  ) => {
+    const formElem = e.currentTarget
+
+    if (e.shiftKey) {
+      // shift + enter 快捷键新建字幕
       e.preventDefault()
-      const formElem = e.currentTarget
+      if (e.key === "Enter") {
+        e.preventDefault()
+        const newSub: Subtitle = new Subtitle()
+        newSub.origin = "新建字幕"
+        subtitles().splice(idx + 1, 0, newSub)
+        const deepcopy = subtitles().map(x => x)
+        setSubtitles(deepcopy)
+      }
+    }
+
+    if (e.ctrlKey) {
+      // ctrl + enter 移动到下一行
+      e.preventDefault()
+      if (e.key === "Enter") {
+        e.preventDefault()
+        if (document.activeElement?.getAttribute("name") === "subtitle") {
+          document.getElementById(`${subtitle.id+1}-sub`)?.focus()
+        } else {
+          document.getElementById(`${subtitle.id+1}-ori`)?.focus()
+        }
+        
+      }
+    }
+
+    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
+      e.preventDefault()
+      console.log(e.key, "sigle");
 
       subtitle.subtitle = formElem.subtitle.value
       subtitle.origin = formElem.origin.value
       postChange(subtitle)
-    } else {
-      return
     }
   }
 
@@ -95,6 +131,7 @@ const CheckArea: ParentComponent<{
                 </Match>
               </Switch>
               <input
+                id={elem.id + "-sub"}
                 type="text"
                 name="subtitle"
                 autocomplete="off"
@@ -103,6 +140,7 @@ const CheckArea: ParentComponent<{
                 class={inputStyle}
               />
               <input
+                id={elem.id + "-ori"}
                 type="text"
                 name="origin"
                 autocomplete="off"
