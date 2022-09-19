@@ -41,24 +41,28 @@ const CheckArea: ParentComponent<{
     idx: number,
     subtitle: Subtitle
   ) => {
+    console.log(e.key);
+    
     const formElem = e.currentTarget
 
     if (e.shiftKey) {
-      // shift + enter 快捷键新建字幕
+      // shift + 小键盘上下 快捷键新建字幕
       e.preventDefault()
-      if (e.key === "Enter") {
+      if (e.key === "ArrowUp") {
         e.preventDefault()
         const newSub: Subtitle = new Subtitle()
-        newSub.origin = "新建字幕"
+        subtitles().splice(idx, 0, newSub)
+        const deepcopy = subtitles().map(x => x)
+        setSubtitles(deepcopy)
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault()
+        const newSub: Subtitle = new Subtitle()
         subtitles().splice(idx + 1, 0, newSub)
         const deepcopy = subtitles().map(x => x)
         setSubtitles(deepcopy)
       }
-    }
-
-    if (e.ctrlKey) {
-      // ctrl + enter 移动到下一行
-      e.preventDefault()
+      // shift + enter 移动到下一行
       if (e.key === "Enter") {
         e.preventDefault()
         if (document.activeElement?.getAttribute("name") === "subtitle") {
@@ -66,10 +70,21 @@ const CheckArea: ParentComponent<{
         } else {
           document.getElementById(`${subtitle.id+1}-ori`)?.focus()
         }
-        
       }
     }
-
+    if (e.ctrlKey) {
+      // ctrl + enter 移动到上一行
+      e.preventDefault()
+      if (e.key === "Enter") {
+        e.preventDefault()
+        if (document.activeElement?.getAttribute("name") === "subtitle") {
+          document.getElementById(`${subtitle.id-1}-sub`)?.focus()
+        } else {
+          document.getElementById(`${subtitle.id-1}-ori`)?.focus()
+        }
+      }
+    }
+    // 按回车提交
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault()
       console.log(e.key, "sigle");
@@ -80,11 +95,17 @@ const CheckArea: ParentComponent<{
     }
   }
 
-  const addClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
+  const addUpClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
     const newSub: Subtitle = new Subtitle()
-    newSub.origin = "新建字幕"
     subtitles().splice(idx, 0, newSub)
+    const deepcopy = subtitles().map(x => x)
+    setSubtitles(deepcopy)
+  }
+  const addDownClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
+    e.preventDefault()
+    const newSub: Subtitle = new Subtitle()
+    subtitles().splice(idx + 1, 0, newSub)
     const deepcopy = subtitles().map(x => x)
     setSubtitles(deepcopy)
   }
@@ -111,22 +132,34 @@ const CheckArea: ParentComponent<{
               onSubmit={(e) => onSubmitHandler(e, idx(), elem)}
               class="flex px-2 gap-2 items-center"
             >
-              <div class="px-1 rounded-md bg-sky-500/75 select-none">
-                14:34:54
-              </div>
               <Switch fallback={
-                <div class="px-1 rounded-md bg-orange-500/75 select-none">
-                  已翻译
+                <div class="flex gap-3 items-center px-1 rounded-md bg-orange-500/70 select-none">
+                  <div>
+                    12:50:23
+                  </div>
+                  <div>
+                    翻译
+                  </div>
                 </div>
               }>
                 <Match when={elem.send_time !== null}>
-                  <div class="px-1 rounded-md bg-gray-500/75 select-none">
-                    已发送
+                  <div class="flex gap-3 items-center px-1 rounded-md bg-gray-500/70 select-none">
+                    <div>
+                      12:50:23
+                    </div>
+                    <div>
+                      发送aaaaa
+                    </div>
                   </div>
                 </Match>
                 <Match when={elem.checked_by !== null}>
-                  <div class="px-1 rounded-md bg-green-500/75 select-none">
-                    已校对
+                  <div class="flex gap-3 items-center px-1 rounded-md bg-green-500/70 select-none">
+                    <div>
+                      12:50:23
+                    </div>
+                    <div>
+                      校对
+                    </div>
                   </div>
                 </Match>
               </Switch>
@@ -161,12 +194,21 @@ const CheckArea: ParentComponent<{
                 </svg>
               </button>
               <button
-                onClick={(e) => addClickHandler(e, idx(), elem)}
+                onClick={(e) => addUpClickHandler(e, idx(), elem)}
                 class="rounded-md p-1 bg-amber-500/70 hover:bg-amber-700/70 active:bg-amber-500/70"
               >
-                {/* add btn */}
+                {/* add up btn */}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => addDownClickHandler(e, idx(), elem)}
+                class="rounded-md p-1 bg-amber-500/70 hover:bg-amber-700/70 active:bg-amber-500/70"
+              >
+                {/* add down btn */}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
                 </svg>
               </button>
               <button

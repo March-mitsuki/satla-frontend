@@ -1,6 +1,8 @@
 import { createSignal, Match, Switch } from "solid-js"
+
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
+import { Subtitle } from "@/interfaces"
 
 import type { Component } from "solid-js"
 
@@ -14,15 +16,21 @@ const TranslatePane: Component = () => {
     // bilingual: 是否显示双语
     isBilingual, switchBilingual,
   } = _pagetype
-  const { setSubtitles } = _subtitles
+  const { subtitles, setSubtitles } = _subtitles
 
   const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
     e.stopPropagation()
     e.preventDefault()
     const formElem = e.currentTarget
-    console.log("custom submit action", formElem.subtitle.value, formElem.origin.value);
+    const newSub: Subtitle = new Subtitle()
+    newSub.subtitle = formElem.subtitle.value
+    newSub.origin = formElem.origin.value
+    subtitles().push(newSub)
+    const deepcopy = subtitles().map(x => x)
+    setSubtitles(deepcopy)
     formElem.subtitle.value = ""
     formElem.origin.value = ""
+    document.getElementById(subtitles()[subtitles().length - 1].id + "-sub")?.scrollIntoView()
   }
 
   const bilingualToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
@@ -143,7 +151,10 @@ const TranslatePane: Component = () => {
           name="origin"
           autocomplete="off"
           placeholder="请输入原文"
-          class={inputStyle}
+          classList={{
+            [inputStyle]: isBilingual() === true,
+            "hidden": isBilingual() === false,
+          }}
         />
         <button
           type="submit"
