@@ -9,12 +9,13 @@ import { Subtitle } from "@/interfaces"
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 type FloatingElem = {
+  id: number,
   zIndex: number | "auto",
   position: "static" | "relative" | "absolute" | "sticky" | "fixed",
   isFloating: boolean,
-  x: number,
   y: number,
   hidden: boolean,
+  isDrop: boolean,
 }
 
 const CheckArea: ParentComponent<{
@@ -27,13 +28,15 @@ const CheckArea: ParentComponent<{
 
   let initialFloatingElem: FloatingElem[] = [];
   for (let i = 0; i < subtitles().length; i++) {
+    const elem = subtitles()[i]
     const floatingElem: FloatingElem = {
+      id: elem.id,
       zIndex: "auto",
       position: "static",
       isFloating: false,
-      x: 0,
       y: 0,
-      hidden: false
+      hidden: false,
+      isDrop: false,
     }
     initialFloatingElem.push(floatingElem)
   }
@@ -137,78 +140,120 @@ const CheckArea: ParentComponent<{
   const startDragHandler = (
     e: MouseEvent & { currentTarget: HTMLDivElement },
     idx: number,
-    elem: Subtitle
+    subtitle: Subtitle
   ) => {
     let belowElem: Element | null
-    const currentForm = document.getElementById(elem.id.toString() + "-form")
+    // const currentFormWrapper = document.getElementById(elem.id.toString() + "-form")
+    const currentFormWrapper = (afterFormWrapperRefs as HTMLDivElement[])[idx]
 
-    let shiftX: number;
     let shiftY: number;
-    shiftX = e.clientX - (currentForm as HTMLFormElement).getBoundingClientRect().left;
-    shiftY = e.clientY - (currentForm as HTMLFormElement).getBoundingClientRect().top; 
+    shiftY = e.clientY - (currentFormWrapper as HTMLDivElement).getBoundingClientRect().top;
     const docHeight = document.documentElement.clientHeight;
-    const docWidth = document.documentElement.clientWidth;
+    // 拖动之后clientrect的计算会出错, 还不知道为啥
+    console.log((currentFormWrapper as HTMLDivElement).getBoundingClientRect().top);
+
+    // 拖动后的form wrapper
+    let afterFormWrapper: ParentNode | null | undefined;
 
     onmousemove = (e: MouseEvent) => {
       e.preventDefault()
 
-      const moveX = e.pageX - shiftX
-      const moveY = e.pageY - shiftY
+      // const moveY = e.pageY - shiftY
+      const moveY = e.clientY
       if (
-        moveX + (currentForm as HTMLFormElement).offsetWidth <= docWidth
-        && moveY + (currentForm as HTMLFormElement).offsetHeight <= docHeight
-        && moveX >= 0
+        moveY + (currentFormWrapper as HTMLDivElement).offsetHeight <= docHeight
         && moveY >= 0
       ) {
         // 开始拖拽
         const deepcopy = floatingElem().map(x => x)
-        deepcopy[idx] = {
-          zIndex: 1000,
-          position: "absolute",
-          isFloating: true,
-          x: moveX,
-          y: moveY,
-          hidden: true,
-        }
+        deepcopy[idx].zIndex = 1000
+        deepcopy[idx].position = "absolute"
+        deepcopy[idx].isFloating = true,
+        deepcopy[idx].y = moveY
+        deepcopy[idx].hidden = true
         setFloatingElem(deepcopy)
       }
-      // 瞬间设置拖动为hidden, 获取下方要素
+      // 拖动瞬间设置元素为hidden, 获取下方要素
       belowElem = document.elementFromPoint(e.clientX, e.clientY)
       if (
-        moveX + (currentForm as HTMLFormElement).offsetWidth <= docWidth
-        && moveY + (currentForm as HTMLFormElement).offsetHeight <= docHeight
-        && moveX >= 0
+        moveY + (currentFormWrapper as HTMLDivElement).offsetHeight <= docHeight
         && moveY >= 0
       ) {
         // 成功获取之后再设置hidden为false, 展现元素给用户
         const deepcopy = floatingElem().map(x => x)
-        deepcopy[idx] = {
-          zIndex: 1000,
-          position: "absolute",
-          isFloating: true,
-          x: moveX,
-          y: moveY,
-          hidden: false,
-        }
+        deepcopy[idx].hidden = false
         setFloatingElem(deepcopy)
+      }
+      if (!belowElem) {
+        return
+      }
+
+      if (
+        belowElem instanceof HTMLDivElement
+        && belowElem.closest("form")
+      ) {
+        afterFormWrapper = belowElem.closest("form")?.parentNode
+        if (afterFormWrapper) {
+          const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
+          const reorderIdx = floatingElem().findIndex(elem => elem.id === elemId)
+          const spliceElem = floatingElem()[reorderIdx]
+          spliceElem.id = floatingElem()[reorderIdx].id
+          spliceElem.isDrop = true
+          floatingElem().splice(reorderIdx, 1, spliceElem)
+        }
+      }
+      if (
+        belowElem instanceof HTMLDivElement
+        && !belowElem.closest("form")
+      ) {
+        setFloatingElem(floatingElem().map(elem => {
+          elem.isDrop = false
+          return elem
+        }))
       }
     }
 
     onmouseup = () => {
-      const deepcopy = floatingElem().map(x => x)
-      deepcopy[idx] = {
-        zIndex: "auto",
-        position: "static",
-        isFloating: false,
-        x: 0,
-        y: 0,
-        hidden: false,
+      if (afterFormWrapper) {
+        const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
+        const reorderIdx = floatingElem().findIndex(elem => elem.id === elemId)
+  
+        const dc_floatingElem = floatingElem().map(x => x)
+        dc_floatingElem[idx].zIndex = "auto"
+        dc_floatingElem[idx].position = "static"
+        dc_floatingElem[idx].isFloating = false
+        dc_floatingElem[idx].y = 0
+        dc_floatingElem[idx].isDrop = false
+        dc_floatingElem[idx].hidden = false
+        dc_floatingElem[reorderIdx].isDrop = false
+        dc_floatingElem.splice(idx, 1)
+        dc_floatingElem.splice(reorderIdx-1, 0, {
+          id: subtitles()[idx].id,
+          zIndex: "auto",
+          position: "static",
+          isFloating: false,
+          y: 0,
+          hidden: false,
+          isDrop: false,
+        })
+        setFloatingElem(dc_floatingElem)
+
+        const dc_subtitles = subtitles().map(x => x)
+        dc_subtitles.splice(idx, 1)
+        dc_subtitles.splice(reorderIdx-1, 0, subtitle)
+        setSubtitles(dc_subtitles)
+  
+        console.log(floatingElem(), subtitles());
       }
-      setFloatingElem(deepcopy)
 
       onmousemove = () => null
       onmouseup = () => null
     }
+  }
+
+  let afterFormWrapperRefs: HTMLDivElement[] | undefined = [];
+  const refCallback = (el: HTMLDivElement) => {
+    afterFormWrapperRefs?.push(el)
   }
 
   return (
@@ -219,14 +264,17 @@ const CheckArea: ParentComponent<{
         console.log("creat For!");
         return (
           <div
+            ref={(el) => refCallback(el)}
             id={`${elem.id}-form`}
             style={{
               "z-index": floatingElem()[idx()].zIndex,
               "position": `${floatingElem()[idx()].position}`,
-              "left": `${floatingElem()[idx()].x}px`,
               "top": `${floatingElem()[idx()].y}px`,
             }}
-            class="mt-2"
+            classList={{
+              "mt-2": floatingElem()[idx()].isDrop === false,
+              "mt-2 border-t-2 border-sky-500": floatingElem()[idx()].isDrop === true,
+            }}
             hidden={floatingElem()[idx()].hidden}
           >
             <form
@@ -234,36 +282,45 @@ const CheckArea: ParentComponent<{
               onSubmit={(e) => onSubmitHandler(e, idx(), elem)}
               class="flex px-2 gap-2 items-center"
             >
-              {/* <button onClick={() => console.log(formRefs[idx()])}>ClickMe</button> */}
+              {/* <button onClick={() => console.log(afterFormWrapperRefs[idx()])}>C-me</button> */}
               <Switch fallback={
                 <div
+                  id="reorder-wrapper"
                   onMouseDown={(e) => startDragHandler(e, idx(), elem)}
                   class="cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none"
                 >
-                  <div class="flex-1">
+                  <div id="reorder-time" class="flex-1">
                     12:50:23
                   </div>
-                  <div class="flex-1 truncate text-center">
+                  <div id="reorder-name" class="flex-1 truncate text-center">
                     翻译
                   </div>
                 </div>
               }>
                 <Match when={elem.send_time !== null}>
-                  <div class="flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none">
-                    <div class="flex-1">
+                  <div
+                    id="reorder-wrapper"
+                    onMouseDown={(e) => startDragHandler(e, idx(), elem)}
+                    class="cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none"
+                  >
+                    <div id="reorder-time" class="flex-1">
                       12:50:23
                     </div>
-                    <div class="flex-1 truncate text-center">
+                    <div id="reorder-name" class="flex-1 truncate text-center">
                       发送aaasd
                     </div>
                   </div>
                 </Match>
                 <Match when={elem.checked_by !== null}>
-                  <div class="flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none">
-                    <div class="flex-1">
+                  <div
+                    id="reorder-wrapper"
+                    onMouseDown={(e) => startDragHandler(e, idx(), elem)}
+                    class="cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none"
+                  >
+                    <div id="reorder-time" class="flex-1">
                       12:50:23
                     </div>
-                    <div class="flex-1 truncate text-center">
+                    <div id="reorder-name" class="flex-1 truncate text-center">
                       校对asdadsssasdasd
                     </div>
                   </div>

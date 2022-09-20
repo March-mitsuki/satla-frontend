@@ -23,7 +23,7 @@ const subtitiles: Subtitle[] = [
     translated_by: "用户A",
     checked_by: "用户B",
     subtitle: "此行应被显示为 -校对-未发送- 样式",
-    origin: "Test 02",
+    origin: "02",
   },
   {
     id: 3,
@@ -35,7 +35,7 @@ const subtitiles: Subtitle[] = [
     translated_by: "用户A",
     checked_by: "用户B",
     subtitle: "此行应该显示,并显示为被 -已校对-发送- 样式",
-    origin: "",
+    origin: "03",
   },
   {
     id: 4,
@@ -47,7 +47,7 @@ const subtitiles: Subtitle[] = [
     translated_by: "用户A",
     checked_by: null,
     subtitle: "此行不应该被显示,应显示全部行,未显示行交给服务器diff掉",
-    origin: "",
+    origin: "04",
   },
   {
     id: 5,
@@ -59,7 +59,7 @@ const subtitiles: Subtitle[] = [
     translated_by: "用户A",
     checked_by: null,
     subtitle: "未校对, 已发送",
-    origin: "",
+    origin: "05",
   },
   {
     id: 6,
@@ -71,7 +71,7 @@ const subtitiles: Subtitle[] = [
     translated_by: "用户A",
     checked_by: null,
     subtitle: "未校对, 已发送",
-    origin: "",
+    origin: "06",
   },
 ]
 
