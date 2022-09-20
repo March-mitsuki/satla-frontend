@@ -217,34 +217,60 @@ const CheckArea: ParentComponent<{
       if (afterFormWrapper) {
         const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
         const reorderIdx = floatingElem().findIndex(elem => elem.id === elemId)
-  
-        const dc_floatingElem = floatingElem().map(x => x)
-        dc_floatingElem[idx].zIndex = "auto"
-        dc_floatingElem[idx].position = "static"
-        dc_floatingElem[idx].isFloating = false
-        dc_floatingElem[idx].y = 0
-        dc_floatingElem[idx].isDrop = false
-        dc_floatingElem[idx].hidden = false
-        dc_floatingElem[reorderIdx].isDrop = false
-        dc_floatingElem.splice(idx, 1)
-        dc_floatingElem.splice(reorderIdx-1, 0, {
-          id: subtitles()[idx].id,
-          zIndex: "auto",
-          position: "static",
-          isFloating: false,
-          y: 0,
-          hidden: false,
-          isDrop: false,
-        })
-        setFloatingElem(dc_floatingElem)
 
-        const dc_subtitles = subtitles().map(x => x)
-        dc_subtitles.splice(idx, 1)
-        dc_subtitles.splice(reorderIdx-1, 0, subtitle)
-        setSubtitles(dc_subtitles)
+        if (reorderIdx > idx) {
+          const dc_floatingElem = floatingElem().map(x => x)
+          dc_floatingElem[idx].zIndex = "auto"
+          dc_floatingElem[idx].position = "static"
+          dc_floatingElem[idx].isFloating = false
+          dc_floatingElem[idx].y = 0
+          dc_floatingElem[idx].isDrop = false
+          dc_floatingElem[idx].hidden = false
+          dc_floatingElem[reorderIdx].isDrop = false
+          dc_floatingElem.splice(idx, 1)
+          dc_floatingElem.splice(reorderIdx-1, 0, {
+            id: subtitles()[idx].id,
+            zIndex: "auto",
+            position: "static",
+            isFloating: false,
+            y: 0,
+            hidden: false,
+            isDrop: false,
+          })
+          setFloatingElem(dc_floatingElem)
   
-        console.log(floatingElem(), subtitles());
+          const dc_subtitles = subtitles().map(x => x)
+          dc_subtitles.splice(idx, 1)
+          dc_subtitles.splice(reorderIdx-1, 0, subtitle)
+          setSubtitles(dc_subtitles)
+        } else {
+          const dc_floatingElem = floatingElem().map(x => x)
+          dc_floatingElem[idx].zIndex = "auto"
+          dc_floatingElem[idx].position = "static"
+          dc_floatingElem[idx].isFloating = false
+          dc_floatingElem[idx].y = 0
+          dc_floatingElem[idx].isDrop = false
+          dc_floatingElem[idx].hidden = false
+          dc_floatingElem[reorderIdx].isDrop = false
+          dc_floatingElem.splice(idx, 1)
+          dc_floatingElem.splice(reorderIdx, 0, {
+            id: subtitles()[idx].id,
+            zIndex: "auto",
+            position: "static",
+            isFloating: false,
+            y: 0,
+            hidden: false,
+            isDrop: false,
+          })
+          setFloatingElem(dc_floatingElem)
+  
+          const dc_subtitles = subtitles().map(x => x)
+          dc_subtitles.splice(idx, 1)
+          dc_subtitles.splice(reorderIdx, 0, subtitle)
+          setSubtitles(dc_subtitles)
+        }
       }
+      console.log(floatingElem(), subtitles());
 
       onmousemove = () => null
       onmouseup = () => null
