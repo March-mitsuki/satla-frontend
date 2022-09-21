@@ -359,7 +359,6 @@ const CheckArea: ParentComponent<{
               }>
                 <Match when={elem.send_time !== null}>
                   <div
-                    id="reorder-wrapper"
                     onMouseDown={(e) => startDragHandler(e, idx(), elem)}
                     classList={{
                       "cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none": canOrder() === true,
@@ -376,7 +375,6 @@ const CheckArea: ParentComponent<{
                 </Match>
                 <Match when={elem.checked_by !== null}>
                   <div
-                    id="reorder-wrapper"
                     onMouseDown={(e) => startDragHandler(e, idx(), elem)}
                     classList={{
                       "cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none": canOrder() === true,
