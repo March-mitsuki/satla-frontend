@@ -29,3 +29,14 @@ export class Subtitle {
     this.origin = ""
   }
 }
+
+// 前端和subtitle配套的附加属性, 用于判断拖动状态
+export type FloatingElem = {
+  id: number,
+  zIndex: number | "auto",
+  position: "static" | "relative" | "absolute" | "sticky" | "fixed",
+  isFloating: boolean,
+  y: number,
+  hidden: boolean,
+  isDrop: boolean,
+}

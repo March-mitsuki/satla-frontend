@@ -11,3 +11,8 @@ vite + solidjs + tailwind + typescript
 - [] 现在getElement和ref混在, 之后需要找时间统一, 由于solidjs不使用虚拟dom, 应该用id和ref最终得到的效果是一样的
 - [x] floating-window的两个signal应该可以整合到一个, 因为都是一起变化的
   - [] 应该可以从signal升级到store, 因为是以object作为最外围的值的
+
+## Bug
+* 加行时需要一起加floatingElem
+  * 可以吧floatingElem的成分统一到subtitle里面,多nest一个clientProp
+  * 也可以吧floatingElem变成和subtitle同一级的全局signal

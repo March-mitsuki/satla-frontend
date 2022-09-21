@@ -6,7 +6,6 @@ import { useParams } from "@solidjs/router";
 
 import { FloatingWindowX, FloatingWindow } from "@/components";
 
-import dummySub from "@/assets/dummy-subtitles";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
 
@@ -118,7 +117,7 @@ const TranslatePage = () => {
             </FloatingWindow>
           </div>
           <div class="flex-auto h-[calc(100vh-70px)]" >
-            <CheckArea subtitles={dummySub} ws={ws}></CheckArea>
+            <CheckArea ws={ws}></CheckArea>
           </div>
         </div>
       </div>

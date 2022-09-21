@@ -6,6 +6,8 @@ import _subtitles from "../contexts/subtitles"
 import type { ParentComponent } from "solid-js"
 import { Subtitle } from "@/interfaces"
 
+import dummySub from "@/assets/dummy-subtitles"
+
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 type FloatingElem = {
@@ -19,16 +21,21 @@ type FloatingElem = {
 }
 
 const CheckArea: ParentComponent<{
-  subtitles: Subtitle[]
   ws: WebSocket
 }> = (props) => {
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype, isBilingual } = _pagetype
-  const { subtitles, setSubtitles } = _subtitles
+  const {
+    subtitles, setSubtitles,
+    floatingElem, setFloatingElem,
+  } = _subtitles
 
+  if (typeof subtitles() === "undefined") {
+    setSubtitles(dummySub)
+  }
   let initialFloatingElem: FloatingElem[] = [];
-  for (let i = 0; i < subtitles().length; i++) {
-    const elem = subtitles()[i]
+  for (let i = 0; i < (subtitles() as Subtitle[]).length; i++) {
+    const elem = (subtitles() as Subtitle[])[i]
     const floatingElem: FloatingElem = {
       id: elem.id,
       zIndex: "auto",
@@ -40,7 +47,12 @@ const CheckArea: ParentComponent<{
     }
     initialFloatingElem.push(floatingElem)
   }
-  const [floatingElem, setFloatingElem] = createSignal<FloatingElem[]>(initialFloatingElem)
+  // if (typeof floatingElem() === "undefined") {
+  //   setFloatingElem(initialFloatingElem)
+  // }
+  if (!floatingElem()) {
+    setFloatingElem(initialFloatingElem)
+  }
 
 
   const postChange = (subtitle: Subtitle) => {
@@ -75,15 +87,15 @@ const CheckArea: ParentComponent<{
       if (e.key === "ArrowUp") {
         e.preventDefault()
         const newSub: Subtitle = new Subtitle()
-        subtitles().splice(idx, 0, newSub)
-        const deepcopy = subtitles().map(x => x)
+        subtitles()?.splice(idx, 0, newSub)
+        const deepcopy = subtitles()?.map(x => x)
         setSubtitles(deepcopy)
       }
       if (e.key === "ArrowDown") {
         e.preventDefault()
         const newSub: Subtitle = new Subtitle()
-        subtitles().splice(idx + 1, 0, newSub)
-        const deepcopy = subtitles().map(x => x)
+        subtitles()?.splice(idx + 1, 0, newSub)
+        const deepcopy = subtitles()?.map(x => x)
         setSubtitles(deepcopy)
       }
       // shift + enter 移动到下一行
@@ -120,21 +132,21 @@ const CheckArea: ParentComponent<{
   const addUpClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
     const newSub: Subtitle = new Subtitle()
-    subtitles().splice(idx, 0, newSub)
-    const deepcopy = subtitles().map(x => x)
+    subtitles()?.splice(idx, 0, newSub)
+    const deepcopy = subtitles()?.map(x => x)
     setSubtitles(deepcopy)
   }
   const addDownClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
     const newSub: Subtitle = new Subtitle()
-    subtitles().splice(idx + 1, 0, newSub)
-    const deepcopy = subtitles().map(x => x)
+    subtitles()?.splice(idx + 1, 0, newSub)
+    const deepcopy = subtitles()?.map(x => x)
     setSubtitles(deepcopy)
   }
 
   const delClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    setSubtitles(subtitles().filter(elem => elem.id !== subtitle.id))
+    setSubtitles(subtitles()?.filter(elem => elem.id !== subtitle.id))
   }
 
   const startDragHandler = (
@@ -165,7 +177,7 @@ const CheckArea: ParentComponent<{
         && moveY >= 0
       ) {
         // 开始拖拽
-        const deepcopy = floatingElem().map(x => x)
+        const deepcopy = (floatingElem() as FloatingElem[]).map(x => x)
         deepcopy[idx].zIndex = 1000
         deepcopy[idx].position = "absolute"
         deepcopy[idx].isFloating = true,
@@ -180,7 +192,7 @@ const CheckArea: ParentComponent<{
         && moveY >= 0
       ) {
         // 成功获取之后再设置hidden为false, 展现元素给用户
-        const deepcopy = floatingElem().map(x => x)
+        const deepcopy = (floatingElem() as FloatingElem[]).map(x => x)
         deepcopy[idx].hidden = false
         setFloatingElem(deepcopy)
       }
@@ -195,18 +207,18 @@ const CheckArea: ParentComponent<{
         afterFormWrapper = belowElem.closest("form")?.parentNode
         if (afterFormWrapper) {
           const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
-          const reorderIdx = floatingElem().findIndex(elem => elem.id === elemId)
-          const spliceElem = floatingElem()[reorderIdx]
-          spliceElem.id = floatingElem()[reorderIdx].id
+          const reorderIdx = (floatingElem() as FloatingElem[]).findIndex(elem => elem.id === elemId)
+          const spliceElem = (floatingElem() as FloatingElem[])[reorderIdx]
+          spliceElem.id = (floatingElem() as FloatingElem[])[reorderIdx].id
           spliceElem.isDrop = true
-          floatingElem().splice(reorderIdx, 1, spliceElem)
+          floatingElem()?.splice(reorderIdx, 1, spliceElem)
         }
       }
       if (
         belowElem instanceof HTMLDivElement
         && !belowElem.closest("form")
       ) {
-        setFloatingElem(floatingElem().map(elem => {
+        setFloatingElem(floatingElem()?.map(elem => {
           elem.isDrop = false
           return elem
         }))
@@ -216,10 +228,13 @@ const CheckArea: ParentComponent<{
     onmouseup = () => {
       if (afterFormWrapper) {
         const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
-        const reorderIdx = floatingElem().findIndex(elem => elem.id === elemId)
+        const reorderIdx = (floatingElem() as FloatingElem[]).findIndex(elem => elem.id === elemId)
 
         if (reorderIdx > idx) {
-          const dc_floatingElem = floatingElem().map(x => x)
+          const dc_floatingElem = floatingElem()?.map(x => x)
+          if (!dc_floatingElem) {
+            return
+          }
           dc_floatingElem[idx].zIndex = "auto"
           dc_floatingElem[idx].position = "static"
           dc_floatingElem[idx].isFloating = false
@@ -229,7 +244,7 @@ const CheckArea: ParentComponent<{
           dc_floatingElem[reorderIdx].isDrop = false
           dc_floatingElem.splice(idx, 1)
           dc_floatingElem.splice(reorderIdx-1, 0, {
-            id: subtitles()[idx].id,
+            id: (subtitles() as Subtitle[])[idx].id,
             zIndex: "auto",
             position: "static",
             isFloating: false,
@@ -238,13 +253,16 @@ const CheckArea: ParentComponent<{
             isDrop: false,
           })
           setFloatingElem(dc_floatingElem)
-  
-          const dc_subtitles = subtitles().map(x => x)
+
+          const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
           dc_subtitles.splice(idx, 1)
           dc_subtitles.splice(reorderIdx-1, 0, subtitle)
           setSubtitles(dc_subtitles)
         } else {
-          const dc_floatingElem = floatingElem().map(x => x)
+          const dc_floatingElem = floatingElem()?.map(x => x)
+          if (!dc_floatingElem) {
+            return
+          }
           dc_floatingElem[idx].zIndex = "auto"
           dc_floatingElem[idx].position = "static"
           dc_floatingElem[idx].isFloating = false
@@ -254,7 +272,7 @@ const CheckArea: ParentComponent<{
           dc_floatingElem[reorderIdx].isDrop = false
           dc_floatingElem.splice(idx, 1)
           dc_floatingElem.splice(reorderIdx, 0, {
-            id: subtitles()[idx].id,
+            id: (subtitles() as Subtitle[])[idx].id,
             zIndex: "auto",
             position: "static",
             isFloating: false,
@@ -264,7 +282,7 @@ const CheckArea: ParentComponent<{
           })
           setFloatingElem(dc_floatingElem)
   
-          const dc_subtitles = subtitles().map(x => x)
+          const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
           dc_subtitles.splice(idx, 1)
           dc_subtitles.splice(reorderIdx, 0, subtitle)
           setSubtitles(dc_subtitles)
@@ -293,15 +311,15 @@ const CheckArea: ParentComponent<{
             ref={(el) => refCallback(el)}
             id={`${elem.id}-form`}
             style={{
-              "z-index": floatingElem()[idx()].zIndex,
-              "position": `${floatingElem()[idx()].position}`,
-              "top": `${floatingElem()[idx()].y}px`,
+              "z-index": (floatingElem() as FloatingElem[])[idx()].zIndex,
+              "position": `${(floatingElem() as FloatingElem[])[idx()].position}`,
+              "top": `${(floatingElem() as FloatingElem[])[idx()].y}px`,
             }}
             classList={{
-              "mt-2": floatingElem()[idx()].isDrop === false,
-              "mt-2 border-t-2 border-sky-500": floatingElem()[idx()].isDrop === true,
+              "mt-2": (floatingElem() as FloatingElem[])[idx()].isDrop === false,
+              "mt-2 border-t-2 border-sky-500": (floatingElem() as FloatingElem[])[idx()].isDrop === true,
             }}
-            hidden={floatingElem()[idx()].hidden}
+            hidden={(floatingElem() as FloatingElem[])[idx()].hidden}
           >
             <form
               onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}

@@ -1,15 +1,14 @@
 import { createRoot, createSignal } from "solid-js";
-import { createStore } from "solid-js/store"
-import dummySub from "@/assets/dummy-subtitles"
 
-// const handlerSubtitles = () => {
-//   const [subtitles, setSubtitles] = createStore(dummySub)
-//   return { subtitles, setSubtitles }
-// }
+import { Subtitle, FloatingElem } from "@/interfaces";
 
 const handlerSubtitles = () => {
-  const [subtitles, setSubtitles] = createSignal(dummySub)
-  return { subtitles, setSubtitles }
+  const [subtitles, setSubtitles] = createSignal<Subtitle[]>()
+  const [floatingElem, setFloatingElem] = createSignal<FloatingElem[]>()
+  return {
+    subtitles, setSubtitles,
+    floatingElem, setFloatingElem,
+  }
 }
 
 export default createRoot(handlerSubtitles)
