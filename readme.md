@@ -10,6 +10,7 @@ vite + solidjs + tailwind + typescript
 - [ ] 基本功能
   - [ ] 发送页面
   - [ ] 切换项目功能
+    - [ ] 字幕分房间储存
 - [ ] 进阶功能
   - [ ] 把signal改成store应该能增加性能
   - [ ] 现在getElement和ref混在, 之后需要找时间统一, 由于solidjs不使用虚拟dom, 应该用id和ref最终得到的效果是一样的
