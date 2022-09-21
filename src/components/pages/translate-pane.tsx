@@ -47,7 +47,7 @@ const TranslatePane: Component = () => {
     switchCanOrder()
   }
 
-  const inputToggerHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
+  const inputToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
     switchPagetype()
   }
 
@@ -100,7 +100,7 @@ const TranslatePane: Component = () => {
             <input
               type="checkbox"
               checked={pagetype()}
-              onChange={(e) => inputToggerHandler(e)}
+              onChange={(e) => inputToggleHandler(e)}
               class="peer sr-only"
             />
             <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
