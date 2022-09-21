@@ -1,6 +1,6 @@
 import type { Project } from "@/interfaces";
 
-export const Projects: Project[] = [
+const Projects: Project[] = [
   {
     id: 1,
     project_name: "default",
@@ -29,3 +29,5 @@ export const Projects: Project[] = [
     is_delete: false,
   },
 ]
+
+export default Projects

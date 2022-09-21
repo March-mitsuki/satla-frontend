@@ -34,7 +34,7 @@ const SendPage = () => {
       <Title>发送页面</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
-          <Navi></Navi>
+          <Navi current_project={param.roomid}></Navi>
         </div>
         <div class="flex flex-auto">
           <div class="flex flex-col">
