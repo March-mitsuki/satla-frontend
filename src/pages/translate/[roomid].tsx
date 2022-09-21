@@ -89,13 +89,13 @@ const TranslatePage = () => {
             <FloatingWindow
               defaultWindowSize={{
                 width: 500,
-                height: 100,
+                height: "",
               }}
               minWindowSize={{
                 width: 435,
                 height: 80,
               }}
-              wrapperClass="w-[500px] flex flex-col flex-auto"
+              wrapperClass="w-[500px] flex flex-col"
               controllerWrapperClass="flex justify-between items-center border-x-2 border-t-2 border-gray-500 rounded-t-lg bg-neutral-800"
               floatingControlContent={
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">

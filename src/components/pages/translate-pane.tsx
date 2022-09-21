@@ -2,35 +2,41 @@ import { createSignal, Match, Switch } from "solid-js"
 
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
-import { Subtitle } from "@/interfaces"
+import { Subtitle, FloatingElem } from "@/interfaces"
 
 import type { Component } from "solid-js"
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const TranslatePane: Component = () => {
-  const [canOrder, setCanOrder] = createSignal(true)
   const {
     // pagetype: false = 翻译, true = 校对, default = false
     pagetype, switchPagetype,
     // bilingual: 是否显示双语
     isBilingual, switchBilingual,
+    // canOrder: 是否可以拖动排序
+    canOrder, switchCanOrder,
   } = _pagetype
-  const { subtitles, setSubtitles } = _subtitles
+  const {
+    subtitles, setSubtitles,
+    floatingElem, setFloatingElem,
+  } = _subtitles
 
   const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
     e.stopPropagation()
     e.preventDefault()
     const formElem = e.currentTarget
-    const newSub: Subtitle = new Subtitle()
+    const newSub = new Subtitle()
+    const newFloating = new FloatingElem()
     newSub.subtitle = formElem.subtitle.value
     newSub.origin = formElem.origin.value
-    subtitles().push(newSub)
-    const deepcopy = subtitles().map(x => x)
-    setSubtitles(deepcopy)
+    floatingElem()?.push(newFloating)
+    setFloatingElem(floatingElem()?.map(x => x))
+    subtitles()?.push(newSub)
+    setSubtitles(subtitles()?.map(x => x))
     formElem.subtitle.value = ""
     formElem.origin.value = ""
-    document.getElementById((subtitles().length-1).toString() + "-sub")?.scrollIntoView()
+    document.getElementById(((subtitles() as Subtitle[]).length-1).toString() + "-sub")?.scrollIntoView()
   }
 
   const bilingualToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
@@ -38,7 +44,7 @@ const TranslatePane: Component = () => {
   }
 
   const orderToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
-    setCanOrder(!canOrder())
+    switchCanOrder()
   }
 
   const inputToggerHandler = (e: Event & { currentTarget: HTMLInputElement }) => {

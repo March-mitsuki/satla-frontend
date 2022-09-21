@@ -1,30 +1,20 @@
-import { For, Match, Switch, createSignal } from "solid-js"
+import { For, Match, Switch } from "solid-js"
 
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
 
 import type { ParentComponent } from "solid-js"
-import { Subtitle } from "@/interfaces"
+import { Subtitle, FloatingElem } from "@/interfaces"
 
 import dummySub from "@/assets/dummy-subtitles"
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
-type FloatingElem = {
-  id: number,
-  zIndex: number | "auto",
-  position: "static" | "relative" | "absolute" | "sticky" | "fixed",
-  isFloating: boolean,
-  y: number,
-  hidden: boolean,
-  isDrop: boolean,
-}
-
 const CheckArea: ParentComponent<{
   ws: WebSocket
 }> = (props) => {
   // pagetype: false = 翻译, true = 校对, default = false
-  const { pagetype, isBilingual } = _pagetype
+  const { pagetype, isBilingual, canOrder } = _pagetype
   const {
     subtitles, setSubtitles,
     floatingElem, setFloatingElem,
@@ -47,11 +37,32 @@ const CheckArea: ParentComponent<{
     }
     initialFloatingElem.push(floatingElem)
   }
-  // if (typeof floatingElem() === "undefined") {
-  //   setFloatingElem(initialFloatingElem)
-  // }
-  if (!floatingElem()) {
+  if (typeof floatingElem() === "undefined") {
     setFloatingElem(initialFloatingElem)
+  }
+
+  // 定义复用函数, 便于维护
+  const addUp = (idx: number, subtitle: Subtitle) => {
+    const newSub: Subtitle = new Subtitle()
+    const newFloatingElem: FloatingElem = new FloatingElem()
+    newFloatingElem.id = newSub.id
+
+    floatingElem()?.splice(idx, 0, newFloatingElem)
+    setFloatingElem(floatingElem()?.map(x => x))
+
+    subtitles()?.splice(idx, 0, newSub)
+    setSubtitles(subtitles()?.map(x => x))
+  }
+  const addDown = (idx: number, subtitle: Subtitle) => {
+    const newSub: Subtitle = new Subtitle()
+    const newFloatingElem: FloatingElem = new FloatingElem()
+    newFloatingElem.id = newSub.id
+
+    floatingElem()?.splice(idx + 1, 0, newFloatingElem)
+    setFloatingElem(floatingElem()?.map(x => x))
+
+    subtitles()?.splice(idx + 1, 0, newSub)
+    setSubtitles(subtitles()?.map(x => x))
   }
 
 
@@ -86,17 +97,11 @@ const CheckArea: ParentComponent<{
       // shift + 小键盘上下 快捷键新建字幕
       if (e.key === "ArrowUp") {
         e.preventDefault()
-        const newSub: Subtitle = new Subtitle()
-        subtitles()?.splice(idx, 0, newSub)
-        const deepcopy = subtitles()?.map(x => x)
-        setSubtitles(deepcopy)
+        addUp(idx, subtitle)
       }
       if (e.key === "ArrowDown") {
         e.preventDefault()
-        const newSub: Subtitle = new Subtitle()
-        subtitles()?.splice(idx + 1, 0, newSub)
-        const deepcopy = subtitles()?.map(x => x)
-        setSubtitles(deepcopy)
+        addDown(idx, subtitle)
       }
       // shift + enter 移动到下一行
       if (e.key === "Enter") {
@@ -131,17 +136,11 @@ const CheckArea: ParentComponent<{
 
   const addUpClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    const newSub: Subtitle = new Subtitle()
-    subtitles()?.splice(idx, 0, newSub)
-    const deepcopy = subtitles()?.map(x => x)
-    setSubtitles(deepcopy)
+    addUp(idx, subtitle)
   }
   const addDownClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    const newSub: Subtitle = new Subtitle()
-    subtitles()?.splice(idx + 1, 0, newSub)
-    const deepcopy = subtitles()?.map(x => x)
-    setSubtitles(deepcopy)
+    addDown(idx, subtitle)
   }
 
   const delClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
@@ -154,9 +153,11 @@ const CheckArea: ParentComponent<{
     idx: number,
     subtitle: Subtitle
   ) => {
+    if (canOrder() === false) {
+      return
+    }
     let belowElem: Element | null
-    // const currentFormWrapper = document.getElementById(elem.id.toString() + "-form")
-    const currentFormWrapper = (afterFormWrapperRefs as HTMLDivElement[])[idx]
+    const currentFormWrapper = document.getElementById(subtitle.id.toString() + "-form")
 
     let shiftY: number;
     shiftY = e.clientY - (currentFormWrapper as HTMLDivElement).getBoundingClientRect().top;
@@ -226,11 +227,17 @@ const CheckArea: ParentComponent<{
     }
 
     onmouseup = () => {
-      if (afterFormWrapper) {
+      if (
+        belowElem instanceof HTMLDivElement
+        && belowElem.closest("form")
+      ) {
+        // 如果放开鼠标时在指定元素上
+        afterFormWrapper = belowElem.closest("form")?.parentNode
         const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
         const reorderIdx = (floatingElem() as FloatingElem[]).findIndex(elem => elem.id === elemId)
 
         if (reorderIdx > idx) {
+          // 从前往后拖
           const dc_floatingElem = floatingElem()?.map(x => x)
           if (!dc_floatingElem) {
             return
@@ -259,6 +266,7 @@ const CheckArea: ParentComponent<{
           dc_subtitles.splice(reorderIdx-1, 0, subtitle)
           setSubtitles(dc_subtitles)
         } else {
+          // 从后往前拖
           const dc_floatingElem = floatingElem()?.map(x => x)
           if (!dc_floatingElem) {
             return
@@ -287,17 +295,24 @@ const CheckArea: ParentComponent<{
           dc_subtitles.splice(reorderIdx, 0, subtitle)
           setSubtitles(dc_subtitles)
         }
+      } else {
+        // 如果不在指定元素上
+        const dc_floatingElem = floatingElem()?.map(x => x)
+        if (!dc_floatingElem) {
+          return
+        }
+        dc_floatingElem[idx].zIndex = "auto"
+        dc_floatingElem[idx].position = "static"
+        dc_floatingElem[idx].isFloating = false
+        dc_floatingElem[idx].y = 0
+        dc_floatingElem[idx].hidden = false
+        setFloatingElem(dc_floatingElem)
       }
       console.log(floatingElem(), subtitles());
 
       onmousemove = () => null
       onmouseup = () => null
     }
-  }
-
-  let afterFormWrapperRefs: HTMLDivElement[] | undefined = [];
-  const refCallback = (el: HTMLDivElement) => {
-    afterFormWrapperRefs?.push(el)
   }
 
   return (
@@ -308,7 +323,6 @@ const CheckArea: ParentComponent<{
         console.log("creat For!");
         return (
           <div
-            ref={(el) => refCallback(el)}
             id={`${elem.id}-form`}
             style={{
               "z-index": (floatingElem() as FloatingElem[])[idx()].zIndex,
@@ -329,14 +343,16 @@ const CheckArea: ParentComponent<{
               {/* <button onClick={() => console.log(afterFormWrapperRefs[idx()])}>C-me</button> */}
               <Switch fallback={
                 <div
-                  id="reorder-wrapper"
                   onMouseDown={(e) => startDragHandler(e, idx(), elem)}
-                  class="cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none"
+                  classList={{
+                    "cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none": canOrder() === true,
+                    "flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none": canOrder() === false,
+                  }}
                 >
-                  <div id="reorder-time" class="flex-1">
+                  <div class="flex-1">
                     12:50:23
                   </div>
-                  <div id="reorder-name" class="flex-1 truncate text-center">
+                  <div class="flex-1 truncate text-center">
                     翻译
                   </div>
                 </div>
@@ -345,12 +361,15 @@ const CheckArea: ParentComponent<{
                   <div
                     id="reorder-wrapper"
                     onMouseDown={(e) => startDragHandler(e, idx(), elem)}
-                    class="cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none"
+                    classList={{
+                      "cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none": canOrder() === true,
+                      "flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none": canOrder() === false,
+                    }}
                   >
-                    <div id="reorder-time" class="flex-1">
+                    <div class="flex-1">
                       12:50:23
                     </div>
-                    <div id="reorder-name" class="flex-1 truncate text-center">
+                    <div class="flex-1 truncate text-center">
                       发送aaasd
                     </div>
                   </div>
@@ -359,12 +378,15 @@ const CheckArea: ParentComponent<{
                   <div
                     id="reorder-wrapper"
                     onMouseDown={(e) => startDragHandler(e, idx(), elem)}
-                    class="cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none"
+                    classList={{
+                      "cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none": canOrder() === true,
+                      "flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none": canOrder() === false,
+                    }}
                   >
-                    <div id="reorder-time" class="flex-1">
+                    <div class="flex-1">
                       12:50:23
                     </div>
-                    <div id="reorder-name" class="flex-1 truncate text-center">
+                    <div class="flex-1 truncate text-center">
                       校对asdadsssasdasd
                     </div>
                   </div>

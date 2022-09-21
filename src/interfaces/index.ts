@@ -1,8 +1,3 @@
-export interface SubtitleDB extends Subtitle {
-  // 后端保存到DB时用的Subtitle Type
-  is_delete: boolean // 逻辑删除用
-}
-
 export class Subtitle {
   // 前端用的Subtitle Type
   id: number
@@ -30,13 +25,28 @@ export class Subtitle {
   }
 }
 
+export interface SubtitleDB extends Subtitle {
+  // 后端保存到DB时用的Subtitle Type
+  is_delete: boolean // 逻辑删除用
+}
+
 // 前端和subtitle配套的附加属性, 用于判断拖动状态
-export type FloatingElem = {
-  id: number,
-  zIndex: number | "auto",
-  position: "static" | "relative" | "absolute" | "sticky" | "fixed",
-  isFloating: boolean,
-  y: number,
-  hidden: boolean,
-  isDrop: boolean,
+export class FloatingElem {
+  id: number
+  zIndex: number | "auto"
+  position: "static" | "relative" | "absolute" | "sticky" | "fixed"
+  isFloating: boolean
+  y: number
+  hidden: boolean
+  isDrop: boolean
+
+  constructor() {
+    this.id = Date.now()
+    this.zIndex = "auto"
+    this.position = "static"
+    this.isFloating = false
+    this.y = 0
+    this.hidden = false
+    this.isDrop = false
+  }
 }
