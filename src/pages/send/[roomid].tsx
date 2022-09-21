@@ -94,7 +94,7 @@ const SendPage = () => {
               contentsWrapperClass="border-2 border-gray-500 rounded-b-lg flex-auto bg-neutral-700"
               risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
-              <SendPane></SendPane>
+              <SendPane current_room={param.roomid}></SendPane>
             </FloatingWindow>
           </div>
           <div class="flex-auto h-[calc(100vh-70px)]" >
