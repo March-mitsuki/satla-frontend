@@ -1,8 +1,8 @@
 export class Subtitle {
   // 前端用的Subtitle Type
   id: number
-  input_time: number
-  send_time: number | null // 为null则为未发送
+  input_time: Date | number
+  send_time: Date | number | null // 为null则为未发送
   project_id: number
   project_name: string
   translated_by: string
@@ -47,7 +47,11 @@ export class FloatingElem {
 }
 
 export interface Project {
-  project_id: number
+  id: number
   project_name: string
+  description: string
+  point_man: string
+  created_by: string
+  created_time: Date | number
   is_delete: boolean // 后端逻辑删除用, 发送到前端时的is_delete一定会是false
 }
