@@ -1,4 +1,4 @@
-import { For, Match, Switch } from "solid-js"
+import { createSignal, For, Match, Switch } from "solid-js"
 
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
@@ -19,6 +19,7 @@ const CheckArea: ParentComponent<{
     subtitles, setSubtitles,
     floatingElem, setFloatingElem,
   } = _subtitles
+  const [ isComposition, setIsComposition ] = createSignal(false)
 
   if (typeof subtitles() === "undefined") {
     setSubtitles(dummySub)
@@ -67,9 +68,10 @@ const CheckArea: ParentComponent<{
 
 
   const postChange = (subtitle: Subtitle) => {
-    const sendData = new TextEncoder().encode(JSON.stringify(subtitle))
+    // const sendData = new TextEncoder().encode(JSON.stringify(subtitle))
+    const sendData = JSON.stringify(subtitle.subtitle)
     console.log("will post:", subtitle);
-    // props.ws.send(sendData)
+    props.ws.send(subtitle.subtitle)
   }
 
   const onSubmitHandler = (
@@ -125,7 +127,7 @@ const CheckArea: ParentComponent<{
       }
     }
     // 按回车提交
-    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
+    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !isComposition()) {
       e.preventDefault()
 
       subtitle.subtitle = formElem.subtitle.value
@@ -336,6 +338,8 @@ const CheckArea: ParentComponent<{
             hidden={(floatingElem() as FloatingElem[])[idx()].hidden}
           >
             <form
+              onCompositionStart={() => setIsComposition(true)}
+              onCompositionEnd={() => setIsComposition(false)}
               onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}
               onSubmit={(e) => onSubmitHandler(e, idx(), elem)}
               class="flex px-2 gap-2 items-center"
