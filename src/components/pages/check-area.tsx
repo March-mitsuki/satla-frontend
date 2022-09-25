@@ -4,7 +4,7 @@ import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
 
 import type { ParentComponent } from "solid-js"
-import { Subtitle, FloatingElem } from "@/interfaces"
+import { Subtitle, FloatingElem, PostSubtitle } from "@/interfaces"
 
 import dummySub from "@/assets/dummy-subtitles"
 
@@ -69,9 +69,17 @@ const CheckArea: ParentComponent<{
 
   const postChange = (subtitle: Subtitle) => {
     // const sendData = new TextEncoder().encode(JSON.stringify(subtitle))
-    const sendData = JSON.stringify(subtitle.subtitle)
-    console.log("will post:", subtitle);
-    props.ws.send(subtitle.subtitle)
+    const postSubtitle: PostSubtitle = {
+      head: {
+        cmd: "addSubtitle"
+      },
+      body: {
+        data: subtitle
+      }
+    }
+    const postData = new TextEncoder().encode(JSON.stringify(postSubtitle))
+    props.ws.send(postData)
+    console.log("posted:", postData);
   }
 
   const onSubmitHandler = (

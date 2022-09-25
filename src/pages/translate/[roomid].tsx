@@ -5,9 +5,10 @@ import { createEffect } from "solid-js";
 import { useParams } from "@solidjs/router";
 
 import { FloatingWindowX, FloatingWindow } from "@/components";
-
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
+
+import type { PostAddUser } from "@/interfaces";
 
 
 const TranslatePage = () => {
@@ -36,8 +37,17 @@ const TranslatePage = () => {
 
   createEffect(() => {
     ws.onopen = () => {
-      console.log("connected");
-      ws.send('hello init!')
+      console.log("ws connected");
+      const addUser: PostAddUser = {
+        head: {
+          cmd: "addUser"
+        },
+        body: {
+          data: "new user connected"
+        }
+      }
+      const postData = new TextEncoder().encode(JSON.stringify(addUser))
+      ws.send(JSON.stringify(addUser))
     }
     ws.onmessage = (evt) => {
       console.log("on msg:", evt.data);

@@ -80,9 +80,18 @@ export interface Project {
 
 export interface PostSubtitle {
   head: {
-    cmd: "addUser" | "addSubtitle"
+    cmd: "addSubtitle"
   }
   body: {
     data: Subtitle
+  }
+}
+
+export interface PostAddUser {
+  head: {
+    cmd: "addUser"
+  }
+  body: {
+    data: string
   }
 }
