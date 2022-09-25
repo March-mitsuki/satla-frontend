@@ -8,7 +8,7 @@ const Projects: Project[] = [
     point_man: "三月",
     created_by: "三月",
     created_time: Date.now(),
-    is_delete: false,
+    deleted_at: null,
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const Projects: Project[] = [
     point_man: "四月",
     created_by: "三月",
     created_time: Date.now(),
-    is_delete: false,
+    deleted_at: null,
   },
   {
     id: 3,
@@ -26,7 +26,7 @@ const Projects: Project[] = [
     point_man: "みつき",
     created_by: "mitsuki",
     created_time: Date.now(),
-    is_delete: false,
+    deleted_at: null,
   },
 ]
 

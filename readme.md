@@ -2,6 +2,20 @@
 
 vite + solidjs + tailwind + typescript
 
+## 实现方式
+后端使用golang处理，通信基于websocket协议:
+每次发包分为head与body,遵守json格式规则
+```json
+{
+  "head": {
+    "cmd": "" // 后端会读取此词条执行对应操作, 具体规范参照src/interfaces/index.ts
+  },
+  "body": {
+    "data": ""
+  }
+}
+```
+
 ## 注意事项
 * 现在输入只监听回车和按钮, 当blur的时候不更新
   * 强制大家按回车, 因为监听blur会导致按回车发送一次, blur时再发送一次, 而这个发送会直接导致服务器对db进行操作, 所以找到解决办法之前都先用这个吧
