@@ -67,7 +67,7 @@ const TranslatePage = () => {
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
           <Navi current_project={param.roomid}></Navi>
         </div>
-        <div class="flex flex-auto">
+        <div class="flex flex-auto pl-2">
           <div class="flex flex-col">
             <FloatingWindowX
               defaultWindowSize={{
