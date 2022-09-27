@@ -40,3 +40,4 @@ vite + solidjs + tailwind + typescript
   * ~~可以吧floatingElem的成分统一到subtitle里面,多nest一个clientProp~~
   * ~~也可以吧floatingElem变成和subtitle同一级的全局signal~~
   * 当前解决方式是分成两个array解决, 需要统一两个array的idx, 需要代码层面保证不会出现idx错位
+* 从translate等带有ws连接的页面迁移出来时ws不会自动断开连接

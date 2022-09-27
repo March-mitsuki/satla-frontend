@@ -68,7 +68,6 @@ export interface Project {
   description: string
   point_man: string
   created_by: string
-  created_time: Date | number
   deleted_at: Date | null // 后端逻辑删除用, 发送到前端时的is_delete一定会是false
 }
 
