@@ -2,26 +2,24 @@ export class Subtitle {
   // 前端用的Subtitle Type
   id: number
   input_time: string // 行左边显示的时间
-  send_time: Date | number | null // 为null则为未发送
+  send_time: Date | number | -1 // 为-1则为未发送
   project_id: number
   project_name: string
   translated_by: string
-  checked_by: string | null // 为null则为未校对
+  checked_by: string | "" // 为空则为未校对
   subtitle: string // 翻译
   origin: string // 原文
-  deleted_at: Date | null // 后端逻辑删除用, 发送到前端时的is_delete一定会是false
 
   constructor() {
     this.id = Date.now()
     this.input_time = "11:34:30"
-    this.send_time = null
+    this.send_time = -1
     this.project_id = -1
     this.project_name = ""
     this.translated_by = ""
-    this.checked_by = null
+    this.checked_by = ""
     this.subtitle = ""
     this.origin = ""
-    this.deleted_at = null
   }
 }
 
@@ -68,7 +66,6 @@ export interface Project {
   description: string
   point_man: string
   created_by: string
-  deleted_at: Date | null // 后端逻辑删除用, 发送到前端时的is_delete一定会是false
 }
 
 // Project的example, 不指定model直接返回的结果
