@@ -44,7 +44,6 @@ const ProjectForm = () => {
       description: description,
       point_man: pointMan,
       created_by: "默认账户",
-      deleted_at: null
     }
     const data = await poster(newProject)
     console.log("post success:", data);
@@ -78,7 +77,6 @@ const ProjectForm = () => {
         description: description,
         point_man: pointMan,
         created_by: "默认账户",
-        deleted_at: null
       }
       const response = await poster(newProject)
       console.log("post success:", response);
