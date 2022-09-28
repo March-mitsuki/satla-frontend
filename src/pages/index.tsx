@@ -13,9 +13,9 @@ const Home: Component = () => {
     <>
       <Title>Vvvorld</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
-        {/* <div class="shadow-lg text-xl py-3 px-5">
-          <Navi></Navi>
-        </div> */}
+        <div class="shadow-lg text-xl py-3 px-5 bg-red-300/50">
+          navi
+        </div>
         <div class="flex-auto">
           <PaneX
             minLeftElem="35%"
