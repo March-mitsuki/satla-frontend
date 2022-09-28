@@ -52,102 +52,107 @@ const SignUpPage = () => {
   return (
     <>
       <Title>Login</Title>
-      <div class="h-full bg-neutral-700 text-white flex flex-col justify-center items-center">
-        <div class="w-[30%] text-center text-2xl pb-10">
-          注册vvvorld账号
+      <div class="h-full bg-neutral-700 text-white flex flex-col">
+        <div class="bg-red-500/50">
+          navi 
         </div>
-        <form
-          id="signup-form"
-          onSubmit={e => onSubmitHandler(e)}
-          ref={signupFormRef}
-          class="flex flex-col gap-5 items-end w-[30%]"
-        >
-          <label
-            class="flex flex-col w-[100%]"
+        <div class="flex-auto flex flex-col justify-center items-center">
+          <div class="w-[30%] text-center text-2xl pb-10">
+            注册vvvorld账号
+          </div>
+          <form
+            id="signup-form"
+            onSubmit={e => onSubmitHandler(e)}
+            ref={signupFormRef}
+            class="flex flex-col gap-5 items-end w-[30%]"
           >
-            用户名
-            <input
-              type="text"
-              name="username"
-              pattern=".{1,10}"
-              placeholder="1~10文字, 可使用中文"
-              autocomplete="off"
-              class="
-                rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg
-                focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600
-                invalid:focus:border-red-500 invalid:border-red-500
-              "
-            />
-          </label>
-          <label
-            class="flex flex-col w-[100%]"
-          >
-            邮箱
-            <input
-              type="email"
-              name="email"
-              placeholder="example@mail.com"
-              autoCapitalize="off"
-              autocomplete="email"
-              class="
-                rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg
-                focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600
-                invalid:focus:border-red-500 invalid:border-red-500
-              "
-            />
-          </label>
-          <label
-            class="flex flex-col w-[100%]"
-          >
-            <div class="flex justify-between">
-              <div>
-                密码
+            <label
+              class="flex flex-col w-[100%]"
+            >
+              用户名
+              <input
+                type="text"
+                name="username"
+                pattern=".{1,10}"
+                placeholder="1~10文字, 可使用中文"
+                autocomplete="off"
+                class="
+                  rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg
+                  focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600
+                  invalid:focus:border-red-500 invalid:border-red-500
+                "
+              />
+            </label>
+            <label
+              class="flex flex-col w-[100%]"
+            >
+              邮箱
+              <input
+                type="email"
+                name="email"
+                placeholder="example@mail.com"
+                autoCapitalize="off"
+                autocomplete="email"
+                class="
+                  rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg
+                  focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600
+                  invalid:focus:border-red-500 invalid:border-red-500
+                "
+              />
+            </label>
+            <label
+              class="flex flex-col w-[100%]"
+            >
+              <div class="flex justify-between">
+                <div>
+                  密码
+                </div>
+                <div class="text-sm">
+                  可使用 _ ! @ # $ % ^ * ( ) & / . , - 等特殊文字
+                </div>
               </div>
-              <div class="text-sm">
-                可使用 _ ! @ # $ % ^ * ( ) & / . , - 等特殊文字
+              <input
+                type="password"
+                name="password"
+                placeholder="8~24文字, 可使用英数字与特殊文字"
+                autoCapitalize="off"
+                autocomplete="new-password"
+                pattern="^[a-zA-Z0-9_!()@#$%^*&/.,-]{8,24}$"
+                class="
+                  rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg
+                  focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600
+                  invalid:focus:border-red-500 invalid:border-red-500
+                "
+              />
+            </label>
+            <label
+              class="flex flex-col w-[100%]"
+            >
+              再次输入密码
+              <input
+                type="password"
+                name="repeat"
+                placeholder="请再次输入密码"
+                onInput={(e) => repeatInputHandler(e)}
+                classList={{
+                  [inputStyle]: repeatOK() === true,
+                  [wrongRepeatStyle]: repeatOK() === false,
+                }}
+              />
+            </label>
+            <button
+              type="submit"
+              class="w-[100%] flex justify-center items-center mt-5 text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-5 py-2 text-white"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+              </svg>
+              <div class="px-1">
+                注册账号
               </div>
-            </div>
-            <input
-              type="password"
-              name="password"
-              placeholder="8~24文字, 可使用英数字与特殊文字"
-              autoCapitalize="off"
-              autocomplete="new-password"
-              pattern="^[a-zA-Z0-9_!()@#$%^*&/.,-]{8,24}$"
-              class="
-                rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg
-                focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600
-                invalid:focus:border-red-500 invalid:border-red-500
-              "
-            />
-          </label>
-          <label
-            class="flex flex-col w-[100%]"
-          >
-            再次输入密码
-            <input
-              type="password"
-              name="repeat"
-              placeholder="请再次输入密码"
-              onInput={(e) => repeatInputHandler(e)}
-              classList={{
-                [inputStyle]: repeatOK() === true,
-                [wrongRepeatStyle]: repeatOK() === false,
-              }}
-            />
-          </label>
-          <button
-            type="submit"
-            class="w-[100%] flex justify-center items-center mt-5 text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-5 py-2 text-white"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
-            </svg>
-            <div class="px-1">
-              注册账号
-            </div>
-          </button>
-        </form>
+            </button>
+          </form>
+        </div>
         {confirm() &&
           <div
             class="absolute bg-slate-500/50 flex h-full w-full justify-center items-center"
