@@ -1,7 +1,7 @@
 import { Title } from "@solidjs/meta"
 import { createSignal } from "solid-js"
 
-import type { User } from "@/interfaces"
+import type { SignupUser } from "@/interfaces"
 import { Link } from "@solidjs/router"
 
 const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
@@ -11,7 +11,7 @@ const SignUpPage = () => {
   const [repeatOK, setRepeatOK] = createSignal(true)
   const [confirm, setConfirm] = createSignal(false)
 
-  const poster = async (user: User): Promise<Response> => {
+  const poster = async (user: SignupUser): Promise<Response> => {
     const url = "http://192.168.64.3:8080/api/signup"
     const postData = JSON.stringify(user)
     console.log("will post", user);
@@ -26,7 +26,7 @@ const SignUpPage = () => {
   }
 
   const submitForm = async () => {
-    const newUser: User = {
+    const newUser: SignupUser = {
       userName: signupFormRef?.username.value,
       email: signupFormRef?.email.value,
       password: signupFormRef?.password.value,

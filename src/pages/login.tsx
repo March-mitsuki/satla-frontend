@@ -1,12 +1,34 @@
 import { Title } from "@solidjs/meta"
 import { Link } from "@solidjs/router";
 
+import type { LoginUser } from "@/interfaces";
+
 const SignUpPage = () => {
-  const onSubmitHandler = (
+  const poster = async (user: LoginUser): Promise<Response> => {
+    const url = "http://192.168.64.3:8080/api/login"
+    const postData = JSON.stringify(user)
+    console.log("will post", user);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: postData
+    })
+    return response.json()
+  }
+
+  const onSubmitHandler = async (
     e: Event & { currentTarget: HTMLFormElement }
   ) => {
     e.preventDefault()
-    console.log("will submit");
+    const formElem = e.currentTarget
+    const user: LoginUser = {
+      email: formElem?.email.value,
+      password: formElem?.password.value,
+    }
+    const response = await poster(user)
+    console.log("response: ", response)
   }
 
   return (
@@ -30,6 +52,7 @@ const SignUpPage = () => {
               邮箱
               <input
                 type="email"
+                name="email"
                 placeholder="email"
                 class="
                   rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg
@@ -44,6 +67,7 @@ const SignUpPage = () => {
               密码
               <input
                 type="password"
+                name="password"
                 placeholder="password"
                 autocomplete="current-password"
                 class="

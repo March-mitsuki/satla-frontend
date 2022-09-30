@@ -92,8 +92,13 @@ export interface PostAddUser {
   }
 }
 
-export interface User {
+export interface SignupUser {
   userName: string
+  email: string
+  password: string
+}
+
+export interface LoginUser {
   email: string
   password: string
 }
