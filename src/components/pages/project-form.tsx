@@ -33,9 +33,9 @@ const ProjectForm = () => {
       console.log("项目描述超过100字");
       return
     }
-    const re = new RegExp("^[a-zA-Z0-9_]{1,30}$");
+    const re = new RegExp("^[a-z0-9_]{1,30}$");
     if (!re.test(projectName)) {
-      console.log("只允许英数字加下划线组合");
+      console.log("只允许英文小文字加下划线组合");
       return
     }
     const newProject: Project = {
@@ -68,7 +68,7 @@ const ProjectForm = () => {
       }
       const re = new RegExp("^[a-zA-Z0-9_]{1,30}$");
       if (!re.test(projectName)) {
-        console.log("只允许英数字加下划线组合,且在30字以内");
+        console.log("只允许英文小文字数字加下划线组合,且在30字以内");
         return
       }
       const newProject: Project = {
@@ -96,11 +96,16 @@ const ProjectForm = () => {
         <input
           type="text"
           name="projectName"
+          pattern="^[a-z0-9_]{1,30}$"
           placeholder="请输入"
-          class={inputStyle}
+          class="
+            flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm
+            focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600
+            invalid:focus:border-red-500 invalid:border-red-500
+          "
         />
         <div class="text-sm">
-          *英数字加下划线组合,30字以内
+          *英小文字加下划线,30字以内
         </div>
       </label>
       <label
