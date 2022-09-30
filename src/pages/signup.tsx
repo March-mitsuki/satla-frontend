@@ -2,6 +2,7 @@ import { Title } from "@solidjs/meta"
 import { createSignal } from "solid-js"
 
 import type { User } from "@/interfaces"
+import { Link } from "@solidjs/router"
 
 const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 const wrongRepeatStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-red-500 lg:text-lg focus:border-red focus:ring-0 focus:outline-0 focus:bg-neutral-600"
@@ -10,13 +11,28 @@ const SignUpPage = () => {
   const [repeatOK, setRepeatOK] = createSignal(true)
   const [confirm, setConfirm] = createSignal(false)
 
-  const submitForm = () => {
+  const poster = async (user: User): Promise<Response> => {
+    const url = "http://192.168.64.3:8080/api/signup"
+    const postData = JSON.stringify(user)
+    console.log("will post", user);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: postData
+    })
+    return response.json()
+  }
+
+  const submitForm = async () => {
     const newUser: User = {
       userName: signupFormRef?.username.value,
       email: signupFormRef?.email.value,
       password: signupFormRef?.password.value,
     }
-    console.log("will post", newUser);
+    const response = await poster(newUser)
+    console.log("response: ", response)
     setConfirm(false)
   }
 
@@ -53,9 +69,9 @@ const SignUpPage = () => {
     <>
       <Title>Login</Title>
       <div class="h-full bg-neutral-700 text-white flex flex-col">
-        <div class="bg-red-500/50">
+        {/* <div class="bg-red-500/50">
           navi 
-        </div>
+        </div> */}
         <div class="flex-auto flex flex-col justify-center items-center">
           <div class="w-[30%] text-center text-2xl pb-10">
             注册vvvorld账号
@@ -140,9 +156,13 @@ const SignUpPage = () => {
                 }}
               />
             </label>
+            <Link
+              href="/login"
+              class="underline"
+            >已有账号? 点我直接登录!</Link>
             <button
               type="submit"
-              class="w-[100%] flex justify-center items-center mt-5 text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-5 py-2 text-white"
+              class="w-[100%] flex justify-center items-center text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-5 py-2 text-white"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />

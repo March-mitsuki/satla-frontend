@@ -4,7 +4,7 @@ const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-5
 
 const ProjectForm = () => {
   const poster = async (p: Project): Promise<Response> => {
-    const url = "http://192.168.64.3:8080/new_project"
+    const url = "http://192.168.64.3:8080/api/new_project"
     const postData = JSON.stringify(p)
     console.log("will post", p);
     const response = await fetch(url, {
