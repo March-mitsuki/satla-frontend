@@ -42,7 +42,6 @@ const SignUpPage = () => {
     poster(newUser)
       .then(async res => {
         if (res.redirected) {
-          console.log("redirected: ", res);
           window.location.href = res.url
         } else if (res.status === 200) {
           console.log("now status 200: ", res);
