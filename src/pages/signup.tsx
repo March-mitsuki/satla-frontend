@@ -20,19 +20,30 @@ const SignUpPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: postData
+      body: postData,
+      redirect: "follow",
     })
-    return response.json()
+    return response
   }
 
-  const submitForm = async () => {
+  const submitForm = () => {
     const newUser: SignupUser = {
       userName: signupFormRef?.username.value,
       email: signupFormRef?.email.value,
       password: signupFormRef?.password.value,
     }
-    const response = await poster(newUser)
-    console.log("response: ", response)
+    poster(newUser)
+      .then(res => {
+        if (res.redirected) {
+          console.log("redirected: ", res);
+          window.location.href = res.url
+        } else if (res.status === 200) {
+          console.log("now status 200: ", res);
+        }
+      })
+      .catch(err => {
+        console.log("login post error: ", err);
+      })
     setConfirm(false)
   }
 

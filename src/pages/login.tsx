@@ -13,12 +13,13 @@ const SignUpPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: postData
+      body: postData,
+      redirect: "follow",
     })
-    return response.json()
+    return response
   }
 
-  const onSubmitHandler = async (
+  const onSubmitHandler = (
     e: Event & { currentTarget: HTMLFormElement }
   ) => {
     e.preventDefault()
@@ -27,8 +28,18 @@ const SignUpPage = () => {
       email: formElem?.email.value,
       password: formElem?.password.value,
     }
-    const response = await poster(user)
-    console.log("response: ", response)
+    poster(user)
+      .then(res => {
+        if (res.redirected) {
+          console.log("redirected: ", res);
+          window.location.href = res.url
+        } else if (res.status === 200) {
+          console.log("now status 200: ", res);
+        }
+      })
+      .catch(err => {
+        console.log("login post error: ", err);
+      })
   }
 
   return (

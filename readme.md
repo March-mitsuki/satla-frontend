@@ -23,6 +23,13 @@ vite + solidjs + tailwind + typescript
   * projects table
   * subtitles table
   * orders table
+* 关于login/signup/logout
+  1. 现在使用的是fetch api进行post
+  1. 但是fetch api不会让浏览器redirect
+  1. 所以使用js的window.location进行redirect
+  1. 但是这种redirect会丢失掉很多meta情报
+  1. 具体例子具体分析可能之后要更改代码
+  1. 具体可以看这里 https://qiita.com/1987yama3/items/5ff58b6195fe6c3f268b
 
 ## todo
 - [ ] 基本功能
