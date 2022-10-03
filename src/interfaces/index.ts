@@ -93,7 +93,7 @@ export interface PostAddUser {
 }
 
 export interface SignupUser {
-  userName: string
+  user_name: string
   email: string
   password: string
 }
@@ -101,4 +101,28 @@ export interface SignupUser {
 export interface LoginUser {
   email: string
   password: string
+}
+
+// 2000番 -> 成功
+// 4000番 -> 请求不正确
+//   4100番 -> login相关, 4200番 -> signup相关, 4300 -> session相关
+// 5000番 -> 服务端出错
+//   5100番 -> login相关, 5200番 -> signup相关, 5300 -> session相关
+export interface LoginResponseBody {
+  code: -1 | 0 // -1 -> 失败, 0 -> 成功
+  status: 2000 | 4101 | 4102 | 5101 | 5102
+  // 4101 -> 使用未注册的用户登录
+  // 4102 -> 登录时密码错误
+  // 5101 -> client储存session失败
+  // 5102 -> 登录时redis set session error
+  msg: string
+}
+
+export interface SignupResponseBody {
+  code: -1 | 0 // -1 -> 失败, 0 -> 成功
+  status: 2000 | 4201 | 5201 | 5202
+  // 4201 -> 已存在该用户
+  // 5201 -> 暗号化密码失败
+  // 5202 -> db创建用户失败
+  msg: string
 }

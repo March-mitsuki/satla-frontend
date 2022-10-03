@@ -1,9 +1,18 @@
 import { Title } from "@solidjs/meta"
 import { Link } from "@solidjs/router";
+import { createSignal } from "solid-js";
 
-import type { LoginUser } from "@/interfaces";
+import type { LoginUser, LoginResponseBody } from "@/interfaces";
 
 const SignUpPage = () => {
+  const [isErr, setIsErr] = createSignal<{
+    status: boolean,
+    msg: string
+  }>({
+    status: false,
+    msg: ""
+  })
+
   const poster = async (user: LoginUser): Promise<Response> => {
     const url = "http://192.168.64.3:8080/api/login"
     const postData = JSON.stringify(user)
@@ -29,15 +38,43 @@ const SignUpPage = () => {
       password: formElem?.password.value,
     }
     poster(user)
-      .then(res => {
+      .then(async res => {
         if (res.redirected) {
           console.log("redirected: ", res);
           window.location.href = res.url
         } else if (res.status === 200) {
-          console.log("now status 200: ", res);
+          console.log("now status 200: ");
+          const body: LoginResponseBody = await res.json()
+          console.log(body);
+          if (body.code === -1) {
+            switch (body.status) {
+              case 4101:
+                setIsErr({
+                  status: true,
+                  msg: "该用户还未注册",
+                })
+                break;
+              case 4102:
+                setIsErr({
+                  status: true,
+                  msg: "密码错误"
+                })
+                break;
+              default:
+                setIsErr({
+                  status: true,
+                  msg: "未知错误,请刷新后重试"
+                })
+                break;
+            }
+          }
         }
       })
       .catch(err => {
+        setIsErr({
+          status: true,
+          msg: "未知错误,请刷新后重试"
+        })
         console.log("login post error: ", err);
       })
   }
@@ -57,6 +94,11 @@ const SignUpPage = () => {
             onSubmit={e => onSubmitHandler(e)}
             class="flex flex-col gap-5 items-end w-[30%]"
           >
+            {isErr().status &&
+              <div class="text-red-600">
+                {isErr().msg}
+              </div>
+            }
             <label
               class="flex flex-col w-[100%]"
             >

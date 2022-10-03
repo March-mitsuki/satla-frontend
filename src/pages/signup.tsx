@@ -1,8 +1,8 @@
 import { Title } from "@solidjs/meta"
 import { createSignal } from "solid-js"
-
-import type { SignupUser } from "@/interfaces"
 import { Link } from "@solidjs/router"
+
+import type { SignupUser, SignupResponseBody } from "@/interfaces"
 
 const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 const wrongRepeatStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-red-500 lg:text-lg focus:border-red focus:ring-0 focus:outline-0 focus:bg-neutral-600"
@@ -10,6 +10,13 @@ const wrongRepeatStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2
 const SignUpPage = () => {
   const [repeatOK, setRepeatOK] = createSignal(true)
   const [confirm, setConfirm] = createSignal(false)
+  const [isErr, setIsErr] = createSignal<{
+    status: boolean,
+    msg: string
+  }>({
+    status: false,
+    msg: ""
+  })
 
   const poster = async (user: SignupUser): Promise<Response> => {
     const url = "http://192.168.64.3:8080/api/signup"
@@ -28,20 +35,42 @@ const SignUpPage = () => {
 
   const submitForm = () => {
     const newUser: SignupUser = {
-      userName: signupFormRef?.username.value,
+      user_name: signupFormRef?.username.value,
       email: signupFormRef?.email.value,
       password: signupFormRef?.password.value,
     }
     poster(newUser)
-      .then(res => {
+      .then(async res => {
         if (res.redirected) {
           console.log("redirected: ", res);
           window.location.href = res.url
         } else if (res.status === 200) {
           console.log("now status 200: ", res);
+          const body: SignupResponseBody = await res.json()
+          console.log(body);
+          if (body.code === -1) {
+            switch (body.status) {
+              case 4201:
+                setIsErr({
+                  status: true,
+                  msg: "已存在该用户",
+                })
+                break;
+              default:
+                setIsErr({
+                  status: true,
+                  msg: "未知错误,请刷新后重试"
+                })
+                break;
+            }
+          }
         }
       })
       .catch(err => {
+        setIsErr({
+          status: true,
+          msg: "未知错误,请刷新后重试"
+        })
         console.log("login post error: ", err);
       })
     setConfirm(false)
@@ -93,6 +122,11 @@ const SignUpPage = () => {
             ref={signupFormRef}
             class="flex flex-col gap-5 items-end w-[30%]"
           >
+            {isErr().status &&
+              <div class="text-red-600">
+                {isErr().msg}
+              </div>
+            }
             <label
               class="flex flex-col w-[100%]"
             >
