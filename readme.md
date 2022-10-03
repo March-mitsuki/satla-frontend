@@ -2,6 +2,10 @@
 
 vite + solidjs + tailwind + typescript
 
+backend here:
+
+https://github.com/March-mitsuki/vvvorld
+
 ## 实现方式
 后端使用golang处理，通信基于websocket协议:
 每次发包分为head与body,遵守json格式规则
