@@ -170,11 +170,11 @@ const FloatingWindow: ParentComponent<{
           && <div
           ref={resizeElemRef}
           style={{
-          "position": "absolute",
-          "right": "0",
-          "bottom": "0",
-          "z-index": floatingElem().zIndex,
-          "cursor": "nwse-resize",
+            "position": "absolute",
+            "right": "0",
+            "bottom": "0",
+            "z-index": floatingElem().zIndex,
+            "cursor": "nwse-resize",
           }}
           onMouseDown={startResize}
           class={props.risizerClass}
