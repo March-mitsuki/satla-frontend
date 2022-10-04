@@ -105,9 +105,9 @@ export interface LoginUser {
 
 // 2000番 -> 成功
 // 4000番 -> 请求不正确
-//   4100番 -> login相关, 4200番 -> signup相关, 4300 -> session相关
+//   4100番 -> login相关, 4200番 -> signup相关
 // 5000番 -> 服务端出错
-//   5100番 -> login相关, 5200番 -> signup相关, 5300 -> session相关
+//   5100番 -> login相关, 5200番 -> signup相关
 export interface LoginResponseBody {
   code: -1 | 0 // -1 -> 失败, 0 -> 成功
   status: 2000 | 4101 | 4102 | 5101 | 5102
