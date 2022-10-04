@@ -8,7 +8,7 @@ import { FloatingWindowX, FloatingWindow } from "@/components";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
 
-import type { PostAddUser } from "@/interfaces";
+import type { wsSendAddUser } from "@/interfaces";
 
 
 const TranslatePage = () => {
@@ -38,7 +38,7 @@ const TranslatePage = () => {
   createEffect(() => {
     ws.onopen = () => {
       console.log("ws connected");
-      const addUser: PostAddUser = {
+      const addUser: wsSendAddUser = {
         head: {
           cmd: "addUser"
         },
