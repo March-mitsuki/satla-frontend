@@ -2,7 +2,12 @@
 import { Title } from "@solidjs/meta";
 // local dependencies
 import { PaneX } from "@/components";
-import { ProjectOverview, ProjectForm, LogoutBtn } from "@/components/pages"
+import {
+  ProjectOverview,
+  ProjectForm,
+  LogoutBtn,
+  WsUsers,
+} from "@/components/pages"
 // type
 import type { Component } from "solid-js";
 // for temporary test
@@ -18,7 +23,9 @@ const Home: Component = () => {
           <div>
             Welcome to vvvorld
           </div>
-          <div>
+          <div class="flex justify-center items-center gap-5">
+            <WsUsers></WsUsers>
+            <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
             <LogoutBtn></LogoutBtn>
           </div>
         </div>

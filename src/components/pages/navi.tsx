@@ -2,6 +2,7 @@
 import { Link } from "@solidjs/router"
 // local dependencies
 import LogoutBtn from "./logout-btn"
+import WsUsers from "./ws-users-conn"
 // type
 import { Component } from "solid-js"
 
@@ -39,7 +40,9 @@ const Navi: Component<{
           发送
         </Link>
       </div>
-      <div>
+      <div class="flex justify-center items-center gap-5">
+        <WsUsers></WsUsers>
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
         <LogoutBtn></LogoutBtn>
       </div>
     </div>
