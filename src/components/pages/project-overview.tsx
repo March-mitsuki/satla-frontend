@@ -1,6 +1,8 @@
+// dependencies lib
 import { For } from "solid-js"
 import { Link } from "@solidjs/router"
 
+// type
 import type { Component } from "solid-js"
 import type { Project } from "@/interfaces"
 

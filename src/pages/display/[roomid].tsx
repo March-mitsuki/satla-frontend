@@ -1,3 +1,4 @@
+// dependencies lib
 import type { Component } from 'solid-js';
 import { Title } from '@solidjs/meta';
 

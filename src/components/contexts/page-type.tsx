@@ -1,3 +1,4 @@
+// dependencies lib
 import { createRoot, createSignal } from "solid-js";
 
 const handlerPageType = () => {

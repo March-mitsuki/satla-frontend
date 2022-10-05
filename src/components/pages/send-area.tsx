@@ -1,10 +1,14 @@
+// dependencies lib
 import { For, Match, Switch } from "solid-js"
 
+// local dependencies
 import _subtitles from "../contexts/subtitles"
 
+// type
 import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
 
+// for test
 import dummySub from "@/assets/dummy-subtitles"
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"

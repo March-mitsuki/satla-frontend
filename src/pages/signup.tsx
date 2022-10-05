@@ -1,7 +1,9 @@
+// dependencies lib
 import { Title } from "@solidjs/meta"
 import { createSignal } from "solid-js"
 import { Link } from "@solidjs/router"
 
+// type
 import type { SignupUser, SignupResponseBody } from "@/interfaces"
 
 const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"

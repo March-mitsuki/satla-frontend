@@ -1,9 +1,10 @@
+// dependencies lib
 import { Title } from "@solidjs/meta";
 import { createEffect } from "solid-js";
 import { useParams } from "@solidjs/router";
 
+// local dependencies
 import { FloatingWindow } from "@/components";
-
 import { Navi, SendArea, SendPane } from "@/components/pages";
 
 const SendPage = () => {

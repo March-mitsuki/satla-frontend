@@ -1,8 +1,9 @@
+// dependencies lib, videojs也用于type
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
-
 import { createEffect, createSignal, onCleanup } from "solid-js";
 
+// type
 import type { Component } from "solid-js";
 
 const VideoJS: Component<videojs.PlayerOptions> = (props) => {

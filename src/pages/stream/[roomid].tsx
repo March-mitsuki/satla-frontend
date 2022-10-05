@@ -1,8 +1,10 @@
+// dependencies lib
 import { VideoJS } from "@/components"
 import videojs from "video.js"
 import { useParams } from "@solidjs/router";
 import { Title } from "@solidjs/meta"
 
+// local dependencies
 import { Navi } from "@/components/pages"
 
 const StreamPage = () => {

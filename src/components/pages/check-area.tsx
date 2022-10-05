@@ -1,11 +1,16 @@
+// dependencies lib
 import { createSignal, For, Match, Switch } from "solid-js"
 
+// local dependencies
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
 
+// type
 import type { ParentComponent } from "solid-js"
-import { Subtitle, FloatingElem, wsSendSubtitle } from "@/interfaces"
+import { Subtitle, FloatingElem } from "@/interfaces"
+import type { c2sAddSubtitle } from "@/interfaces/ws"
 
+// for test
 import dummySub from "@/assets/dummy-subtitles"
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
@@ -68,7 +73,7 @@ const CheckArea: ParentComponent<{
 
 
   const postChange = (subtitle: Subtitle) => {
-    const postSubtitle: wsSendSubtitle = {
+    const postSubtitle: c2sAddSubtitle = {
       head: {
         cmd: "addSubtitle"
       },

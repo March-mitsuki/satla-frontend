@@ -1,3 +1,4 @@
+// dependencies lib
 import { createSignal, onMount } from "solid-js";
 
 const Dragpage = () => {

@@ -1,5 +1,7 @@
+// dependencies lib
 import { createRoot, createSignal } from "solid-js";
 
+// type
 import { Subtitle, FloatingElem } from "@/interfaces";
 
 const handlerSubtitles = () => {

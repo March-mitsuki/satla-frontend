@@ -1,5 +1,6 @@
 // dependencies lib
 import { Title } from "@solidjs/meta";
+
 // local dependencies
 import { PaneX } from "@/components";
 import {
@@ -8,8 +9,10 @@ import {
   LogoutBtn,
   WsUsers,
 } from "@/components/pages"
+
 // type
 import type { Component } from "solid-js";
+
 // for temporary test
 import dummyProject from "@/assets/dummy-project";
 

@@ -74,24 +74,6 @@ export interface Project {
 //   default 默认项目 三月 三月
 // } 
 
-export interface wsSendSubtitle {
-  head: {
-    cmd: "addSubtitle"
-  }
-  body: {
-    data: Subtitle
-  }
-}
-
-export interface wsSendAddUser {
-  head: {
-    cmd: "addUser"
-  }
-  body: {
-    data: string
-  }
-}
-
 export interface SignupUser {
   user_name: string
   email: string

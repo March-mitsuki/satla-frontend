@@ -1,14 +1,17 @@
+// dependencies lib
 import { VideoJS } from "@/components"
 import videojs from "video.js"
 import { Title } from "@solidjs/meta";
 import { createEffect } from "solid-js";
 import { useParams } from "@solidjs/router";
 
+// local dependencies
 import { FloatingWindowX, FloatingWindow } from "@/components";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
 
-import type { wsSendAddUser } from "@/interfaces";
+// type
+import type { c2sAddUser } from "@/interfaces/ws";
 
 
 const TranslatePage = () => {
@@ -38,12 +41,12 @@ const TranslatePage = () => {
   createEffect(() => {
     ws.onopen = () => {
       console.log("ws connected");
-      const addUser: wsSendAddUser = {
+      const addUser: c2sAddUser = {
         head: {
           cmd: "addUser"
         },
         body: {
-          data: "new user connected"
+          uname: "new user name"
         }
       }
       const postData = new TextEncoder().encode(JSON.stringify(addUser))

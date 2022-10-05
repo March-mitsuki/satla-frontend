@@ -1,5 +1,7 @@
+// dependencies lib
 import { createSignal, onMount } from 'solid-js';
 
+// type
 import type { ParentComponent, JSXElement } from 'solid-js';
 
 const PaneX: ParentComponent<{

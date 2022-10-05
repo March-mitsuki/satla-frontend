@@ -1,7 +1,9 @@
+// dependencies lib
 import { Title } from "@solidjs/meta"
 import { Link } from "@solidjs/router";
 import { createSignal } from "solid-js";
 
+// type
 import type { LoginUser, LoginResponseBody } from "@/interfaces";
 
 const SignUpPage = () => {
