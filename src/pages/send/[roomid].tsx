@@ -6,32 +6,52 @@ import { useParams } from "@solidjs/router";
 // local dependencies
 import { FloatingWindow } from "@/components";
 import { Navi, SendArea, SendPane } from "@/components/pages";
+import _currentUser from "@/components/contexts/current-user"
+
+// type
+import type { c2sAddUser } from "@/interfaces/ws";
 
 const SendPage = () => {
+  const { currentUser } = _currentUser
+
   // 每个page连接不一样的ws room
   const baseUrl = "ws://192.168.64.3:8080/ws/"
   const param = useParams<{ roomid: string }>()
   const url = baseUrl + param.roomid
-  const ws = new WebSocket(url)
+  let ws: WebSocket | undefined
 
   createEffect(() => {
-    ws.onopen = () => {
-      console.log("connected");
-      ws.send('hello init!')
+    if (currentUser().id !== -1) {
+      console.log("now data fetched", currentUser());
+      ws = new WebSocket(url)
+      ws.onopen = () => {
+        console.log("connected");
+        const addUser: c2sAddUser = {
+          head: {
+            cmd: "addUser"
+          },
+          body: {
+            uname: currentUser().user_name
+          }
+        }
+        const postData = new TextEncoder().encode(JSON.stringify(addUser))
+        ws?.send(postData)
+      }
+      ws.onmessage = (evt) => {
+        console.log("on msg:", evt.data);
+      }
+      ws.onclose = () => {
+        console.log("ws close");
+      }
+      ws.onerror = (evt) => {
+        console.log("ws err", evt);
+      }
+      onCleanup(() => {
+        if (ws?.readyState === ws?.OPEN) {
+          ws?.close()
+        }
+      })
     }
-    ws.onmessage = (evt) => {
-      console.log("on msg:", evt.data);
-    }
-    ws.onclose = () => {
-      console.log("ws close");
-    }
-    ws.onerror = (evt) => {
-      console.log("ws err", evt);
-    }
-
-    onCleanup(() => {
-      ws.close()
-    })
   })
 
   return (

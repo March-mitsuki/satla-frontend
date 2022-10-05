@@ -13,7 +13,7 @@ const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-5
 
 const SendPane: Component<{
   current_room: string
-  ws: WebSocket
+  ws: WebSocket | undefined
 }> = (props) => {
   const [inputType, seInputType] = createSignal(false) // true = 输入, false = 发送
   const [sendType, setSendType] = createSignal(true) // true = 双语, false = 单语

@@ -9,6 +9,7 @@ import { useParams } from "@solidjs/router";
 import { FloatingWindowX, FloatingWindow } from "@/components";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
+import _currentUser from "@/components/contexts/current-user"
 
 // type
 import type { c2sAddUser } from "@/interfaces/ws";
@@ -17,6 +18,7 @@ import type { c2sAddUser } from "@/interfaces/ws";
 const TranslatePage = () => {
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype } = _pagetype
+  const { currentUser } = _currentUser
 
   const videoJSOption: videojs.PlayerOptions = {
     controls: true,
@@ -36,35 +38,40 @@ const TranslatePage = () => {
   const baseUrl = "ws://192.168.64.3:8080/ws/"
   const param = useParams<{ roomid: string }>()
   const url = baseUrl + param.roomid
-  const ws = new WebSocket(url)
+  let ws: WebSocket | undefined
 
   createEffect(() => {
-    ws.onopen = () => {
-      console.log("ws connected");
-      const addUser: c2sAddUser = {
-        head: {
-          cmd: "addUser"
-        },
-        body: {
-          uname: "new user name"
+    if (currentUser().id !== -1) {
+      ws = new WebSocket(url)
+      ws.onopen = () => {
+        console.log("ws connected");
+        const addUser: c2sAddUser = {
+          head: {
+            cmd: "addUser"
+          },
+          body: {
+            uname: currentUser().user_name
+          }
         }
+        const postData = new TextEncoder().encode(JSON.stringify(addUser))
+        ws?.send(JSON.stringify(addUser))
       }
-      const postData = new TextEncoder().encode(JSON.stringify(addUser))
-      ws.send(JSON.stringify(addUser))
-    }
-    ws.onmessage = (evt) => {
-      console.log("on msg:", evt.data);
-    }
-    ws.onclose = () => {
-      console.log("ws close");
-    }
-    ws.onerror = (evt) => {
-      console.log("ws err", evt);
-    }
+      ws.onmessage = (evt) => {
+        console.log("on msg:", evt.data);
+      }
+      ws.onclose = () => {
+        console.log("ws close");
+      }
+      ws.onerror = (evt) => {
+        console.log("ws err", evt);
+      }
 
-    onCleanup(() => {
-      ws.close()
-    })
+      onCleanup(() => {
+        if (ws?.readyState === ws?.OPEN) {
+          ws?.close()
+        }
+      })
+    }
   })
 
   return (

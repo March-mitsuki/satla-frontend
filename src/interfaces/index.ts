@@ -85,6 +85,12 @@ export interface LoginUser {
   password: string
 }
 
+export interface UserInfoFromServer {
+  id: number
+  user_name: string
+  email: string
+}
+
 // 2000番 -> 成功
 // 4000番 -> 请求不正确
 //   4100番 -> login相关, 4200番 -> signup相关

@@ -8,6 +8,7 @@ import {
   ProjectForm,
   LogoutBtn,
   WsUsers,
+  CurrentUserInfo,
 } from "@/components/pages"
 
 // type
@@ -28,6 +29,8 @@ const Home: Component = () => {
           </div>
           <div class="flex justify-center items-center gap-5">
             <WsUsers></WsUsers>
+            <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+            <CurrentUserInfo></CurrentUserInfo>
             <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
             <LogoutBtn></LogoutBtn>
           </div>

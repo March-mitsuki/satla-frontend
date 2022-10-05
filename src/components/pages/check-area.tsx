@@ -16,7 +16,7 @@ import dummySub from "@/assets/dummy-subtitles"
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const CheckArea: ParentComponent<{
-  ws: WebSocket
+  ws: WebSocket | undefined
 }> = (props) => {
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype, isBilingual, canOrder } = _pagetype
@@ -82,6 +82,10 @@ const CheckArea: ParentComponent<{
       }
     }
     const postData = new TextEncoder().encode(JSON.stringify(postSubtitle))
+    if (typeof(props.ws) === "undefined") {
+      window.alert("正在连接到服务器, 请稍等")
+      return
+    }
     props.ws.send(postData)
     console.log("posted:", postData);
   }
