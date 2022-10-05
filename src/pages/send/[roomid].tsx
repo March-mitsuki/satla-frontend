@@ -1,6 +1,6 @@
 // dependencies lib
 import { Title } from "@solidjs/meta";
-import { createEffect } from "solid-js";
+import { createEffect, onCleanup } from "solid-js";
 import { useParams } from "@solidjs/router";
 
 // local dependencies
@@ -28,6 +28,10 @@ const SendPage = () => {
     ws.onerror = (evt) => {
       console.log("ws err", evt);
     }
+
+    onCleanup(() => {
+      ws.close()
+    })
   })
 
   return (

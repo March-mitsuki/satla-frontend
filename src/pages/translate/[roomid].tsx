@@ -2,7 +2,7 @@
 import { VideoJS } from "@/components"
 import videojs from "video.js"
 import { Title } from "@solidjs/meta";
-import { createEffect } from "solid-js";
+import { createEffect, onCleanup } from "solid-js";
 import { useParams } from "@solidjs/router";
 
 // local dependencies
@@ -61,6 +61,10 @@ const TranslatePage = () => {
     ws.onerror = (evt) => {
       console.log("ws err", evt);
     }
+
+    onCleanup(() => {
+      ws.close()
+    })
   })
 
   return (
