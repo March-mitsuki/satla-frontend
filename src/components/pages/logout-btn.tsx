@@ -3,7 +3,7 @@ const LogoutBtn = () => {
     e: MouseEvent & { currentTarget: HTMLButtonElement }
   ) => {
     e.preventDefault()
-    const url = "http://192.168.64.3:8080/api/logout"
+    const url = "http://192.168.64.3:8080/seesion/logout"
     fetch(url, {
       method: "DELETE",
       redirect: "follow",

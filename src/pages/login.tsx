@@ -16,7 +16,7 @@ const SignUpPage = () => {
   })
 
   const poster = async (user: LoginUser): Promise<Response> => {
-    const url = "http://192.168.64.3:8080/api/login"
+    const url = "http://192.168.64.3:8080/seesion/login"
     const postData = JSON.stringify(user)
     console.log("will post", user);
     const response = await fetch(url, {
@@ -89,7 +89,7 @@ const SignUpPage = () => {
         </div> */}
         <div class="flex-auto flex flex-col justify-center items-center">
           <div class="w-[30%] text-center text-2xl pb-10">
-            登录vvvorld
+            你必须先登录才能继续操作
           </div>
           <form
             onSubmit={e => onSubmitHandler(e)}
@@ -130,10 +130,13 @@ const SignUpPage = () => {
                 "
               />
             </label>
-            <Link
+            {/* <Link
               href="/signup"
               class="underline"
-            >还没有账号? 注册一个！</Link>
+            >还没有账号? 注册一个！</Link> */}
+            <div>
+              *若不清楚邮箱或密码请联系管理员
+            </div>
             <button
               type="submit"
               class="w-[100%] flex justify-center items-center text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-5 py-2 text-white"

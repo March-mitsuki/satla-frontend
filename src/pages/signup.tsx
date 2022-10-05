@@ -21,7 +21,7 @@ const SignUpPage = () => {
   })
 
   const poster = async (user: SignupUser): Promise<Response> => {
-    const url = "http://192.168.64.3:8080/api/signup"
+    const url = "http://192.168.64.3:8080/seesion/signup"
     const postData = JSON.stringify(user)
     console.log("will post", user);
     const response = await fetch(url, {
@@ -202,10 +202,13 @@ const SignUpPage = () => {
                 }}
               />
             </label>
-            <Link
+            {/* <Link
               href="/login"
               class="underline"
-            >已有账号? 点我直接登录!</Link>
+            >已有账号? 点我直接登录!</Link> */}
+            <div>
+              *只能由管理员创建账号
+            </div>
             <button
               type="submit"
               class="w-[100%] flex justify-center items-center text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-5 py-2 text-white"
