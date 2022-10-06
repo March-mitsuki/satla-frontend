@@ -87,11 +87,8 @@ export interface LoginUser {
 
 export interface UserInfoFromServer {
   id: number
-  current_user_name: string
-  current_user_email: string
-}
-export interface CurrentInfo extends UserInfoFromServer {
-  user_list: string[]
+  name: string
+  email: string
 }
 
 // 2000番 -> 成功

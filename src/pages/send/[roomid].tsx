@@ -12,7 +12,7 @@ import _currentUser from "@/components/contexts/current-info-ctx";
 import type { c2sAddUser, s2cEventMap } from "@/interfaces/ws";
 
 const SendPage = () => {
-  const { currentUser, setCurrentUser } = _currentUser
+  const { currentUser, userList, setUserList } = _currentUser
   const [ _ws, setWs ] = createSignal<WebSocket>()
 
   // 每个page连接不一样的ws room
@@ -39,7 +39,7 @@ const SendPage = () => {
           cmd: "addUser"
         },
         body: {
-          uname: currentUser().current_user_name
+          uname: currentUser().name
         }
       }
       const postData = new TextEncoder().encode(JSON.stringify(addUser))
@@ -49,13 +49,8 @@ const SendPage = () => {
       console.log("msg on send page");
       const data: s2cEventMap = JSON.parse(evt.data)
       if (data.head.cmd === "sAddUser") {
-        console.log("send page on sAddUser:", data, typeof data);
-        setCurrentUser({
-          id: currentUser().id,
-          current_user_name: currentUser().current_user_name,
-          current_user_email: currentUser().current_user_email,
-          user_list: data.body.users,
-        })
+        console.log("send page on sAddUser:", data);
+        setUserList(data.body.users)
       }
     }
     ws.onclose = () => {
@@ -78,7 +73,7 @@ const SendPage = () => {
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
           <Navi
             currentProject={param.roomid}
-            userList={currentUser().user_list}
+            userList={userList()}
           ></Navi>
         </div>
         <div class="flex flex-auto pl-2">

@@ -2,16 +2,19 @@
 import { createRoot, createSignal } from "solid-js";
 
 // type
-import { CurrentInfo } from "@/interfaces";
+import { UserInfoFromServer } from "@/interfaces";
 
 const handlerCurrentUser = () => {
-  const [currentUser, setCurrentUser] = createSignal<CurrentInfo>({
+  const [currentUser, setCurrentUser] = createSignal<UserInfoFromServer>({
     id: -1,
-    current_user_name: "connecting...",
-    current_user_email: "",
-    user_list: []
+    name: "connecting...",
+    email: "",
   })
-  return { currentUser, setCurrentUser }
+  const [userList, setUserList] = createSignal<string[]>([])
+  return {
+    currentUser, setCurrentUser,
+    userList, setUserList,
+  }
 }
 
 export default createRoot(handlerCurrentUser)
