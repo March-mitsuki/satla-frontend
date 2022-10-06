@@ -19,7 +19,6 @@ const SendPage = () => {
   const baseUrl = "ws://192.168.64.3:8080/ws/"
   const param = useParams<{ roomid: string }>()
   const url = baseUrl + param.roomid
-  // let ws: WebSocket | undefined
 
   createEffect(() => {
     if (currentUser().id === -1) {

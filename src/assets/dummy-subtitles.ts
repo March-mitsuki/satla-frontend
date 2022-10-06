@@ -4,7 +4,7 @@ const subtitiles: Subtitle[] = [
   {
     id: 1,
     input_time: "13:32:50",
-    send_time: -1,
+    send_time: null,
     project_id: 1,
     project_name: "default",
     translated_by: "用户A",
@@ -15,7 +15,7 @@ const subtitiles: Subtitle[] = [
   {
     id: 2,
     input_time: "13:32:50",
-    send_time: -1,
+    send_time: null,
     project_id: 1,
     project_name: "default",
     translated_by: "用户A",
@@ -26,7 +26,7 @@ const subtitiles: Subtitle[] = [
   {
     id: 3,
     input_time: "13:32:50",
-    send_time: Date.now(),
+    send_time: null,
     project_id: 1,
     project_name: "default",
     translated_by: "用户A",
@@ -37,7 +37,7 @@ const subtitiles: Subtitle[] = [
   {
     id: 4,
     input_time: "13:32:50",
-    send_time: -1,
+    send_time: null,
     project_id: 1,
     project_name: "default",
     translated_by: "用户A",
@@ -48,7 +48,7 @@ const subtitiles: Subtitle[] = [
   {
     id: 5,
     input_time: "13:32:50",
-    send_time: Date.now(),
+    send_time: null,
     project_id: 1,
     project_name: "default",
     translated_by: "用户A",
@@ -59,7 +59,7 @@ const subtitiles: Subtitle[] = [
   {
     id: 6,
     input_time: "13:32:50",
-    send_time: Date.now(),
+    send_time: null,
     project_id: 1,
     project_name: "default",
     translated_by: "用户A",

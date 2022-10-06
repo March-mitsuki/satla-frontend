@@ -20,11 +20,15 @@ export interface c2sAddUser {
   }
 }
 
+// 先用s2cEventMap判断cmd, 之后再解析body
 export interface s2cEventMap {
   head: {
     cmd: "sAddUser"
   }
-  body: {
-    users: string[]
-  }
+  body: any
+}
+
+export interface s2cAddUserBody {
+  users: string[]
+  subtitles: Subtitle[]
 }

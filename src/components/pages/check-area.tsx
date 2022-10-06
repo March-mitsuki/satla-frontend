@@ -1,14 +1,15 @@
 // dependencies lib
-import { createSignal, For, Match, Switch } from "solid-js"
+import { createSignal, For, Match, Switch, createEffect } from "solid-js"
 
 // local dependencies
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
+import _currentInfo from "@/components/contexts/current-info-ctx";
 
 // type
 import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
-import type { c2sAddSubtitle } from "@/interfaces/ws"
+import type { c2sAddSubtitle, s2cEventMap, s2cAddUserBody } from "@/interfaces/ws"
 
 // for test
 import dummySub from "@/assets/dummy-subtitles"
@@ -24,6 +25,7 @@ const CheckArea: ParentComponent<{
     subtitles, setSubtitles,
     floatingElem, setFloatingElem,
   } = _subtitles
+  const { setUserList } = _currentInfo
   const [ isComposition, setIsComposition ] = createSignal(false)
 
   if (typeof subtitles() === "undefined") {
@@ -332,6 +334,21 @@ const CheckArea: ParentComponent<{
       onmouseup = () => null
     }
   }
+
+  createEffect(() => {
+    if (!props.ws) {
+      return
+    }
+    props.ws.onmessage = (evt) => {
+      const data: s2cEventMap = JSON.parse(evt.data)
+      if (data.head.cmd === "sAddUser") {
+        const body: s2cAddUserBody = data.body
+        setUserList(body.users)
+        setSubtitles(body.subtitles)
+        console.log("add user msg: ", body);
+      }
+    }
+  })
 
   return (
     <div

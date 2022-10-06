@@ -51,5 +51,6 @@ https://github.com/March-mitsuki/vvvorld
   * ~~可以吧floatingElem的成分统一到subtitle里面,多nest一个clientProp~~
   * ~~也可以吧floatingElem变成和subtitle同一级的全局signal~~
   * 当前解决方式是分成两个array解决, 需要统一两个array的idx, 需要代码层面保证不会出现idx错位
-* 从translate等带有ws连接的页面迁移出来时ws不会自动断开连接
-  * 应该是用的是routes的LINk的关系所以会自动cache到本地, 所以导致现在server 的check login也出了问题, 找时候修一修
+* ~~从translate等带有ws连接的页面迁移出来时ws不会自动断开连接~~ 已解决
+  * ~~应该是用的是routes的LINk的关系所以会自动cache到本地, 所以导致现在server 的check login也出了问题, 找时候修一修~~
+* 每次新人连接都会更新别人的subtitles, 可以改成onopen的时候同时发两条cmd

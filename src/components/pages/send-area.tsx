@@ -7,7 +7,7 @@ import _subtitles from "../contexts/subtitles"
 // type
 import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
-import { c2sAddSubtitle, s2cEventMap } from "@/interfaces/ws"
+import { c2sAddSubtitle, s2cAddUserBody, s2cEventMap } from "@/interfaces/ws"
 import _currentInfo from "@/components/contexts/current-info-ctx";
 
 // for test
@@ -24,6 +24,7 @@ const SendArea: ParentComponent<{
   } = _subtitles
   const { setUserList } = _currentInfo
 
+  // 各种初始化操作
   if (typeof subtitles() === "undefined") {
     setSubtitles(dummySub)
   }
@@ -46,6 +47,8 @@ const SendArea: ParentComponent<{
   }
 
   // 定义复用函数, 便于维护
+  // 更新逻辑: 监听用户操作 (-> 复用操作函数) -> ws.send -> ws.onmessage -> 页面更新
+  // 命名规则: 操作函数: _addUp, 更新函数 addUp 
   const addUp = (idx: number, subtitle: Subtitle) => {
     const newSub: Subtitle = new Subtitle()
     const newFloatingElem: FloatingElem = new FloatingElem()
@@ -69,7 +72,7 @@ const SendArea: ParentComponent<{
     setSubtitles(subtitles()?.map(x => x))
   }
 
-
+  // poster函数
   const postChange = (subtitle: Subtitle) => {
     if (!props.ws) {
       console.log("props.ws is undifiend");
@@ -86,6 +89,11 @@ const SendArea: ParentComponent<{
     const postData = new TextEncoder().encode(JSON.stringify(postSubtitle))
     props.ws.send(postData)
     console.log("subtitle posted:", subtitle);
+  }
+
+  // 更新函数
+  const changeSubtitle = () => {
+
   }
 
   const onSubmitHandler = (
@@ -171,7 +179,10 @@ const SendArea: ParentComponent<{
     props.ws.onmessage = (evt) => {
       const data: s2cEventMap = JSON.parse(evt.data)
       if (data.head.cmd === "sAddUser") {
-        setUserList(data.body.users)
+        const body: s2cAddUserBody = data.body
+        setUserList(body.users)
+        setSubtitles(body.subtitles)
+        console.log("add user msg: ", body);
       }
     }
   })

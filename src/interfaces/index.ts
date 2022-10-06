@@ -2,7 +2,7 @@ export class Subtitle {
   // 前端用的Subtitle Type
   id: number
   input_time: string // 行左边显示的时间
-  send_time: Date | number // 为-1则为未发送
+  send_time: Date | null // 为null则为未发送
   project_id: number
   project_name: string
   translated_by: string
@@ -13,7 +13,7 @@ export class Subtitle {
   constructor() {
     this.id = Date.now()
     this.input_time = "11:34:30"
-    this.send_time = -1
+    this.send_time = null
     this.project_id = -1
     this.project_name = ""
     this.translated_by = ""
