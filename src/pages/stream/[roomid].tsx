@@ -23,12 +23,17 @@ const StreamPage = () => {
   }
   const param = useParams<{ roomid: string }>()
 
+  const userList = ["mitsuki", "sanyue", "wow"]
+
   return (
     <>
       <Title>直播页面</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg text-xl py-3 px-5">
-          <Navi current_project={param.roomid}></Navi>
+          <Navi
+            currentProject={param.roomid}
+            userList={userList}
+          ></Navi>
         </div>
         <div class='w-full flex-initial'>
           <VideoJS {...videoJSOption}></VideoJS>

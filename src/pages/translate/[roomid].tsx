@@ -74,12 +74,17 @@ const TranslatePage = () => {
     }
   })
 
+  const userList = ["mitsuki", "sanyue", "wow"]
+
   return (
     <>
       <Title>翻译页面</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
-          <Navi current_project={param.roomid}></Navi>
+          <Navi
+            currentProject={param.roomid}
+            userList={userList}
+          ></Navi>
         </div>
         <div class="flex flex-auto pl-2">
           <div class="flex flex-col">

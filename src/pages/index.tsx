@@ -19,6 +19,8 @@ import dummyProject from "@/assets/dummy-project";
 
 
 const Home: Component = () => {
+  const userList = ["mitsuki", "sanyue", "wow"]
+
   return (
     <>
       <Title>Vvvorld</Title>
@@ -28,7 +30,7 @@ const Home: Component = () => {
             Welcome to vvvorld
           </div>
           <div class="flex justify-center items-center gap-5">
-            <WsUsers></WsUsers>
+            <WsUsers userList={userList}></WsUsers>
             <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
             <CurrentUserInfo></CurrentUserInfo>
             <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
