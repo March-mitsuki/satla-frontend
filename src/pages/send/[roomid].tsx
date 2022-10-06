@@ -6,13 +6,13 @@ import { useParams } from "@solidjs/router";
 // local dependencies
 import { FloatingWindow } from "@/components";
 import { Navi, SendArea, SendPane } from "@/components/pages";
-import _currentUser from "@/components/contexts/current-info-ctx";
+import _currentInfo from "@/components/contexts/current-info-ctx";
 
 // type
-import type { c2sAddUser, s2cEventMap } from "@/interfaces/ws";
+import type { c2sAddUser } from "@/interfaces/ws";
 
 const SendPage = () => {
-  const { currentUser, userList, setUserList } = _currentUser
+  const { currentUser, userList } = _currentInfo
   const [ _ws, setWs ] = createSignal<WebSocket>()
 
   // 每个page连接不一样的ws room
@@ -44,14 +44,6 @@ const SendPage = () => {
       }
       const postData = new TextEncoder().encode(JSON.stringify(addUser))
       ws.send(postData)
-    }
-    ws.onmessage = (evt) => {
-      console.log("msg on send page");
-      const data: s2cEventMap = JSON.parse(evt.data)
-      if (data.head.cmd === "sAddUser") {
-        console.log("send page on sAddUser:", data);
-        setUserList(data.body.users)
-      }
     }
     ws.onclose = () => {
       console.log("ws close");

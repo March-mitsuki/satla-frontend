@@ -2,7 +2,7 @@
 import { createEffect, createResource, onCleanup } from "solid-js"
 
 // local dependencies
-import _currentUser from "../contexts/current-info-ctx"
+import _currentInfo from "../contexts/current-info-ctx"
 
 // type
 import type { UserInfoFromServer } from "@/interfaces"
@@ -24,7 +24,7 @@ const currentUserInfo = () => {
     return body
   }
 
-  const { setCurrentUser } = _currentUser
+  const { setCurrentUser } = _currentInfo
   const [ cUserInfo ] = createResource<UserInfoFromServer>(fetchCurrentUserInfo)
 
   createEffect(() => {

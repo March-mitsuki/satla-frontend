@@ -8,6 +8,7 @@ import _subtitles from "../contexts/subtitles"
 import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
 import { c2sAddSubtitle, s2cEventMap } from "@/interfaces/ws"
+import _currentInfo from "@/components/contexts/current-info-ctx";
 
 // for test
 import dummySub from "@/assets/dummy-subtitles"
@@ -21,6 +22,7 @@ const SendArea: ParentComponent<{
     subtitles, setSubtitles,
     floatingElem, setFloatingElem,
   } = _subtitles
+  const { setUserList } = _currentInfo
 
   if (typeof subtitles() === "undefined") {
     setSubtitles(dummySub)
@@ -166,13 +168,12 @@ const SendArea: ParentComponent<{
     if (!props.ws) {
       return
     }
-    props.ws.addEventListener("message", (evt) => {
-      console.log("msg on send area");
-    })
-    // props.ws.onmessage = (evt) => {
-    //   const data: s2cEventMap = JSON.parse(evt.data)
-    //   console.log("send area on msg: ", data);
-    // }
+    props.ws.onmessage = (evt) => {
+      const data: s2cEventMap = JSON.parse(evt.data)
+      if (data.head.cmd === "sAddUser") {
+        setUserList(data.body.users)
+      }
+    }
   })
 
 
