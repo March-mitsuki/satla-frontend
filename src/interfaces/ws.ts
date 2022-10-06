@@ -19,3 +19,12 @@ export interface c2sAddUser {
     uname: string // username
   }
 }
+
+export interface s2cEventMap {
+  head: {
+    cmd: "sAddUser"
+  }
+  body: {
+    users: string[]
+  }
+}

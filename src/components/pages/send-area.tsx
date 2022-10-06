@@ -1,5 +1,5 @@
 // dependencies lib
-import { For, Match, Switch } from "solid-js"
+import { createEffect, For, Match, Switch } from "solid-js"
 
 // local dependencies
 import _subtitles from "../contexts/subtitles"
@@ -7,6 +7,7 @@ import _subtitles from "../contexts/subtitles"
 // type
 import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
+import { c2sAddSubtitle, s2cEventMap } from "@/interfaces/ws"
 
 // for test
 import dummySub from "@/assets/dummy-subtitles"
@@ -14,7 +15,7 @@ import dummySub from "@/assets/dummy-subtitles"
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const SendArea: ParentComponent<{
-  ws: WebSocket | undefined
+  ws: WebSocket | undefined,
 }> = (props) => {
   const {
     subtitles, setSubtitles,
@@ -68,9 +69,21 @@ const SendArea: ParentComponent<{
 
 
   const postChange = (subtitle: Subtitle) => {
-    const sendData = new TextEncoder().encode(JSON.stringify(subtitle))
-    console.log("will post:", subtitle);
-    // props.ws.send(sendData)
+    if (!props.ws) {
+      console.log("props.ws is undifiend");
+      return
+    }
+    const postSubtitle: c2sAddSubtitle = {
+      head: {
+        cmd: "addSubtitle"
+      },
+      body: {
+        data: subtitle
+      }
+    }
+    const postData = new TextEncoder().encode(JSON.stringify(postSubtitle))
+    props.ws.send(postData)
+    console.log("subtitle posted:", subtitle);
   }
 
   const onSubmitHandler = (
@@ -148,6 +161,19 @@ const SendArea: ParentComponent<{
     e.preventDefault()
     setSubtitles(subtitles()?.filter(elem => elem.id !== subtitle.id))
   }
+
+  createEffect(() => {
+    if (!props.ws) {
+      return
+    }
+    props.ws.addEventListener("message", (evt) => {
+      console.log("msg on send area");
+    })
+    // props.ws.onmessage = (evt) => {
+    //   const data: s2cEventMap = JSON.parse(evt.data)
+    //   console.log("send area on msg: ", data);
+    // }
+  })
 
 
   return (

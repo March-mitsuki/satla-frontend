@@ -30,7 +30,6 @@ const WsUsers: Component<{
         </li>
       }</For>
     </ul>
-
   )
 }
 

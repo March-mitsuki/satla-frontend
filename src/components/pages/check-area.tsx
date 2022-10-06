@@ -73,6 +73,10 @@ const CheckArea: ParentComponent<{
 
 
   const postChange = (subtitle: Subtitle) => {
+    if (typeof(props.ws) === "undefined") {
+      window.alert("正在连接到服务器, 请稍等")
+      return
+    }
     const postSubtitle: c2sAddSubtitle = {
       head: {
         cmd: "addSubtitle"
@@ -82,10 +86,6 @@ const CheckArea: ParentComponent<{
       }
     }
     const postData = new TextEncoder().encode(JSON.stringify(postSubtitle))
-    if (typeof(props.ws) === "undefined") {
-      window.alert("正在连接到服务器, 请稍等")
-      return
-    }
     props.ws.send(postData)
     console.log("posted:", postData);
   }

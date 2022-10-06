@@ -13,7 +13,7 @@ import { Component } from "solid-js"
 
 const Navi: Component<{
   currentProject: string
-  userList: string[]
+  userList?: string[]
 }> = (props) => {
   return (
     <div class="flex justify-between">
@@ -47,8 +47,12 @@ const Navi: Component<{
         </Link>
       </div>
       <div class="flex justify-center items-center gap-5">
-        <WsUsers userList={props.userList}></WsUsers>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+        {props.userList && 
+          <>
+            <WsUsers userList={props.userList}></WsUsers>
+            <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+          </>
+        }
         <CurrentUserInfo></CurrentUserInfo>
         <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
         <LogoutBtn></LogoutBtn>

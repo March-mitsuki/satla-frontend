@@ -2,14 +2,14 @@
 import { VideoJS } from "@/components"
 import videojs from "video.js"
 import { Title } from "@solidjs/meta";
-import { createEffect, onCleanup } from "solid-js";
+import { createEffect, createSignal, onCleanup } from "solid-js";
 import { useParams } from "@solidjs/router";
 
 // local dependencies
 import { FloatingWindowX, FloatingWindow } from "@/components";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
-import _currentUser from "@/components/contexts/current-user"
+import _currentUser from "@/components/contexts/current-info-ctx"
 
 // type
 import type { c2sAddUser } from "@/interfaces/ws";
@@ -19,6 +19,7 @@ const TranslatePage = () => {
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype } = _pagetype
   const { currentUser } = _currentUser
+  const [userList, setUserList] = createSignal<string[]>([])
 
   const videoJSOption: videojs.PlayerOptions = {
     controls: true,
@@ -50,11 +51,11 @@ const TranslatePage = () => {
             cmd: "addUser"
           },
           body: {
-            uname: currentUser().user_name
+            uname: currentUser().current_user_name
           }
         }
         const postData = new TextEncoder().encode(JSON.stringify(addUser))
-        ws?.send(JSON.stringify(addUser))
+        ws?.send(postData)
       }
       ws.onmessage = (evt) => {
         console.log("on msg:", evt.data);
@@ -74,8 +75,6 @@ const TranslatePage = () => {
     }
   })
 
-  const userList = ["mitsuki", "sanyue", "wow"]
-
   return (
     <>
       <Title>翻译页面</Title>
@@ -83,7 +82,7 @@ const TranslatePage = () => {
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
           <Navi
             currentProject={param.roomid}
-            userList={userList}
+            userList={userList()}
           ></Navi>
         </div>
         <div class="flex flex-auto pl-2">

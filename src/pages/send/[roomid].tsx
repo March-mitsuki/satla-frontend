@@ -1,60 +1,75 @@
 // dependencies lib
 import { Title } from "@solidjs/meta";
-import { createEffect, onCleanup } from "solid-js";
+import { createEffect, onCleanup, createSignal } from "solid-js";
 import { useParams } from "@solidjs/router";
 
 // local dependencies
 import { FloatingWindow } from "@/components";
 import { Navi, SendArea, SendPane } from "@/components/pages";
-import _currentUser from "@/components/contexts/current-user"
+import _currentUser from "@/components/contexts/current-info-ctx";
 
 // type
-import type { c2sAddUser } from "@/interfaces/ws";
+import type { c2sAddUser, s2cEventMap } from "@/interfaces/ws";
 
 const SendPage = () => {
-  const { currentUser } = _currentUser
+  const { currentUser, setCurrentUser } = _currentUser
+  const [ _ws, setWs ] = createSignal<WebSocket>()
 
   // 每个page连接不一样的ws room
   const baseUrl = "ws://192.168.64.3:8080/ws/"
   const param = useParams<{ roomid: string }>()
   const url = baseUrl + param.roomid
-  let ws: WebSocket | undefined
+  // let ws: WebSocket | undefined
 
   createEffect(() => {
-    if (currentUser().id !== -1) {
-      console.log("now data fetched", currentUser());
-      ws = new WebSocket(url)
-      ws.onopen = () => {
-        console.log("connected");
-        const addUser: c2sAddUser = {
-          head: {
-            cmd: "addUser"
-          },
-          body: {
-            uname: currentUser().user_name
-          }
-        }
-        const postData = new TextEncoder().encode(JSON.stringify(addUser))
-        ws?.send(postData)
-      }
-      ws.onmessage = (evt) => {
-        console.log("on msg:", evt.data);
-      }
-      ws.onclose = () => {
-        console.log("ws close");
-      }
-      ws.onerror = (evt) => {
-        console.log("ws err", evt);
-      }
-      onCleanup(() => {
-        if (ws?.readyState === ws?.OPEN) {
-          ws?.close()
-        }
-      })
+    if (currentUser().id === -1) {
+      return
     }
+    console.log("now data fetched", currentUser());
+    setWs(new WebSocket(url))
+    const ws = _ws()
+    if (!ws) {
+      console.log("send page ws is undefined");
+      return
+    }
+    ws.onopen = () => {
+      console.log("connected");
+      const addUser: c2sAddUser = {
+        head: {
+          cmd: "addUser"
+        },
+        body: {
+          uname: currentUser().current_user_name
+        }
+      }
+      const postData = new TextEncoder().encode(JSON.stringify(addUser))
+      ws.send(postData)
+    }
+    ws.onmessage = (evt) => {
+      console.log("msg on send page");
+      const data: s2cEventMap = JSON.parse(evt.data)
+      if (data.head.cmd === "sAddUser") {
+        console.log("send page on sAddUser:", data, typeof data);
+        setCurrentUser({
+          id: currentUser().id,
+          current_user_name: currentUser().current_user_name,
+          current_user_email: currentUser().current_user_email,
+          user_list: data.body.users,
+        })
+      }
+    }
+    ws.onclose = () => {
+      console.log("ws close");
+    }
+    ws.onerror = (evt) => {
+      console.log("ws err", evt);
+    }
+    onCleanup(() => {
+      if (ws.readyState === ws.OPEN) {
+        ws.close()
+      }
+    })
   })
-
-  const userList = ["mitsuki", "sanyue", "wow"]
 
   return (
     <>
@@ -63,7 +78,7 @@ const SendPage = () => {
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
           <Navi
             currentProject={param.roomid}
-            userList={userList}
+            userList={currentUser().user_list}
           ></Navi>
         </div>
         <div class="flex flex-auto pl-2">
@@ -126,12 +141,12 @@ const SendPage = () => {
             >
               <SendPane
                 current_room={param.roomid}
-                ws={ws}
+                ws={_ws()}
               ></SendPane>
             </FloatingWindow>
           </div>
           <div class="flex-auto h-[calc(100vh-70px)]" >
-            <SendArea ws={ws}></SendArea>
+            <SendArea ws={_ws()}></SendArea>
           </div>
         </div>
       </div>

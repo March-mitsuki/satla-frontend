@@ -3,6 +3,7 @@ import { VideoJS } from "@/components"
 import videojs from "video.js"
 import { useParams } from "@solidjs/router";
 import { Title } from "@solidjs/meta"
+import { createSignal } from "solid-js";
 
 // local dependencies
 import { Navi } from "@/components/pages"
@@ -23,8 +24,6 @@ const StreamPage = () => {
   }
   const param = useParams<{ roomid: string }>()
 
-  const userList = ["mitsuki", "sanyue", "wow"]
-
   return (
     <>
       <Title>直播页面</Title>
@@ -32,7 +31,6 @@ const StreamPage = () => {
         <div class="shadow-lg text-xl py-3 px-5">
           <Navi
             currentProject={param.roomid}
-            userList={userList}
           ></Navi>
         </div>
         <div class='w-full flex-initial'>
