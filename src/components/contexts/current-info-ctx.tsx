@@ -10,7 +10,7 @@ const handlerCurrentUser = () => {
     user_name: "connecting...",
     email: "",
   })
-  const [userList, setUserList] = createSignal<string[]>([])
+  const [userList, setUserList] = createSignal<string[]>()
   return {
     currentUser, setCurrentUser,
     userList, setUserList,

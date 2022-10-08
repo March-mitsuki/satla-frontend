@@ -10,13 +10,15 @@ import { FloatingWindowX, FloatingWindow } from "@/components";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
 import _currentInfo from "@/components/contexts/current-info-ctx"
+import _subtitles from "@/components/contexts/subtitles"
 import { wsHandler } from "@/controllers";
 
 
 const TranslatePage = () => {
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype } = _pagetype
-  const { currentUser, userList } = _currentInfo
+  const { currentUser, userList, setUserList } = _currentInfo
+  const { setFloatingElem, setSubtitles } = _subtitles
   const [ _ws, setWs ] = createSignal<WebSocket>()
 
   const videoJSOption: videojs.PlayerOptions = {
@@ -64,6 +66,9 @@ const TranslatePage = () => {
         ws.send("client clean up now")
         ws.close()
       }
+      setFloatingElem(undefined)
+      setSubtitles(undefined)
+      setUserList(undefined)
     })
   })
 
