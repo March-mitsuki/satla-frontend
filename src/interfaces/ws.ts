@@ -11,9 +11,9 @@ export interface c2sAddSubtitle {
   }
 }
 
-export interface c2sAddUser {
+export interface c2sChangeUser {
   head: {
-    cmd: "addUser"
+    cmd: "changeUser"
   }
   body: {
     uname: string // username
@@ -32,12 +32,12 @@ export interface c2sGetRoomSubtitles {
 // 先用s2cEventMap判断cmd, 之后再解析body
 export interface s2cEventMap {
   head: {
-    cmd: "sAddUser" | "sGetRoomSubtitles"
+    cmd: "sChangeUser" | "sGetRoomSubtitles"
   }
   body: any
 }
 
-export interface s2cAddUserBody {
+export interface s2cChangeUserBody {
   users: string[]
 }
 

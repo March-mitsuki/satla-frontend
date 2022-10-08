@@ -4,10 +4,10 @@ import type {
   UserInfoFromServer,
 } from "@/interfaces";
 import type {
-  c2sAddUser,
+  c2sChangeUser,
   c2sGetRoomSubtitles,
   s2cEventMap,
-  s2cAddUserBody,
+  s2cChangeUserBody,
   s2cGetRoomSubBody,
 } from "@/interfaces/ws"
 import type { Setter } from "solid-js";
@@ -16,7 +16,7 @@ export const addUserHandler = (
   data: s2cEventMap,
   setUserList: Setter<string[]>,
 ) => {
-  const body: s2cAddUserBody = data.body
+  const body: s2cChangeUserBody = data.body
   setUserList(body.users)
   console.log("add user msg: ", body);
 }
@@ -36,9 +36,9 @@ export const onopenHandler = (
   currentUserInfo: UserInfoFromServer,
 ) => {
   console.log("ws connected");
-  const _addUser: c2sAddUser = {
+  const _addUser: c2sChangeUser = {
     head: {
-      cmd: "addUser"
+      cmd: "changeUser"
     },
     body: {
       uname: currentUserInfo.user_name

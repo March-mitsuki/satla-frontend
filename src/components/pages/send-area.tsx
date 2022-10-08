@@ -180,7 +180,7 @@ const SendArea: ParentComponent<{
     props.ws.onmessage = (evt) => {
       const data: s2cEventMap = JSON.parse(evt.data)
       switch (data.head.cmd) {
-        case "sAddUser":
+        case "sChangeUser":
           wsHandler.addUserHandler(data, setUserList)
           break;
         case "sGetRoomSubtitles":
