@@ -33,10 +33,9 @@ const WsUsers: Component<{
   const randomColor = () => {
     return Math.floor(Math.random() * colors.length)
   }
-  const testUserList = ["A", "B", "C", "D", "E"]
   return (
     <ul class="flex relative h-full">
-      <For each={testUserList}>{(elem, idx) =>
+      <For each={props.userList}>{(elem, idx) =>
         <li
           style={listStylePositon(idx())}
           class={`${baseStyle} ${colors[randomColor()]} ${listPosition(idx())}`}
