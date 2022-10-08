@@ -10,7 +10,7 @@ import _currentInfo from "@/components/contexts/current-info-ctx";
 import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
 import type { c2sAddSubtitle, s2cEventMap } from "@/interfaces/ws"
-import { wsAddUserHandler } from "@/controllers/ws";
+import { wsHandler } from "@/controllers";
 
 // for test
 import dummySub from "@/assets/dummy-subtitles"
@@ -342,8 +342,16 @@ const CheckArea: ParentComponent<{
     }
     props.ws.onmessage = (evt) => {
       const data: s2cEventMap = JSON.parse(evt.data)
-      if (data.head.cmd === "sAddUser") {
-        wsAddUserHandler(data, setUserList, setSubtitles)
+      switch (data.head.cmd) {
+        case "sAddUser":
+          wsHandler.addUserHandler(data, setUserList)
+          break;
+        case "sGetRoomSubtitles":
+          wsHandler.getRoomSubHandler(data, setSubtitles)
+          break;
+        default:
+          console.log("unknow cmd: ", data);
+          break;
       }
     }
   })

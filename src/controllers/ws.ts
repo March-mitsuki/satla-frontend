@@ -8,21 +8,29 @@ import type {
   c2sGetRoomSubtitles,
   s2cEventMap,
   s2cAddUserBody,
+  s2cGetRoomSubBody,
 } from "@/interfaces/ws"
 import type { Setter } from "solid-js";
 
-export const wsAddUserHandler = (
+export const addUserHandler = (
   data: s2cEventMap,
   setUserList: Setter<string[]>,
-  setSubtitles: Setter<Subtitle[] | undefined>,
 ) => {
   const body: s2cAddUserBody = data.body
   setUserList(body.users)
-  setSubtitles(body.subtitles)
   console.log("add user msg: ", body);
 }
 
-export const wsOnopenHandler = (
+export const getRoomSubHandler = (
+  data: s2cEventMap,
+  setSubtitles: Setter<Subtitle[] | undefined>
+) => {
+  const body: s2cGetRoomSubBody = data.body
+  setSubtitles(body.subtitles)
+  console.log("get room subtitles msg: ", body);
+}
+
+export const onopenHandler = (
   ws: WebSocket,
   roomid: string,
   currentUserInfo: UserInfoFromServer,

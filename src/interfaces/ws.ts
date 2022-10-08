@@ -32,12 +32,15 @@ export interface c2sGetRoomSubtitles {
 // 先用s2cEventMap判断cmd, 之后再解析body
 export interface s2cEventMap {
   head: {
-    cmd: "sAddUser"
+    cmd: "sAddUser" | "sGetRoomSubtitles"
   }
   body: any
 }
 
 export interface s2cAddUserBody {
   users: string[]
+}
+
+export interface s2cGetRoomSubBody {
   subtitles: Subtitle[]
 }
