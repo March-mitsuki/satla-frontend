@@ -114,3 +114,9 @@ export interface SignupResponseBody {
   // 5202 -> db创建用户失败
   msg: string
 }
+
+export interface NewProjectResponseBody {
+  code: -1 | 0
+  status: 2000 | 5303
+  msg: string
+}

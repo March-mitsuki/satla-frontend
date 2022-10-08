@@ -1,13 +1,28 @@
+// dependencies lib
+import { createSignal } from "solid-js";
+
+// local dependencies
+import _currentInfo from "@/components/contexts/current-info-ctx"
+
 // type
-import type { Project } from "@/interfaces";
+import type { NewProjectResponseBody, Project } from "@/interfaces";
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const ProjectForm = () => {
+  const { currentUser } = _currentInfo
+  const [ isErr, setIsErr ] = createSignal<{
+    status: boolean,
+    msg: string
+  }>({
+    status: false,
+    msg: ""
+  })
+
   const poster = async (p: Project): Promise<Response> => {
     const url = "http://192.168.64.3:8080/api/new_project"
     const postData = JSON.stringify(p)
-    console.log("will post", p);
+    console.log("will post", postData);
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -15,28 +30,43 @@ const ProjectForm = () => {
       },
       body: postData
     })
-    return response.json()
+    return response
   }
 
-  const onSubmitHandler = async (
-    e: Event & { currentTarget: HTMLFormElement }
+  // 定义submit用的复用函数
+  const _submitHandler = (
+    formElem: HTMLFormElement
   ) => {
-    e.preventDefault()
-    const formElem = e.currentTarget
     const projectName: string = formElem.projectName.value
     const description: string = formElem.description.value
     const pointMan: string = formElem.pointMan.value
     if (!projectName || !description || !pointMan) {
-      console.log("不能为空");
+      setIsErr({
+        status: true,
+        msg: "请填写所有项目",
+      })
       return
     }
     if (description.length > 100) {
-      console.log("项目描述超过100字");
+      setIsErr({
+        status: true,
+        msg: "项目描述超过100字",
+      })
       return
     }
     const re = new RegExp("^[a-z0-9_]{1,30}$");
     if (!re.test(projectName)) {
-      console.log("只允许英文小文字加下划线组合");
+      setIsErr({
+        status: true,
+        msg: "只允许英文小文字加下划线组合",
+      })
+      return
+    }
+    if (currentUser().id === -1) {
+      setIsErr({
+        status: true,
+        msg: "登录状态出错,请重新登录后尝试",
+      })
       return
     }
     const newProject: Project = {
@@ -44,43 +74,58 @@ const ProjectForm = () => {
       project_name: projectName,
       description: description,
       point_man: pointMan,
-      created_by: "默认账户",
+      created_by: currentUser().name,
     }
-    const data = await poster(newProject)
-    console.log("post success:", data);
+    poster(newProject)
+    .then(async res => {
+      if (res.status === 200) {
+        const body: NewProjectResponseBody = await res.json()
+        if (body.code === -1) {
+          if (body.status === 5303) {
+            setIsErr({
+              status: true,
+              msg: "创建失败, 可能是项目名称重复, 请更改后重试"
+            })
+          }
+        } else if (body.code === 0) {
+          // 如果成功则清空form value
+          formElem.projectName.value = ""
+          formElem.description.value = ""
+          formElem.pointMan.value = ""
+          if (isErr()) {
+            setIsErr({
+              status: false,
+              msg: "",
+            })
+          }
+        }
+      }
+    })
+    .catch(err => {
+      setIsErr({
+        status: true,
+        msg: "网络错误: " + err,
+      })
+    })
+
+    return
   }
 
-  const textareaKeyDownHandler = async (
+  const onSubmitHandler = (
+    e: Event & { currentTarget: HTMLFormElement }
+  ) => {
+    e.preventDefault()
+    const formElem = e.currentTarget
+    _submitHandler(formElem)
+  }
+
+  const textareaKeyDownHandler = (
     e: KeyboardEvent & { currentTarget: HTMLTextAreaElement }
   ) => {
     if (e.key === "Enter") {
       e.preventDefault()
       const formElem = document.getElementById("project-form")
-      const projectName: string = (formElem as HTMLFormElement).projectName.value
-      const description: string = (formElem as HTMLFormElement).description.value
-      const pointMan: string = (formElem as HTMLFormElement).pointMan.value
-      if (!projectName || !description || !pointMan) {
-        console.log("不能为空");
-        return
-      }
-      if (description.length > 100) {
-        console.log("项目描述超过100字");
-        return
-      }
-      const re = new RegExp("^[a-zA-Z0-9_]{1,30}$");
-      if (!re.test(projectName)) {
-        console.log("只允许英文小文字数字加下划线组合,且在30字以内");
-        return
-      }
-      const newProject: Project = {
-        id: Date.now(),
-        project_name: projectName,
-        description: description,
-        point_man: pointMan,
-        created_by: "默认账户",
-      }
-      const response = await poster(newProject)
-      console.log("post success:", response);
+      _submitHandler((formElem as HTMLFormElement))
     }
   }
 
@@ -90,6 +135,16 @@ const ProjectForm = () => {
       onSubmit={e => onSubmitHandler(e)}
       class="border-2 p-2 flex gap-2 justify-center overflow-auto"
     >
+      {isErr().status && 
+        <div class="flex flex-col text-red-500 h-20 overflow-hidden">
+          <div>
+            *{isErr().msg}
+          </div>
+          <div>
+            *若一直失败请联系管理员
+          </div>
+        </div>
+      }
       <label
         class="flex flex-col"
       >
