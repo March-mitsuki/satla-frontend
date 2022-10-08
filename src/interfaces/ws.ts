@@ -20,6 +20,15 @@ export interface c2sAddUser {
   }
 }
 
+export interface c2sGetRoomSubtitles {
+  head: {
+    cmd: "getRoomSubtitles"
+  }
+  body: {
+    roomid: string
+  }
+}
+
 // 先用s2cEventMap判断cmd, 之后再解析body
 export interface s2cEventMap {
   head: {

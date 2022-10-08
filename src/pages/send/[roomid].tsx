@@ -7,9 +7,8 @@ import { useParams } from "@solidjs/router";
 import { FloatingWindow } from "@/components";
 import { Navi, SendArea, SendPane } from "@/components/pages";
 import _currentInfo from "@/components/contexts/current-info-ctx";
+import { onOpenHandler } from "@/controllers/ws"
 
-// type
-import type { c2sAddUser } from "@/interfaces/ws";
 
 const SendPage = () => {
   const { currentUser, userList } = _currentInfo
@@ -32,17 +31,7 @@ const SendPage = () => {
       return
     }
     ws.onopen = () => {
-      console.log("connected");
-      const addUser: c2sAddUser = {
-        head: {
-          cmd: "addUser"
-        },
-        body: {
-          uname: currentUser().name
-        }
-      }
-      const postData = new TextEncoder().encode(JSON.stringify(addUser))
-      ws.send(postData)
+      onOpenHandler(ws, param.roomid, currentUser())
     }
     ws.onclose = () => {
       console.log("ws close");

@@ -10,9 +10,7 @@ import { FloatingWindowX, FloatingWindow } from "@/components";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
 import _currentInfo from "@/components/contexts/current-info-ctx"
-
-// type
-import type { c2sAddUser } from "@/interfaces/ws";
+import { onOpenHandler } from "@/controllers/ws";
 
 
 const TranslatePage = () => {
@@ -52,33 +50,7 @@ const TranslatePage = () => {
       return
     }
     ws.onopen = () => {
-      console.log("connected");
-      const addUser: c2sAddUser = {
-        head: {
-          cmd: "addUser"
-        },
-        body: {
-          uname: currentUser().name
-        }
-      }
-      const postData = new TextEncoder().encode(JSON.stringify(addUser))
-      ws.send(postData)
-    }
-    ws.onopen = () => {
-      console.log("ws connected");
-      const addUser: c2sAddUser = {
-        head: {
-          cmd: "addUser"
-        },
-        body: {
-          uname: currentUser().name
-        }
-      }
-      const postData = new TextEncoder().encode(JSON.stringify(addUser))
-      ws?.send(postData)
-    }
-    ws.onmessage = (evt) => {
-      console.log("on msg:", evt.data);
+      onOpenHandler(ws, param.roomid, currentUser())
     }
     ws.onclose = () => {
       console.log("ws close");
