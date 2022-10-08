@@ -33,7 +33,7 @@ const SendPage = () => {
       return
     }
     ws.onopen = () => {
-      wsHandler.onopenHandler(ws, param.roomid, currentUser())
+      wsHandler.onopen(ws, param.roomid, currentUser())
     }
     ws.onclose = () => {
       console.log("ws close");
