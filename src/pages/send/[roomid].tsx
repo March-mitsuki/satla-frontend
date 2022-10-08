@@ -7,7 +7,7 @@ import { useParams } from "@solidjs/router";
 import { FloatingWindow } from "@/components";
 import { Navi, SendArea, SendPane } from "@/components/pages";
 import _currentInfo from "@/components/contexts/current-info-ctx";
-import { onOpenHandler } from "@/controllers/ws"
+import { wsOnopenHandler } from "@/controllers/ws"
 
 
 const SendPage = () => {
@@ -31,7 +31,7 @@ const SendPage = () => {
       return
     }
     ws.onopen = () => {
-      onOpenHandler(ws, param.roomid, currentUser())
+      wsOnopenHandler(ws, param.roomid, currentUser())
     }
     ws.onclose = () => {
       console.log("ws close");

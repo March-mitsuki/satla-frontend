@@ -9,7 +9,8 @@ import _currentInfo from "@/components/contexts/current-info-ctx";
 // type
 import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
-import type { c2sAddSubtitle, s2cEventMap, s2cAddUserBody } from "@/interfaces/ws"
+import type { c2sAddSubtitle, s2cEventMap } from "@/interfaces/ws"
+import { wsAddUserHandler } from "@/controllers/ws";
 
 // for test
 import dummySub from "@/assets/dummy-subtitles"
@@ -342,10 +343,7 @@ const CheckArea: ParentComponent<{
     props.ws.onmessage = (evt) => {
       const data: s2cEventMap = JSON.parse(evt.data)
       if (data.head.cmd === "sAddUser") {
-        const body: s2cAddUserBody = data.body
-        setUserList(body.users)
-        setSubtitles(body.subtitles)
-        console.log("add user msg: ", body);
+        wsAddUserHandler(data, setUserList, setSubtitles)
       }
     }
   })

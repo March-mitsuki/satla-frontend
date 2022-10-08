@@ -10,7 +10,7 @@ import { FloatingWindowX, FloatingWindow } from "@/components";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
 import _currentInfo from "@/components/contexts/current-info-ctx"
-import { onOpenHandler } from "@/controllers/ws";
+import { wsOnopenHandler } from "@/controllers/ws";
 
 
 const TranslatePage = () => {
@@ -50,7 +50,7 @@ const TranslatePage = () => {
       return
     }
     ws.onopen = () => {
-      onOpenHandler(ws, param.roomid, currentUser())
+      wsOnopenHandler(ws, param.roomid, currentUser())
     }
     ws.onclose = () => {
       console.log("ws close");
@@ -60,8 +60,8 @@ const TranslatePage = () => {
     }
 
     onCleanup(() => {
-      if (ws?.readyState === ws?.OPEN) {
-        ws?.close()
+      if (ws.readyState === ws.OPEN) {
+        ws.close()
       }
     })
   })

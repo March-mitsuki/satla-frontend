@@ -1,18 +1,28 @@
 // type
-import { Subtitle } from "@/interfaces"
+import { Subtitle } from "@/interfaces";
 import type {
   UserInfoFromServer,
 } from "@/interfaces";
 import type {
   c2sAddUser,
   c2sGetRoomSubtitles,
+  s2cEventMap,
+  s2cAddUserBody,
 } from "@/interfaces/ws"
+import type { Setter } from "solid-js";
 
-export const postChange = (ws: WebSocket, subtitle: Subtitle) => {
-
+export const wsAddUserHandler = (
+  data: s2cEventMap,
+  setUserList: Setter<string[]>,
+  setSubtitles: Setter<Subtitle[] | undefined>,
+) => {
+  const body: s2cAddUserBody = data.body
+  setUserList(body.users)
+  setSubtitles(body.subtitles)
+  console.log("add user msg: ", body);
 }
 
-export const onOpenHandler = (
+export const wsOnopenHandler = (
   ws: WebSocket,
   roomid: string,
   currentUserInfo: UserInfoFromServer,

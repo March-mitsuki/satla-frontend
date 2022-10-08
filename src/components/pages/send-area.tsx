@@ -9,6 +9,7 @@ import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
 import { c2sAddSubtitle, s2cAddUserBody, s2cEventMap } from "@/interfaces/ws"
 import _currentInfo from "@/components/contexts/current-info-ctx";
+import { wsAddUserHandler } from "@/controllers/ws"
 
 // for test
 import dummySub from "@/assets/dummy-subtitles"
@@ -179,10 +180,7 @@ const SendArea: ParentComponent<{
     props.ws.onmessage = (evt) => {
       const data: s2cEventMap = JSON.parse(evt.data)
       if (data.head.cmd === "sAddUser") {
-        const body: s2cAddUserBody = data.body
-        setUserList(body.users)
-        setSubtitles(body.subtitles)
-        console.log("add user msg: ", body);
+        wsAddUserHandler(data, setUserList, setSubtitles)
       }
     }
   })
