@@ -3,6 +3,7 @@ import { For } from "solid-js"
 
 // type
 import type { Component } from "solid-js"
+import type { JSX } from "solid-js"
 
 const WsUsers: Component<{
   userList: string[]
@@ -12,7 +13,17 @@ const WsUsers: Component<{
     if (idx === 0) {
       return ""
     }
-    return `absolute right-${idx * 5}`
+    return `absolute right-[${idx * 20}px]`
+  }
+  const listStylePositon = (idx: number): JSX.CSSProperties | string => {
+    if (idx === 0) {
+      return ""
+    }
+    const style: JSX.CSSProperties = {
+      "position": "absolute",
+      "right": `${idx * 20}px`,
+    }
+    return style
   }
   const colors = [
     "bg-red-400", "bg-sky-600", "bg-orange-600",
@@ -22,10 +33,14 @@ const WsUsers: Component<{
   const randomColor = () => {
     return Math.floor(Math.random() * colors.length)
   }
+  const testUserList = ["A", "B", "C", "D", "E"]
   return (
-    <ul class="flex relative">
-      <For each={props.userList}>{(elem, idx) =>
-        <li class={`${baseStyle} ${colors[randomColor()]} ${listPosition(idx())}`}>
+    <ul class="flex relative h-full">
+      <For each={testUserList}>{(elem, idx) =>
+        <li
+          style={listStylePositon(idx())}
+          class={`${baseStyle} ${colors[randomColor()]} ${listPosition(idx())}`
+        }>
           {elem}
         </li>
       }</For>
