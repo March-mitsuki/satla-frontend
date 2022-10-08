@@ -73,7 +73,7 @@ const ProjectForm = () => {
       project_name: projectName,
       description: description,
       point_man: pointMan,
-      created_by: currentUser().name,
+      created_by: currentUser().user_name,
     }
     poster(newProject)
     .then(async res => {

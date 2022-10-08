@@ -57,7 +57,7 @@ export interface LoginUser {
 
 export interface UserInfoFromServer {
   id: number
-  name: string
+  user_name: string
   email: string
 }
 

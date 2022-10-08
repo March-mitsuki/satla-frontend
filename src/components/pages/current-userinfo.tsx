@@ -15,7 +15,7 @@ const currentUserInfo = () => {
     const body = await new Promise<UserInfoFromServer>((resolve, reject) => {
       setTimeout(() => {
         resolve({
-          name: "local_test",
+          user_name: "local_test",
           email: "test@email",
           id: 1234,
         })
@@ -34,7 +34,7 @@ const currentUserInfo = () => {
     onCleanup(() => {
       setCurrentUser({
         id: -1,
-        name: "connecting...",
+        user_name: "connecting...",
         email: "",
       })
     })
@@ -43,7 +43,7 @@ const currentUserInfo = () => {
   return (
     <div>
       <span>{ cUserInfo.loading && "Loading..." }</span>
-      {cUserInfo()?.name}
+      {cUserInfo()?.user_name}
     </div>
   )
 }

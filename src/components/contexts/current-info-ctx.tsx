@@ -7,7 +7,7 @@ import { UserInfoFromServer } from "@/interfaces";
 const handlerCurrentUser = () => {
   const [currentUser, setCurrentUser] = createSignal<UserInfoFromServer>({
     id: -1,
-    name: "connecting...",
+    user_name: "connecting...",
     email: "",
   })
   const [userList, setUserList] = createSignal<string[]>([])

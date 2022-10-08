@@ -41,7 +41,7 @@ export const onopenHandler = (
       cmd: "addUser"
     },
     body: {
-      uname: currentUserInfo.name
+      uname: currentUserInfo.user_name
     }
   }
   const addUser = new TextEncoder().encode(JSON.stringify(_addUser))
