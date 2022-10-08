@@ -39,8 +39,8 @@ const WsUsers: Component<{
       <For each={testUserList}>{(elem, idx) =>
         <li
           style={listStylePositon(idx())}
-          class={`${baseStyle} ${colors[randomColor()]} ${listPosition(idx())}`
-        }>
+          class={`${baseStyle} ${colors[randomColor()]} ${listPosition(idx())}`}
+        >
           {elem}
         </li>
       }</For>
