@@ -23,22 +23,6 @@ export class Subtitle {
   }
 }
 
-// 服务器传回来的数据example
-// map[
-//   checked_by: 
-//   created_at:2022-09-25 01:08:23.934 +0000 UTC
-//   deleted_at:<nil> 
-//   id:1 
-//   input_time:12:32:40 
-//   origin: 
-//   project_id:1 
-//   project_name:default 
-//   send_time:2022-09-25 01:08:23.933 +0000 UTC 
-//   subtitle: 
-//   translated_by:三月 
-//   updated_at:2022-09-25 01:08:23.934 +0000 UTC
-// ]
-
 // 前端subtitle配套的附加属性, 用于判断拖动状态
 export class FloatingElem {
   id: number
@@ -60,20 +44,6 @@ export class FloatingElem {
   }
 }
 
-export interface Project {
-  id: number
-  project_name: string
-  description: string
-  point_man: string
-  created_by: string
-}
-
-// Project的example, 不指定model直接返回的结果
-// {
-//   {1 2022-09-25 02:58:51.505 +0000 UTC 2022-09-25 02:58:51.505 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}}
-//   default 默认项目 三月 三月
-// } 
-
 export interface SignupUser {
   user_name: string
   email: string
@@ -89,6 +59,20 @@ export interface UserInfoFromServer {
   id: number
   name: string
   email: string
+}
+
+interface DataFromServerHead {
+  id: number
+  created_at: any
+  updated_at: any
+  deleted_at: any
+}
+
+export interface ProjectFromServer extends DataFromServerHead {
+  project_name: string
+  description: string
+  point_man: string
+  created_by: string
 }
 
 // 2000番 -> 成功

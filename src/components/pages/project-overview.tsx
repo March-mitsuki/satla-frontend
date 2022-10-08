@@ -4,10 +4,10 @@ import { Link } from "@solidjs/router"
 
 // type
 import type { Component } from "solid-js"
-import type { Project } from "@/interfaces"
+import type { ProjectFromServer } from "@/interfaces"
 
 const ProjectOverview: Component<{
-  projects: Project[]
+  projects: ProjectFromServer[] | undefined
 }> = (props) => {
   return (
     <div class="flex flex-col gap-2 border-2 p-2">

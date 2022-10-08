@@ -1,5 +1,6 @@
 // dependencies lib
 import { Title } from "@solidjs/meta";
+import { createResource, createSignal, onMount } from "solid-js"
 
 // local dependencies
 import { PaneX } from "@/components";
@@ -12,12 +13,20 @@ import {
 
 // type
 import type { Component } from "solid-js";
-
-// for temporary test
-import dummyProject from "@/assets/dummy-project";
+import type { ProjectFromServer } from "@/interfaces";
 
 
 const Home: Component = () => {
+  // const [ projects, setProjects ] = createSignal<Project[]>(dummyProject)
+  const fetchAllProjects = async () => {
+    const url = "http://192.168.64.3:8080/api/all_projects"
+    const response = await fetch(url)
+    const body: ProjectFromServer[] = await response.json()
+    console.log("get all projects respons body: ", body);
+    return body
+  }
+  const [ projects ] = createResource<ProjectFromServer[]>(fetchAllProjects)
+
   return (
     <>
       <Title>Vvvorld</Title>
@@ -38,7 +47,8 @@ const Home: Component = () => {
             minRightElem="20%"
             leftElem={
               <div class="p-2">
-                <ProjectOverview projects={dummyProject}></ProjectOverview>
+                {projects.loading && <span>connecting to server...</span>}
+                <ProjectOverview projects={projects()}></ProjectOverview>
               </div>
             }
             rightElem={
