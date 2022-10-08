@@ -11,11 +11,11 @@ const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-5
 
 const ProjectForm = () => {
   const { currentUser } = _currentInfo
-  const [ isErr, setIsErr ] = createSignal<{
-    status: boolean,
+  const [ postStatus, setPostStatus ] = createSignal<{
+    status: 0 | 1 | 2 , // 1 -> 失败, 2 -> 成功, 默认为0
     msg: string
   }>({
-    status: false,
+    status: 0,
     msg: ""
   })
 
@@ -41,36 +41,35 @@ const ProjectForm = () => {
     const description: string = formElem.description.value
     const pointMan: string = formElem.pointMan.value
     if (!projectName || !description || !pointMan) {
-      setIsErr({
-        status: true,
+      setPostStatus({
+        status: 1,
         msg: "请填写所有项目",
       })
       return
     }
     if (description.length > 100) {
-      setIsErr({
-        status: true,
+      setPostStatus({
+        status: 1,
         msg: "项目描述超过100字",
       })
       return
     }
     const re = new RegExp("^[a-z0-9_]{1,30}$");
     if (!re.test(projectName)) {
-      setIsErr({
-        status: true,
+      setPostStatus({
+        status: 1,
         msg: "只允许英文小文字加下划线组合",
       })
       return
     }
     if (currentUser().id === -1) {
-      setIsErr({
-        status: true,
+      setPostStatus({
+        status: 1,
         msg: "登录状态出错,请重新登录后尝试",
       })
       return
     }
     const newProject: Project = {
-      id: Date.now(),
       project_name: projectName,
       description: description,
       point_man: pointMan,
@@ -82,9 +81,9 @@ const ProjectForm = () => {
         const body: NewProjectResponseBody = await res.json()
         if (body.code === -1) {
           if (body.status === 5303) {
-            setIsErr({
-              status: true,
-              msg: "创建失败, 可能是项目名称重复, 请更改后重试"
+            setPostStatus({
+              status: 1,
+              msg: "创建失败, 可能是项目名称重复, 请更改后重试, 若一直失败请联系管理员"
             })
           }
         } else if (body.code === 0) {
@@ -92,18 +91,18 @@ const ProjectForm = () => {
           formElem.projectName.value = ""
           formElem.description.value = ""
           formElem.pointMan.value = ""
-          if (isErr()) {
-            setIsErr({
-              status: false,
-              msg: "",
+          if (postStatus()) {
+            setPostStatus({
+              status: 2,
+              msg: "创建成功, 现在可以刷新项目列表查看新项目",
             })
           }
         }
       }
     })
     .catch(err => {
-      setIsErr({
-        status: true,
+      setPostStatus({
+        status: 1,
         msg: "网络错误: " + err,
       })
     })
@@ -135,14 +134,16 @@ const ProjectForm = () => {
       onSubmit={e => onSubmitHandler(e)}
       class="border-2 p-2 flex gap-2 justify-center overflow-auto"
     >
-      {isErr().status && 
-        <div class="flex flex-col text-red-500 h-20 overflow-hidden">
+      {postStatus().status === 1 && 
+        <div class="text-red-500 h-20 overflow-hidden">
           <div>
-            *{isErr().msg}
+            *{postStatus().msg}
           </div>
-          <div>
-            *若一直失败请联系管理员
-          </div>
+        </div>
+      }
+      {postStatus().status === 2 && 
+        <div class="text-green-500 h-20 overflow-hidden">
+          *{postStatus().msg}
         </div>
       }
       <label

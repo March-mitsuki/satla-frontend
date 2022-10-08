@@ -68,12 +68,14 @@ interface DataFromServerHead {
   deleted_at: any
 }
 
-export interface ProjectFromServer extends DataFromServerHead {
+export interface Project {
   project_name: string
   description: string
   point_man: string
   created_by: string
 }
+
+export interface ProjectFromServer extends DataFromServerHead, Project {}
 
 // 2000番 -> 成功
 // 4000番 -> 请求不正确
