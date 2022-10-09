@@ -19,6 +19,8 @@ https://github.com/March-mitsuki/vvvorld
   }
 }
 ```
+* 在数据上roomid === project_name
+  * 通过subtitles的project_id进行连接(但不设置外键)
 
 ## 注意事项
 * 现在输入只监听回车和按钮, 当blur的时候不更新
@@ -38,8 +40,9 @@ https://github.com/March-mitsuki/vvvorld
 ## todo
 - [ ] 基本功能
   - [ ] 发送页面
+  - [ ] ws连接显示灯
   - [ ] 切换项目功能
-    - [ ] 字幕分房间储存
+    - [x] 字幕分房间储存
 - [ ] 进阶功能
   - [ ] 把signal改成store应该能增加性能
   - [ ] 现在getElement和ref混在, 之后需要找时间统一, 由于solidjs不使用虚拟dom, 应该用id和ref最终得到的效果是一样的

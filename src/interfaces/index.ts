@@ -4,20 +4,36 @@ export class Subtitle {
   input_time: string // 行左边显示的时间
   send_time: Date | null // 为null则为未发送
   project_id: number
-  project_name: string
   translated_by: string
   checked_by: string // 为空字符串则为未校对
   subtitle: string // 翻译
   origin: string // 原文
 
-  constructor() {
-    this.id = Date.now()
-    this.input_time = "11:34:30"
+  constructor(
+    {
+      id,
+      project_id,
+      translated_by,
+      checked_by
+    }:{
+      id: number,
+      project_id: number,
+      translated_by: string,
+      checked_by?: string 
+    }
+  ){
+    if (checked_by) {
+      this.checked_by = checked_by
+    } else {
+      this.checked_by = ""
+    }
+
+    this.id = id
+    this.project_id = project_id
+    this.translated_by = translated_by
+
+    this.input_time = "00:00:00"
     this.send_time = null
-    this.project_id = -1
-    this.project_name = ""
-    this.translated_by = ""
-    this.checked_by = ""
     this.subtitle = ""
     this.origin = ""
   }
@@ -33,8 +49,8 @@ export class FloatingElem {
   hidden: boolean
   isDrop: boolean
 
-  constructor() {
-    this.id = Date.now()
+  constructor(id: number) {
+    this.id = id
     this.zIndex = "auto"
     this.position = "static"
     this.isFloating = false

@@ -7,7 +7,7 @@ import _subtitles from "../contexts/subtitles"
 // type
 import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
-import { c2sAddSubtitle, s2cEventMap } from "@/interfaces/ws"
+import { c2sAddSubtitleUp, s2cEventMap } from "@/interfaces/ws"
 import _currentInfo from "@/components/contexts/current-info-ctx";
 import { wsHandler } from "@/controllers"
 
@@ -79,9 +79,9 @@ const SendArea: ParentComponent<{
       console.log("props.ws is undifiend");
       return
     }
-    const postSubtitle: c2sAddSubtitle = {
+    const postSubtitle: c2sAddSubtitleUp = {
       head: {
-        cmd: "addSubtitle"
+        cmd: "addSubtitleUp"
       },
       body: {
         data: subtitle
@@ -181,10 +181,10 @@ const SendArea: ParentComponent<{
       const data: s2cEventMap = JSON.parse(evt.data)
       switch (data.head.cmd) {
         case "sChangeUser":
-          wsHandler.addUserHandler(data, setUserList)
+          wsHandler.addUser(data, setUserList)
           break;
         case "sGetRoomSubtitles":
-          wsHandler.getRoomSubHandler(data, setSubtitles)
+          wsHandler.getRoomSubtitles(data, setSubtitles, setFloatingElem)
           break;
         default:
           console.log("unknow cmd: ", data);

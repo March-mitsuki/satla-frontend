@@ -1,13 +1,36 @@
 import { Subtitle } from "."
 
 // c2s -> client to server msg
-// s2c -> server to client msg
-export interface c2sAddSubtitle {
+export interface c2sAddSubtitleUp {
   head: {
-    cmd: "addSubtitle"
+    cmd: "addSubtitleUp"
   }
   body: {
-    data: Subtitle
+    pre_subtitle_id: number
+    pre_subtitle_idx: number
+    project_id: number
+    checked_by: string
+  }
+}
+
+export interface c2sAddSubtitleDown {
+  head: {
+    cmd: "addSubtitleDown"
+  }
+  body: {
+    pre_subtitle_id: number
+    pre_subtitle_idx: number
+    project_id: number
+    checked_by: string
+  }
+}
+
+export interface c2sChangeSubtitle {
+  head: {
+    cmd: "changeSubtitle"
+  }
+  body: {
+    subtitle: Subtitle
   }
 }
 
@@ -29,10 +52,14 @@ export interface c2sGetRoomSubtitles {
   }
 }
 
-// 先用s2cEventMap判断cmd, 之后再解析body
+
+// s2c -> server to client msg
 export interface s2cEventMap {
+  // 先用s2cEventMap判断cmd, 之后再解析body
   head: {
-    cmd: "sChangeUser" | "sGetRoomSubtitles"
+    cmd: 
+      "sChangeUser" | "sGetRoomSubtitles" |
+      "sAddSubtitleUp" | "sAddSubtitleDown" 
   }
   body: any
 }
@@ -43,4 +70,14 @@ export interface s2cChangeUserBody {
 
 export interface s2cGetRoomSubBody {
   subtitles: Subtitle[]
+  order: string
+}
+
+export interface s2cAddSubtitleBody {
+  // 无论往上加还是往下加, client需要的body资料都相同
+  // 只是通过不同的cmd判断是往上加还是往下加而已
+  project_id: number
+  new_subtitle_id: number
+  pre_subtitle_idx: number
+  checked_by: string
 }
