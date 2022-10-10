@@ -11,7 +11,7 @@ import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
 import _currentInfo from "@/components/contexts/current-info-ctx"
 import _subtitles from "@/components/contexts/subtitles"
-import { wsHandler } from "@/controllers";
+import { wsOn } from "@/controllers";
 
 
 const TranslatePage = () => {
@@ -52,7 +52,7 @@ const TranslatePage = () => {
       return
     }
     ws.onopen = () => {
-      wsHandler.onopen(ws, param.roomid, currentUser())
+      wsOn.onopen(ws, param.roomid)
     }
     ws.onclose = () => {
       console.log("ws close");

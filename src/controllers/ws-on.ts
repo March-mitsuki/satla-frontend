@@ -1,16 +1,12 @@
 // local dependencies
 import _currentInfo from "@/components/contexts/current-info-ctx";
+import { wsSend } from "."
 
 // type
 import { Subtitle } from "@/interfaces";
 import type {
-  UserInfoFromServer,
   FloatingElem,
 } from "@/interfaces";
-import type {
-  c2sChangeUser,
-  c2sGetRoomSubtitles,
-} from "@/interfaces/ws"
 import type {
   s2cEventMap,
   s2cChangeUserBody,
@@ -60,27 +56,8 @@ export const getRoomSubtitles = (
 export const onopen = (
   ws: WebSocket,
   roomid: string,
-  currentUserInfo: UserInfoFromServer,
 ) => {
   console.log("ws connected");
-  const _addUser: c2sChangeUser = {
-    head: {
-      cmd: "changeUser"
-    },
-    body: {
-      uname: currentUserInfo.user_name
-    }
-  }
-  const addUser = new TextEncoder().encode(JSON.stringify(_addUser))
-  ws.send(addUser)
-  const _getRoomSubtitles: c2sGetRoomSubtitles = {
-    head: {
-      cmd: "getRoomSubtitles"
-    },
-    body: {
-      roomid: roomid
-    }
-  }
-  const getRoomSubtitles = new TextEncoder().encode(JSON.stringify(_getRoomSubtitles))
-  ws.send(getRoomSubtitles)
+  wsSend.addUser(ws)
+  wsSend.getRoomSubtitles(ws, roomid)
 }

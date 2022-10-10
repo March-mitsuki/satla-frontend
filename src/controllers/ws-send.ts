@@ -4,10 +4,41 @@ import _currentInfo from "@/components/contexts/current-info-ctx";
 // type
 import { Subtitle } from "@/interfaces"
 import type {
+  c2sChangeUser,
+  c2sGetRoomSubtitles,
   c2sChangeSubtitle,
   c2sAddSubtitleUp,
   c2sAddSubtitleDown,
 } from "@/interfaces/ws"
+
+export const addUser = (ws: WebSocket) => {
+  const _addUser: c2sChangeUser = {
+    head: {
+      cmd: "changeUser"
+    },
+    body: {
+      uname: _currentInfo.currentUser().user_name
+    }
+  }
+  const addUser = new TextEncoder().encode(JSON.stringify(_addUser))
+  ws.send(addUser)
+}
+
+export const getRoomSubtitles = (
+  ws: WebSocket,
+  roomid: string,
+) => {
+  const _getRoomSubtitles: c2sGetRoomSubtitles = {
+    head: {
+      cmd: "getRoomSubtitles"
+    },
+    body: {
+      roomid: roomid
+    }
+  }
+  const getRoomSubtitles = new TextEncoder().encode(JSON.stringify(_getRoomSubtitles))
+  ws.send(getRoomSubtitles)
+}
 
 export const changeSubtitle = (
   {
