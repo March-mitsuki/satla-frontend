@@ -31,7 +31,7 @@ const CheckArea: ParentComponent<{
     subtitles, setSubtitles,
     attachedInfo, setAttachedInfo,
   } = _subtitles
-  const { setUserList } = _currentInfo
+  const { currentUser, setUserList } = _currentInfo
   const [ isComposition, setIsComposition ] = createSignal(false)
 
   if (typeof subtitles() === "undefined") {
@@ -118,6 +118,7 @@ const CheckArea: ParentComponent<{
 
     subtitle.subtitle = formElem.subtitle.value
     subtitle.origin = formElem.origin.value
+    subtitle.checked_by = currentUser().user_name
     wsSend.changeSubtitle({ws: props.ws, subtitle: subtitle})
   }
 
@@ -175,6 +176,7 @@ const CheckArea: ParentComponent<{
 
       subtitle.subtitle = formElem.subtitle.value
       subtitle.origin = formElem.origin.value
+      subtitle.checked_by = currentUser().user_name
       wsSend.changeSubtitle({ws: props.ws, subtitle: subtitle})
     }
   }
@@ -212,7 +214,7 @@ const CheckArea: ParentComponent<{
       return
     }
     let belowElem: Element | null
-    const currentFormWrapper = document.getElementById(subtitle.id.toString() + "-form")
+    const currentFormWrapper = document.getElementById(`${subtitle.id}-wrapper`)
 
     let shiftY: number;
     shiftY = e.clientY - (currentFormWrapper as HTMLDivElement).getBoundingClientRect().top;
@@ -262,7 +264,7 @@ const CheckArea: ParentComponent<{
       ) {
         afterFormWrapper = belowElem.closest("form")?.parentNode
         if (afterFormWrapper) {
-          const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
+          const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-wrapper", ""))
           const reorderIdx = (attachedInfo() as AttachedInfo[]).findIndex(elem => elem.id === elemId)
           const spliceElem = (attachedInfo() as AttachedInfo[])[reorderIdx]
           spliceElem.id = (attachedInfo() as AttachedInfo[])[reorderIdx].id
@@ -288,7 +290,7 @@ const CheckArea: ParentComponent<{
       ) {
         // 如果放开鼠标时在指定元素上
         afterFormWrapper = belowElem.closest("form")?.parentNode
-        const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
+        const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-wrapper", ""))
         const reorderIdx = (attachedInfo() as AttachedInfo[]).findIndex(elem => elem.id === elemId)
 
         if (reorderIdx > idx) {
@@ -452,14 +454,30 @@ const CheckArea: ParentComponent<{
           if (!dc_attachedInfo) {
             return
           }
-          const idx = dc_attachedInfo.findIndex(elem => elem.id === changeSubBody.subtitle_id)          
+          const idx = dc_attachedInfo.findIndex(elem => elem.id === changeSubBody.subtitle.id)       
           if (!changeSubBody.status) {
+            // 无论是否更新成功都要deep copy之后进行更新, 所以先.map并不会造成性能损失
             dc_attachedInfo[idx].changeStatus = 2
             setAttachedInfo(dc_attachedInfo)
           } else {
             if (dc_attachedInfo[idx].changeStatus === 2 || 1) {
               dc_attachedInfo[idx].changeStatus = 0
               setAttachedInfo(dc_attachedInfo)
+            }
+            if (changeSubBody.subtitle.checked_by !== currentUser().user_name) {
+              // 如果成功并且进行操作的人是别人, 那么同时更新subtitle
+              const dc_subtitles = subtitles()?.map(x => x)
+              if (!dc_subtitles) {
+                return
+              }
+              dc_subtitles[idx].subtitle = changeSubBody.subtitle.subtitle
+              dc_subtitles[idx].origin = changeSubBody.subtitle.origin
+              dc_subtitles[idx].checked_by = changeSubBody.subtitle.checked_by
+              setSubtitles(dc_subtitles);
+              // 更新subtitles之后只会反应checked_by不知道为什么
+              const currentForm = document.getElementById(`${changeSubBody.subtitle.id}-form`);
+              (currentForm as HTMLFormElement).subtitle.value = changeSubBody.subtitle.subtitle;
+              (currentForm as HTMLFormElement).origin.value = changeSubBody.subtitle.origin;
             }
           }
           break;
@@ -494,7 +512,7 @@ const CheckArea: ParentComponent<{
         console.log("creat For!");
         return (
           <div
-            id={`${elem.id}-form`}
+            id={`${elem.id}-wrapper`}
             style={{
               "z-index": (attachedInfo() as AttachedInfo[])[idx()].zIndex,
               "position": `${(attachedInfo() as AttachedInfo[])[idx()].position}`,
@@ -507,6 +525,7 @@ const CheckArea: ParentComponent<{
             hidden={(attachedInfo() as AttachedInfo[])[idx()].hidden}
           >
             <form
+              id={`${elem.id}-form`}
               onCompositionStart={() => onCompoStartHandler(idx())}
               onCompositionEnd={() => setIsComposition(false)}
               onInput={() => onInputHandler(idx())}

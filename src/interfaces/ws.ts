@@ -31,6 +31,8 @@ export interface c2sChangeSubtitle {
     cmd: "changeSubtitle"
   }
   body: {
+    // 虽然发送整个subtitle, 但是只更新checked_by, subtitle, origin三个要素
+    // 之后可以考虑削减发送的数据量来进行性能提升
     subtitle: Subtitle
   }
 }
@@ -109,7 +111,7 @@ export interface s2cChangeSubtitleBody {
   // 更改逻辑:
   // 更改字幕 -> 修改本地subtitle -> ws send -> ws on
   status: boolean // 当status === false的时候显示更改失败
-  subtitle_id: number // 用来查找subtitle id用于更改style
+  subtitle: Subtitle // change subtitle的时候checked_by一定是当前用户
 }
 
 export interface s2cEditChangeBody {

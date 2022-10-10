@@ -19,7 +19,7 @@ const currentUserInfo = () => {
           email: "test@email",
           id: 1234,
         })
-      }, 2000);
+      }, 1000);
     })
     return body
   }
