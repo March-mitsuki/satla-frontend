@@ -50,7 +50,7 @@ export class AttachedInfo {
   hidden: boolean
   isDrop: boolean
   isEditing: boolean
-  changeStatus: boolean
+  changeStatus: 0 | 1 | 2 // 0 -> 正常, 1 -> 未提交, 2 -> 错误
 
   constructor(id: number) {
     this.id = id
@@ -61,7 +61,7 @@ export class AttachedInfo {
     this.hidden = false
     this.isDrop = false
     this.isEditing = false
-    this.changeStatus = true // 初始为ture, 当为false的时候说明改行更改失败
+    this.changeStatus = 0 // 服务器传回来的changeStatus为bool, 因为是否提交后端不需要知道
   }
 }
 

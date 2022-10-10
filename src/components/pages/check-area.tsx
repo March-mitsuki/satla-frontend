@@ -374,6 +374,25 @@ const CheckArea: ParentComponent<{
     }
   }
 
+  const onCompoStartHandler = (idx: number) => {
+    setIsComposition(true)
+    const dc_attachedInfo = attachedInfo()?.map(x => x)
+    if (!dc_attachedInfo) {
+      return
+    }
+    dc_attachedInfo[idx].changeStatus = 1
+    setAttachedInfo(dc_attachedInfo)
+  }
+
+  const onInputHandler = (idx: number) => {
+    const dc_attachedInfo = attachedInfo()?.map(x => x)
+    if (!dc_attachedInfo) {
+      return
+    }
+    dc_attachedInfo[idx].changeStatus = 1
+    setAttachedInfo(dc_attachedInfo)
+  }
+
   const editStart = (idx: number) => {
     const dc_attachedInfo = attachedInfo()?.map(x => x)
     if (!dc_attachedInfo) {
@@ -429,17 +448,13 @@ const CheckArea: ParentComponent<{
           if (!dc_attachedInfo) {
             return
           }
-          console.log("on change msg", changeSubBody);
-          
-          const idx = dc_attachedInfo.findIndex(elem => elem.id === changeSubBody.subtitle_id)
-          console.log("on change msg idx: ", idx);
-          
+          const idx = dc_attachedInfo.findIndex(elem => elem.id === changeSubBody.subtitle_id)          
           if (!changeSubBody.status) {
-            dc_attachedInfo[idx].changeStatus = false
+            dc_attachedInfo[idx].changeStatus = 2
             setAttachedInfo(dc_attachedInfo)
           } else {
-            if (dc_attachedInfo[idx].changeStatus === false) {
-              dc_attachedInfo[idx].changeStatus = true
+            if (dc_attachedInfo[idx].changeStatus === 2 || 1) {
+              dc_attachedInfo[idx].changeStatus = 0
               setAttachedInfo(dc_attachedInfo)
             }
           }
@@ -472,16 +487,18 @@ const CheckArea: ParentComponent<{
             hidden={(attachedInfo() as AttachedInfo[])[idx()].hidden}
           >
             <form
-              onCompositionStart={() => setIsComposition(true)}
+              onCompositionStart={() => onCompoStartHandler(idx())}
               onCompositionEnd={() => setIsComposition(false)}
+              onInput={() => onInputHandler(idx())}
               onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}
               onSubmit={(e) => onSubmitHandler(e, idx(), elem)}
               onFocusIn={() => editStart(idx())}
               onFocusOut={() => editEnd(idx())}
               class="flex px-2 gap-2 items-center"
               classList={{
-                "flex px-2 gap-2 items-center": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === true,
-                "flex px-2 gap-2 items-center border-2 border-red-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === false,
+                "flex px-2 gap-2 items-center": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 0,
+                "flex px-2 gap-2 items-center border-2 border-orange-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 1,
+                "flex px-2 gap-2 items-center border-2 border-red-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 2,
               }}
             >
               <Switch fallback={
