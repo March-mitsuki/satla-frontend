@@ -39,10 +39,24 @@ https://github.com/March-mitsuki/vvvorld
 
 ## todo
 - [ ] 基本功能
+  - [ ] 翻译页面
+    - [x] 加行(up down)
+    - [ ] 加翻译行
+    - [ ] 删除行
+    - [ ] 拖动行
   - [ ] 发送页面
-  - [ ] ws连接显示灯
+    - [x] 加行(up down)
+    - [ ] 直接发送
+    - [ ] 删除行
+    - [ ] css控制
+    - [ ] 发送空行
+  - [ ] 显示页面
+  - [ ] ws连接
+    - [x] 当前房间人数
+    - [ ] 连接显示灯
   - [ ] 切换项目功能
     - [x] 字幕分房间储存
+    - [ ] 项目显示分页
 - [ ] 进阶功能
   - [ ] 把signal改成store应该能增加性能
   - [ ] 现在getElement和ref混在, 之后需要找时间统一, 由于solidjs不使用虚拟dom, 应该用id和ref最终得到的效果是一样的
@@ -56,4 +70,4 @@ https://github.com/March-mitsuki/vvvorld
   * 当前解决方式是分成两个array解决, 需要统一两个array的idx, 需要代码层面保证不会出现idx错位
 * ~~从translate等带有ws连接的页面迁移出来时ws不会自动断开连接~~ 已解决
   * ~~应该是用的是routes的LINk的关系所以会自动cache到本地, 所以导致现在server 的check login也出了问题, 找时候修一修~~
-* 每次新人连接都会更新别人的subtitles, 可以改成onopen的时候同时发两条cmd
+* ~~每次新人连接都会更新别人的subtitles, 可以改成onopen的时候同时发两条cmd~~ 已解决
