@@ -53,6 +53,26 @@ export interface c2sGetRoomSubtitles {
   }
 }
 
+export interface c2sEditStart {
+  head: {
+    cmd: "editStart"
+  }
+  body: {
+    subtitle_id: number
+    uname: string
+  }
+}
+
+export interface c2sEditEnd {
+  head: {
+    cmd: "editEnd"
+  }
+  body: {
+    subtitle_id: number
+    uname: string
+  }
+}
+
 
 // s2c -> server to client msg
 
@@ -62,7 +82,7 @@ export interface s2cEventMap {
     cmd: 
       "sChangeUser" | "sGetRoomSubtitles" |
       "sAddSubtitleUp" | "sAddSubtitleDown" |
-      "sChangeSubtitle"
+      "sChangeSubtitle" | "sEditStart" | "sEditEnd"
   }
   body: any
 }
@@ -90,4 +110,10 @@ export interface s2cChangeSubtitleBody {
   // 更改字幕 -> 修改本地subtitle -> ws send -> ws on
   status: boolean // 当status === false的时候显示更改失败
   subtitle_id: number // 用来查找subtitle id用于更改style
+}
+
+export interface s2cEditChangeBody {
+  // body都一样, 只是cmd不同
+  subtitle_id: number
+  uname: string
 }

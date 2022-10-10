@@ -9,6 +9,8 @@ import type {
   c2sChangeSubtitle,
   c2sAddSubtitleUp,
   c2sAddSubtitleDown,
+  c2sEditStart,
+  c2sEditEnd,
 } from "@/interfaces/ws"
 
 export const addUser = (ws: WebSocket) => {
@@ -49,7 +51,7 @@ export const changeSubtitle = (
     subtitle: Subtitle
   }
 ) => {
-  if (typeof(ws) === "undefined") {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
     window.alert("正在连接到服务器, 请稍等")
     return
   }
@@ -63,8 +65,6 @@ export const changeSubtitle = (
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))
   ws.send(postData)
-  console.log("send change subtitle: ", JSON.stringify(_postData));
-
 }
 
 export const addSubtitleUp = (
@@ -80,7 +80,7 @@ export const addSubtitleUp = (
     project_id: number,
   }
 ) => {
-  if (typeof(ws) === "undefined") {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
     window.alert("正在连接到服务器, 请稍等")
     return
   }
@@ -97,7 +97,6 @@ export const addSubtitleUp = (
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))
   ws.send(postData)
-  console.log("add subtitle up: ", _postData);
 }
 
 export const addSubtitleDown = (
@@ -113,7 +112,7 @@ export const addSubtitleDown = (
     project_id: number,
   }
 ) => {
-  if (typeof(ws) === "undefined") {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
     window.alert("正在连接到服务器, 请稍等")
     return
   }
@@ -130,5 +129,46 @@ export const addSubtitleDown = (
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))
   ws.send(postData)
-  console.log("send subtitle down: ", _postData);
+}
+
+export const editStart = (
+  ws: WebSocket | undefined,
+  subtitle_id: number,
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    window.alert("正在连接到服务器, 请稍等")
+    return
+  }
+  const _postData: c2sEditStart = {
+    head: {
+      cmd: "editStart"
+    },
+    body: {
+      uname: _currentInfo.currentUser().user_name,
+      subtitle_id: subtitle_id
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+}
+
+export const editEnd = (
+  ws: WebSocket | undefined,
+  subtitle_id: number,
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    window.alert("正在连接到服务器, 请稍等")
+    return
+  }
+  const _postData: c2sEditEnd = {
+    head: {
+      cmd: "editEnd"
+    },
+    body: {
+      uname: _currentInfo.currentUser().user_name,
+      subtitle_id: subtitle_id
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
 }

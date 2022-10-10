@@ -13,6 +13,7 @@ import type {
   s2cEventMap,
   s2cAddSubtitleBody,
   s2cChangeSubtitleBody,
+  s2cEditChangeBody,
 } from "@/interfaces/ws"
 import { wsOn, wsSend } from "@/controllers";
 
@@ -32,7 +33,6 @@ const CheckArea: ParentComponent<{
   } = _subtitles
   const { setUserList } = _currentInfo
   const [ isComposition, setIsComposition ] = createSignal(false)
-  const [ editingUser, setEditingUser ] = createSignal<string>("")
 
   if (typeof subtitles() === "undefined") {
     setSubtitles(dummySub)
@@ -314,6 +314,7 @@ const CheckArea: ParentComponent<{
             hidden: false,
             isDrop: false,
             isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
+            editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
             changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
           })
           setAttachedInfo(dc_attachedInfo)
@@ -345,6 +346,7 @@ const CheckArea: ParentComponent<{
             hidden: false,
             isDrop: false,
             isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
+            editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
             changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
           })
           setAttachedInfo(dc_attachedInfo)
@@ -393,21 +395,23 @@ const CheckArea: ParentComponent<{
     setAttachedInfo(dc_attachedInfo)
   }
 
-  const editStart = (idx: number) => {
+  const editStart = (idx: number, editingUser: string) => {
     const dc_attachedInfo = attachedInfo()?.map(x => x)
     if (!dc_attachedInfo) {
       return
     }
     dc_attachedInfo[idx].isEditing = true
+    dc_attachedInfo[idx].editingUser = editingUser
     setAttachedInfo(dc_attachedInfo)
   }
 
-  const editEnd = (idx: number) => {
+  const editEnd = (idx: number, editingUser: string) => {
     const dc_attachedInfo = attachedInfo()?.map(x => x)
     if (!dc_attachedInfo) {
       return
     }
     dc_attachedInfo[idx].isEditing = false
+    dc_attachedInfo[idx].editingUser = editingUser
     setAttachedInfo(dc_attachedInfo)
   }
 
@@ -459,6 +463,22 @@ const CheckArea: ParentComponent<{
             }
           }
           break;
+        case "sEditStart":
+          const editStartBody: s2cEditChangeBody = data.body
+          const startIdx = attachedInfo()?.findIndex(elem => elem.id === editStartBody.subtitle_id)
+          if (typeof startIdx === "undefined") {
+            return
+          }          
+          editStart(startIdx, editStartBody.uname)
+          break;
+        case "sEditEnd":
+          const editEndBody: s2cEditChangeBody = data.body
+          const endIdx = attachedInfo()?.findIndex(elem => elem.id === editEndBody.subtitle_id)
+          if (typeof endIdx === "undefined") {
+            return
+          }
+          editEnd(endIdx, "")
+          break;
         default:
           console.log("unknow cmd: ", data);
           break;
@@ -490,14 +510,15 @@ const CheckArea: ParentComponent<{
               onCompositionStart={() => onCompoStartHandler(idx())}
               onCompositionEnd={() => setIsComposition(false)}
               onInput={() => onInputHandler(idx())}
+              onChange={() => wsSend.editStart(props.ws, elem.id)}
               onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}
               onSubmit={(e) => onSubmitHandler(e, idx(), elem)}
-              onFocusIn={() => editStart(idx())}
-              onFocusOut={() => editEnd(idx())}
+              onFocusIn={() => wsSend.editStart(props.ws, elem.id)}
+              onFocusOut={() => wsSend.editEnd(props.ws, elem.id)}
               class="flex px-2 gap-2 items-center"
               classList={{
                 "flex px-2 gap-2 items-center": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 0,
-                "flex px-2 gap-2 items-center border-2 border-orange-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 1,
+                "flex px-2 gap-2 items-center border-2 border-sky-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 1,
                 "flex px-2 gap-2 items-center border-2 border-red-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 2,
               }}
             >
@@ -527,7 +548,7 @@ const CheckArea: ParentComponent<{
                   >
                   <div class="flex gap-1 justify-center items-center flex-1">
                     <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
-                    <div>{editingUser()} 输入中...</div>
+                    <div>{(attachedInfo() as AttachedInfo[])[idx()].editingUser} 输入中...</div>
                   </div>
                 </div>
                 </Match>
