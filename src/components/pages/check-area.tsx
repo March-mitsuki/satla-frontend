@@ -14,7 +14,7 @@ import type {
   c2sChangeSubtitle,
   s2cAddSubtitleBody,
 } from "@/interfaces/ws"
-import { wsHandler } from "@/controllers";
+import { wsOn, wsSend } from "@/controllers";
 
 // for test
 import dummySub from "@/assets/dummy-subtitles"
@@ -158,7 +158,7 @@ const CheckArea: ParentComponent<{
       // shift + 小键盘上下 快捷键新建字幕
       if (e.key === "ArrowUp") {
         e.preventDefault()
-        wsHandler.addSubtitleUp({
+        wsSend.addSubtitleUp({
           ws: props.ws,
           id: subtitle.id,
           idx: idx,
@@ -167,7 +167,7 @@ const CheckArea: ParentComponent<{
       }
       if (e.key === "ArrowDown") {
         e.preventDefault()
-        wsHandler.addSubtitleDown({
+        wsSend.addSubtitleDown({
           ws: props.ws,
           id: subtitle.id,
           idx: idx,
@@ -207,7 +207,7 @@ const CheckArea: ParentComponent<{
 
   const addUpClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    wsHandler.addSubtitleUp({
+    wsSend.addSubtitleUp({
       ws: props.ws,
       id: subtitle.id,
       idx: idx,
@@ -216,7 +216,7 @@ const CheckArea: ParentComponent<{
   }
   const addDownClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    wsHandler.addSubtitleDown({
+    wsSend.addSubtitleDown({
       ws: props.ws,
       id: subtitle.id,
       idx: idx,
@@ -404,10 +404,10 @@ const CheckArea: ParentComponent<{
       const data: s2cEventMap = JSON.parse(evt.data)
       switch (data.head.cmd) {
         case "sChangeUser":
-          wsHandler.addUser(data, setUserList)
+          wsOn.addUser(data, setUserList)
           break;
         case "sGetRoomSubtitles":
-          wsHandler.getRoomSubtitles(data, setSubtitles, setFloatingElem)
+          wsOn.getRoomSubtitles(data, setSubtitles, setFloatingElem)
           break;
         case "sAddSubtitleUp":
           const addUpBody: s2cAddSubtitleBody = data.body
