@@ -4,7 +4,7 @@ import { createEffect, For, Match, Switch } from "solid-js"
 // local dependencies
 import _subtitles from "../contexts/subtitles"
 import _currentInfo from "@/components/contexts/current-info-ctx";
-import { wsHandler } from "@/controllers"
+import { wsOn, wsSend } from "@/controllers"
 
 // type
 import type { ParentComponent } from "solid-js"
@@ -159,7 +159,7 @@ const SendArea: ParentComponent<{
       // shift + 小键盘上下 快捷键新建字幕
       if (e.key === "ArrowUp") {
         e.preventDefault()
-        wsHandler.addSubtitleUp({
+        wsSend.addSubtitleUp({
           ws: props.ws,
           id: subtitle.id,
           idx: idx,
@@ -168,7 +168,7 @@ const SendArea: ParentComponent<{
       }
       if (e.key === "ArrowDown") {
         e.preventDefault()
-        wsHandler.addSubtitleDown({
+        wsSend.addSubtitleDown({
           ws: props.ws,
           id: subtitle.id,
           idx: idx,
@@ -208,7 +208,7 @@ const SendArea: ParentComponent<{
 
   const addUpClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    wsHandler.addSubtitleUp({
+    wsSend.addSubtitleUp({
       ws: props.ws,
       id: subtitle.id,
       idx: idx,
@@ -217,7 +217,7 @@ const SendArea: ParentComponent<{
   }
   const addDownClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    wsHandler.addSubtitleDown({
+    wsSend.addSubtitleDown({
       ws: props.ws,
       id: subtitle.id,
       idx: idx,
@@ -238,10 +238,10 @@ const SendArea: ParentComponent<{
       const data: s2cEventMap = JSON.parse(evt.data)
       switch (data.head.cmd) {
         case "sChangeUser":
-          wsHandler.addUser(data, setUserList)
+          wsOn.addUser(data, setUserList)
           break;
         case "sGetRoomSubtitles":
-          wsHandler.getRoomSubtitles(data, setSubtitles, setFloatingElem)
+          wsOn.getRoomSubtitles(data, setSubtitles, setFloatingElem)
           break;
         case "sAddSubtitleUp":
           const addUpBody: s2cAddSubtitleBody = data.body
