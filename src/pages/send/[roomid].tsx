@@ -13,7 +13,7 @@ import { wsOn } from "@/controllers"
 
 const SendPage = () => {
   const { currentUser, userList, setUserList } = _currentInfo
-  const { setFloatingElem, setSubtitles } = _subtitles
+  const { setAttachedInfo, setSubtitles } = _subtitles
   const [ _ws, setWs ] = createSignal<WebSocket>()
 
   // 每个page连接不一样的ws room
@@ -45,7 +45,7 @@ const SendPage = () => {
       if (ws.readyState === ws.OPEN) {
         ws.close()
       }
-      setFloatingElem(undefined)
+      setAttachedInfo(undefined)
       setSubtitles(undefined)
       setUserList(undefined)
     })

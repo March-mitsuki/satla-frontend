@@ -12,6 +12,7 @@
   "author": "mitsuki",
   "license": "ISC",
   "devDependencies": {
+    "@types/luxon": "^3.0.1",
     "@types/video.js": "^7.3.47",
     "autoprefixer": "^10.4.9",
     "postcss": "^8.4.16",
@@ -23,9 +24,9 @@
     "vite-plugin-solid": "^2.3.0"
   },
   "dependencies": {
-    "@solid-primitives/set": "^0.2.2",
     "@solidjs/meta": "^0.28.0",
     "@solidjs/router": "^0.4.3",
+    "luxon": "^3.0.4",
     "solid-js": "^1.5.4"
   }
 }

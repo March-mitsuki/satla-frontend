@@ -14,12 +14,18 @@ export class Subtitle {
       id,
       project_id,
       translated_by,
-      checked_by
+      checked_by,
+      subtitle,
+      origin,
+      input_time,
     }:{
-      id: number,
-      project_id: number,
-      translated_by: string,
+      id: number
+      project_id: number
+      translated_by: string
       checked_by?: string 
+      subtitle?: string
+      origin?: string
+      input_time?: string
     }
   ){
     if (checked_by) {
@@ -27,15 +33,27 @@ export class Subtitle {
     } else {
       this.checked_by = ""
     }
+    if (subtitle) {
+      this.subtitle = subtitle
+    } else {
+      this.subtitle = ""
+    }
+    if (origin) {
+      this.origin = origin
+    } else {
+      this.origin = ""
+    }
+    if (input_time) {
+      this.input_time = input_time
+    } else {
+      this.input_time = "00:00:00"
+    }
 
     this.id = id
     this.project_id = project_id
     this.translated_by = translated_by
 
-    this.input_time = "00:00:00"
     this.send_time = null
-    this.subtitle = ""
-    this.origin = ""
   }
 }
 

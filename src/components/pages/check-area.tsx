@@ -14,6 +14,7 @@ import type {
   s2cAddSubtitleBody,
   s2cChangeSubtitleBody,
   s2cEditChangeBody,
+  s2cAddTranslatedSubtitleBody,
 } from "@/interfaces/ws"
 import { wsOn, wsSend } from "@/controllers";
 
@@ -69,10 +70,10 @@ const CheckArea: ParentComponent<{
       checked_by: checked_by,
       translated_by: checked_by,
     })
-    const newattachedInfo = new AttachedInfo(newSubId)
-    newattachedInfo.id = newSub.id
+    const newAttachedInfo = new AttachedInfo(newSubId)
+    newAttachedInfo.id = newSub.id
 
-    attachedInfo()?.splice(idx, 0, newattachedInfo)
+    attachedInfo()?.splice(idx, 0, newAttachedInfo)
     setAttachedInfo(attachedInfo()?.map(x => x))
 
     subtitles()?.splice(idx, 0, newSub)
@@ -97,13 +98,20 @@ const CheckArea: ParentComponent<{
       checked_by: checked_by,
       translated_by: checked_by,
     })
-    const newattachedInfo = new AttachedInfo(newSubId)
-    newattachedInfo.id = newSub.id
+    const newAttachedInfo = new AttachedInfo(newSubId)
+    newAttachedInfo.id = newSub.id
 
-    attachedInfo()?.splice(idx + 1, 0, newattachedInfo)
+    attachedInfo()?.splice(idx + 1, 0, newAttachedInfo)
     setAttachedInfo(attachedInfo()?.map(x => x))
 
     subtitles()?.splice(idx + 1, 0, newSub)
+    setSubtitles(subtitles()?.map(x => x))
+  }
+  const addTranslatedSub = (subtitle: Subtitle) => {
+    const newAttachedInfo = new AttachedInfo(subtitle.id)
+    attachedInfo()?.push(newAttachedInfo)
+    setAttachedInfo(attachedInfo()?.map(x => x))
+    subtitles()?.push(subtitle)
     setSubtitles(subtitles()?.map(x => x))
   }
 
@@ -496,6 +504,16 @@ const CheckArea: ParentComponent<{
             return
           }
           editEnd(endIdx, "")
+          break;
+        case "sAddTransSub":
+          const addTransSubBody: s2cAddTranslatedSubtitleBody = data.body
+          console.log(addTransSubBody);
+          
+          addTranslatedSub(addTransSubBody.new_subtitle)
+          const translateForm = document.getElementById("translate-form");
+          (translateForm as HTMLFormElement).subtitle.value = "";
+          (translateForm as HTMLFormElement).origin.value = "";
+          document.getElementById(((subtitles() as Subtitle[]).length-1).toString() + "-sub")?.scrollIntoView()
           break;
         default:
           console.log("unknow cmd: ", data);

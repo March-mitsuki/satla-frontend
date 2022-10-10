@@ -18,7 +18,7 @@ const TranslatePage = () => {
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype } = _pagetype
   const { currentUser, userList, setUserList } = _currentInfo
-  const { setFloatingElem, setSubtitles } = _subtitles
+  const { setAttachedInfo, setSubtitles } = _subtitles
   const [ _ws, setWs ] = createSignal<WebSocket>()
 
   const videoJSOption: videojs.PlayerOptions = {
@@ -66,7 +66,7 @@ const TranslatePage = () => {
         ws.send("client clean up now")
         ws.close()
       }
-      setFloatingElem(undefined)
+      setAttachedInfo(undefined)
       setSubtitles(undefined)
       setUserList(undefined)
     })
@@ -140,7 +140,7 @@ const TranslatePage = () => {
               contentsWrapperClass="border-2 border-gray-500 rounded-b-lg flex-auto bg-neutral-700"
               risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
-              <TranslatePane></TranslatePane>
+              <TranslatePane ws={_ws()} roomid={param.roomid}></TranslatePane>
             </FloatingWindow>
           </div>
           <div class="flex-auto h-[calc(100vh-70px)]" >

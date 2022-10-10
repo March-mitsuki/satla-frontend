@@ -75,6 +75,16 @@ export interface c2sEditEnd {
   }
 }
 
+export interface c2sAddTranslatedSubtitle {
+  head: {
+    cmd: "addTransSub"
+  }
+  body: {
+    new_subtitle: Subtitle
+    project_name: string
+  }
+}
+
 
 // s2c -> server to client msg
 
@@ -84,7 +94,8 @@ export interface s2cEventMap {
     cmd: 
       "sChangeUser" | "sGetRoomSubtitles" |
       "sAddSubtitleUp" | "sAddSubtitleDown" |
-      "sChangeSubtitle" | "sEditStart" | "sEditEnd"
+      "sChangeSubtitle" | "sEditStart" | "sEditEnd" |
+      "sAddTransSub"
   }
   body: any
 }
@@ -118,4 +129,8 @@ export interface s2cEditChangeBody {
   // body都一样, 只是cmd不同
   subtitle_id: number
   uname: string
+}
+
+export interface s2cAddTranslatedSubtitleBody {
+  new_subtitle: Subtitle
 }

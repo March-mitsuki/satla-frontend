@@ -1,17 +1,23 @@
 // dependencies lib
 import { createSignal, For, Match, Switch } from "solid-js"
+import { DateTime } from "luxon";
 
 // local dependencies
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
 import { Subtitle, AttachedInfo } from "@/interfaces"
+import _currentInfo from "@/components/contexts/current-info-ctx"
+import { wsSend } from "@/controllers"
 
 // type
 import type { Component } from "solid-js"
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
-const TranslatePane: Component = () => {
+const TranslatePane: Component<{
+  ws: WebSocket | undefined,
+  roomid: string
+}> = (props) => {
   const {
     // pagetype: false = 翻译, true = 校对, default = false
     pagetype, switchPagetype,
@@ -30,22 +36,23 @@ const TranslatePane: Component = () => {
     e.stopPropagation()
     e.preventDefault()
     const formElem = e.currentTarget
+    const fmtdt = DateTime.now().setZone("Asia/Tokyo").minus({
+      seconds: 30
+    }).toFormat("HH:mm:ss")
     const newSub = new Subtitle({
-      // 暂时写的假东西, 别忘记改
-      id: Date.now(),
-      project_id: 1,
-      translated_by: "current user",
+      // project_id和新id都从服务器拿, 服务器根据roomid进行插入
+      id: 0,
+      input_time: fmtdt,
+      project_id: 0,
+      translated_by: _currentInfo.currentUser().user_name,
+      origin: formElem.origin.value,
+      subtitle: formElem.subtitle.value,
     })
-    const newAttachedInfo = new AttachedInfo(Date.now())
-    newSub.subtitle = formElem.subtitle.value
-    newSub.origin = formElem.origin.value
-    attachedInfo()?.push(newAttachedInfo)
-    setAttachedInfo(attachedInfo()?.map(x => x))
-    subtitles()?.push(newSub)
-    setSubtitles(subtitles()?.map(x => x))
-    formElem.subtitle.value = ""
-    formElem.origin.value = ""
-    document.getElementById(((subtitles() as Subtitle[]).length-1).toString() + "-sub")?.scrollIntoView()
+    wsSend.addTranslatedSubtitle({
+      ws: props.ws,
+      subtitle: newSub,
+      project_name: props.roomid
+    })
   }
 
   const addCheckMemo = (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
@@ -167,6 +174,7 @@ const TranslatePane: Component = () => {
       <Switch>
         <Match when={pagetype() === false}>
           <form
+            id="translate-form"
             onSubmit={(e) => onSubmitHandler(e)}
             class="flex gap-1 px-1"
           >

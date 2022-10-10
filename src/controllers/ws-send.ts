@@ -11,6 +11,7 @@ import type {
   c2sAddSubtitleDown,
   c2sEditStart,
   c2sEditEnd,
+  c2sAddTranslatedSubtitle,
 } from "@/interfaces/ws"
 
 export const addUser = (ws: WebSocket) => {
@@ -52,7 +53,8 @@ export const changeSubtitle = (
   }
 ) => {
   if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
-    window.alert("正在连接到服务器, 请稍等")
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
     return
   }
   const _postData: c2sChangeSubtitle = {
@@ -81,7 +83,8 @@ export const addSubtitleUp = (
   }
 ) => {
   if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
-    window.alert("正在连接到服务器, 请稍等")
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
     return
   }
   const _postData: c2sAddSubtitleUp = {
@@ -113,7 +116,8 @@ export const addSubtitleDown = (
   }
 ) => {
   if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
-    window.alert("正在连接到服务器, 请稍等")
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
     return
   }
   const _postData: c2sAddSubtitleDown = {
@@ -136,7 +140,8 @@ export const editStart = (
   subtitle_id: number,
 ) => {
   if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
-    window.alert("正在连接到服务器, 请稍等")
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
     return
   }
   const _postData: c2sEditStart = {
@@ -157,7 +162,8 @@ export const editEnd = (
   subtitle_id: number,
 ) => {
   if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
-    window.alert("正在连接到服务器, 请稍等")
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
     return
   }
   const _postData: c2sEditEnd = {
@@ -167,6 +173,35 @@ export const editEnd = (
     body: {
       uname: _currentInfo.currentUser().user_name,
       subtitle_id: subtitle_id
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+}
+
+export const addTranslatedSubtitle = (
+  {
+    ws,
+    subtitle,
+    project_name,
+  }:{
+    ws: WebSocket | undefined,
+    subtitle: Subtitle,
+    project_name: string,
+  }
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sAddTranslatedSubtitle = {
+    head: {
+      cmd: "addTransSub"
+    },
+    body: {
+      project_name: project_name,
+      new_subtitle: subtitle
     }
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))
