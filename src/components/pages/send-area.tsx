@@ -3,13 +3,17 @@ import { createEffect, For, Match, Switch } from "solid-js"
 
 // local dependencies
 import _subtitles from "../contexts/subtitles"
+import _currentInfo from "@/components/contexts/current-info-ctx";
+import { wsHandler } from "@/controllers"
 
 // type
 import type { ParentComponent } from "solid-js"
 import { Subtitle, FloatingElem } from "@/interfaces"
-import { c2sAddSubtitleUp, s2cEventMap } from "@/interfaces/ws"
-import _currentInfo from "@/components/contexts/current-info-ctx";
-import { wsHandler } from "@/controllers"
+import type {
+  c2sChangeSubtitle,
+  s2cEventMap,
+  s2cAddSubtitleBody,
+} from "@/interfaces/ws"
 
 // for test
 import dummySub from "@/assets/dummy-subtitles"
@@ -48,11 +52,27 @@ const SendArea: ParentComponent<{
   }
 
   // 定义复用函数, 便于维护
-  // 更新逻辑: 监听用户操作 (-> 复用操作函数) -> ws.send -> ws.onmessage -> 页面更新
-  // 命名规则: 操作函数: _addUp, 更新函数 addUp 
-  const addUp = (idx: number, subtitle: Subtitle) => {
-    const newSub: Subtitle = new Subtitle()
-    const newFloatingElem: FloatingElem = new FloatingElem()
+  // 更新逻辑: 监听用户操作 -> ws.send -> ws.onmessage -> 页面更新(启动更新函数)
+  const addUp = (
+    {
+      idx,
+      newSubId,
+      project_id,
+      checked_by,
+    }:{
+      idx: number,
+      newSubId: number,
+      project_id: number,
+      checked_by: string,
+    }
+  ) => {
+    const newSub: Subtitle = new Subtitle({
+      id: newSubId,
+      project_id: project_id,
+      checked_by: checked_by,
+      translated_by: checked_by,
+    })
+    const newFloatingElem: FloatingElem = new FloatingElem(newSubId)
     newFloatingElem.id = newSub.id
 
     floatingElem()?.splice(idx, 0, newFloatingElem)
@@ -61,9 +81,26 @@ const SendArea: ParentComponent<{
     subtitles()?.splice(idx, 0, newSub)
     setSubtitles(subtitles()?.map(x => x))
   }
-  const addDown = (idx: number, subtitle: Subtitle) => {
-    const newSub: Subtitle = new Subtitle()
-    const newFloatingElem: FloatingElem = new FloatingElem()
+  const addDown = (
+    {
+      idx,
+      newSubId,
+      project_id,
+      checked_by,
+    }:{
+      idx: number,
+      newSubId: number,
+      project_id: number,
+      checked_by: string,
+    }
+  ) => {
+    const newSub: Subtitle = new Subtitle({
+      id: newSubId,
+      project_id: project_id,
+      checked_by: checked_by,
+      translated_by: checked_by,
+    })
+    const newFloatingElem: FloatingElem = new FloatingElem(newSubId)
     newFloatingElem.id = newSub.id
 
     floatingElem()?.splice(idx + 1, 0, newFloatingElem)
@@ -79,12 +116,12 @@ const SendArea: ParentComponent<{
       console.log("props.ws is undifiend");
       return
     }
-    const postSubtitle: c2sAddSubtitleUp = {
+    const postSubtitle: c2sChangeSubtitle = {
       head: {
-        cmd: "addSubtitleUp"
+        cmd: "changeSubtitle"
       },
       body: {
-        data: subtitle
+        subtitle: subtitle
       }
     }
     const postData = new TextEncoder().encode(JSON.stringify(postSubtitle))
@@ -122,11 +159,21 @@ const SendArea: ParentComponent<{
       // shift + 小键盘上下 快捷键新建字幕
       if (e.key === "ArrowUp") {
         e.preventDefault()
-        addUp(idx, subtitle)
+        wsHandler.addSubtitleUp({
+          ws: props.ws,
+          id: subtitle.id,
+          idx: idx,
+          project_id: subtitle.project_id
+        })
       }
       if (e.key === "ArrowDown") {
         e.preventDefault()
-        addDown(idx, subtitle)
+        wsHandler.addSubtitleDown({
+          ws: props.ws,
+          id: subtitle.id,
+          idx: idx,
+          project_id: subtitle.project_id
+        })
       }
       // shift + enter 移动到下一行
       if (e.key === "Enter") {
@@ -161,11 +208,21 @@ const SendArea: ParentComponent<{
 
   const addUpClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    addUp(idx, subtitle)
+    wsHandler.addSubtitleUp({
+      ws: props.ws,
+      id: subtitle.id,
+      idx: idx,
+      project_id: subtitle.project_id
+    })
   }
   const addDownClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    addDown(idx, subtitle)
+    wsHandler.addSubtitleDown({
+      ws: props.ws,
+      id: subtitle.id,
+      idx: idx,
+      project_id: subtitle.project_id
+    })
   }
 
   const delClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
@@ -185,6 +242,24 @@ const SendArea: ParentComponent<{
           break;
         case "sGetRoomSubtitles":
           wsHandler.getRoomSubtitles(data, setSubtitles, setFloatingElem)
+          break;
+        case "sAddSubtitleUp":
+          const addUpBody: s2cAddSubtitleBody = data.body
+          addUp({
+            idx: addUpBody.pre_subtitle_idx,
+            newSubId: addUpBody.new_subtitle_id,
+            project_id: addUpBody.project_id,
+            checked_by: addUpBody.checked_by
+          })
+          break;
+        case "sAddSubtitleDown":
+          const addDownBody: s2cAddSubtitleBody = data.body
+          addDown({
+            idx: addDownBody.pre_subtitle_idx,
+            newSubId: addDownBody.new_subtitle_id,
+            project_id: addDownBody.project_id,
+            checked_by: addDownBody.checked_by
+          })
           break;
         default:
           console.log("unknow cmd: ", data);

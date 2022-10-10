@@ -41,11 +41,13 @@ https://github.com/March-mitsuki/vvvorld
 - [ ] 基本功能
   - [ ] 翻译页面
     - [x] 加行(up down)
+    - [ ] 修改行
     - [ ] 加翻译行
     - [ ] 删除行
     - [ ] 拖动行
   - [ ] 发送页面
     - [x] 加行(up down)
+    - [ ] 修改行
     - [ ] 直接发送
     - [ ] 删除行
     - [ ] css控制
