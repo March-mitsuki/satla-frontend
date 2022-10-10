@@ -4,9 +4,7 @@ import { wsSend } from "."
 
 // type
 import { Subtitle } from "@/interfaces";
-import type {
-  FloatingElem,
-} from "@/interfaces";
+import { AttachedInfo } from "@/interfaces";
 import type {
   s2cEventMap,
   s2cChangeUserBody,
@@ -26,7 +24,7 @@ export const addUser = (
 export const getRoomSubtitles = (
   data: s2cEventMap,
   setSubtitles: Setter<Subtitle[] | undefined>,
-  setFloatingElem: Setter<FloatingElem[] | undefined>,
+  setAttachedInfo: Setter<AttachedInfo[] | undefined>,
 ) => {
   const body: s2cGetRoomSubBody = data.body
   console.log("get room subtitles msg: ", body);
@@ -35,22 +33,14 @@ export const getRoomSubtitles = (
   body.subtitles.sort((a, b) => {
     return orderList.indexOf(a.id.toString()) - orderList.indexOf(b.id.toString());
   })
-  let floatingElem: FloatingElem[] = [];
+  let attachedInfo: AttachedInfo[] = [];
   for (let i = 0; i < (body.subtitles as Subtitle[]).length; i++) {
     const elem = (body.subtitles as Subtitle[])[i]
-    const _floatingElem: FloatingElem = {
-      id: elem.id,
-      zIndex: "auto",
-      position: "static",
-      isFloating: false,
-      y: 0,
-      hidden: false,
-      isDrop: false,
-    }
-    floatingElem.push(_floatingElem)
+    const _attachedInfo = new AttachedInfo(elem.id)
+    attachedInfo.push(_attachedInfo)
   }
-  setFloatingElem(floatingElem)
-  setSubtitles(body.subtitles)
+  setAttachedInfo(attachedInfo)
+  setSubtitles(body.subtitles)  
 }
 
 export const onopen = (

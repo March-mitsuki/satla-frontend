@@ -1,6 +1,7 @@
 import { Subtitle } from "."
 
 // c2s -> client to server msg
+
 export interface c2sAddSubtitleUp {
   head: {
     cmd: "addSubtitleUp"
@@ -54,12 +55,14 @@ export interface c2sGetRoomSubtitles {
 
 
 // s2c -> server to client msg
+
 export interface s2cEventMap {
   // 先用s2cEventMap判断cmd, 之后再解析body
   head: {
     cmd: 
       "sChangeUser" | "sGetRoomSubtitles" |
-      "sAddSubtitleUp" | "sAddSubtitleDown" 
+      "sAddSubtitleUp" | "sAddSubtitleDown" |
+      "sChangeSubtitle"
   }
   body: any
 }
@@ -80,4 +83,11 @@ export interface s2cAddSubtitleBody {
   new_subtitle_id: number
   pre_subtitle_idx: number
   checked_by: string
+}
+
+export interface s2cChangeSubtitleBody {
+  // 更改逻辑:
+  // 更改字幕 -> 修改本地subtitle -> ws send -> ws on
+  status: boolean // 当status === false的时候显示更改失败
+  subtitle_id: number // 用来查找subtitle id用于更改style
 }

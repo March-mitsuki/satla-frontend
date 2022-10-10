@@ -8,11 +8,11 @@ import _currentInfo from "@/components/contexts/current-info-ctx";
 
 // type
 import type { ParentComponent } from "solid-js"
-import { Subtitle, FloatingElem } from "@/interfaces"
+import { Subtitle, AttachedInfo } from "@/interfaces"
 import type {
   s2cEventMap,
-  c2sChangeSubtitle,
   s2cAddSubtitleBody,
+  s2cChangeSubtitleBody,
 } from "@/interfaces/ws"
 import { wsOn, wsSend } from "@/controllers";
 
@@ -28,31 +28,24 @@ const CheckArea: ParentComponent<{
   const { pagetype, isBilingual, canOrder } = _pagetype
   const {
     subtitles, setSubtitles,
-    floatingElem, setFloatingElem,
+    attachedInfo, setAttachedInfo,
   } = _subtitles
   const { setUserList } = _currentInfo
   const [ isComposition, setIsComposition ] = createSignal(false)
+  const [ editingUser, setEditingUser ] = createSignal<string>("")
 
   if (typeof subtitles() === "undefined") {
     setSubtitles(dummySub)
   }
-  let initialFloatingElem: FloatingElem[] = [];
+  let initialattachedInfo: AttachedInfo[] = [];
   for (let i = 0; i < (subtitles() as Subtitle[]).length; i++) {
     const elem = (subtitles() as Subtitle[])[i]
-    const floatingElem: FloatingElem = {
-      id: elem.id,
-      zIndex: "auto",
-      position: "static",
-      isFloating: false,
-      y: 0,
-      hidden: false,
-      isDrop: false,
-    }
-    initialFloatingElem.push(floatingElem)
+    const attachedInfo = new AttachedInfo(elem.id)
+    initialattachedInfo.push(attachedInfo)
   }
-  if (typeof floatingElem() === "undefined") {
-    // floatingElem会根据首次传进来的subtitles进行设定
-    setFloatingElem(initialFloatingElem)
+  if (typeof attachedInfo() === "undefined") {
+    // attachedInfo会根据首次传进来的subtitles进行设定
+    setAttachedInfo(initialattachedInfo)
   }
 
   // 定义复用函数, 便于维护
@@ -76,11 +69,11 @@ const CheckArea: ParentComponent<{
       checked_by: checked_by,
       translated_by: checked_by,
     })
-    const newFloatingElem: FloatingElem = new FloatingElem(newSubId)
-    newFloatingElem.id = newSub.id
+    const newattachedInfo = new AttachedInfo(newSubId)
+    newattachedInfo.id = newSub.id
 
-    floatingElem()?.splice(idx, 0, newFloatingElem)
-    setFloatingElem(floatingElem()?.map(x => x))
+    attachedInfo()?.splice(idx, 0, newattachedInfo)
+    setAttachedInfo(attachedInfo()?.map(x => x))
 
     subtitles()?.splice(idx, 0, newSub)
     setSubtitles(subtitles()?.map(x => x))
@@ -104,33 +97,14 @@ const CheckArea: ParentComponent<{
       checked_by: checked_by,
       translated_by: checked_by,
     })
-    const newFloatingElem: FloatingElem = new FloatingElem(newSubId)
-    newFloatingElem.id = newSub.id
+    const newattachedInfo = new AttachedInfo(newSubId)
+    newattachedInfo.id = newSub.id
 
-    floatingElem()?.splice(idx + 1, 0, newFloatingElem)
-    setFloatingElem(floatingElem()?.map(x => x))
+    attachedInfo()?.splice(idx + 1, 0, newattachedInfo)
+    setAttachedInfo(attachedInfo()?.map(x => x))
 
     subtitles()?.splice(idx + 1, 0, newSub)
     setSubtitles(subtitles()?.map(x => x))
-  }
-
-
-  const postChange = (subtitle: Subtitle) => {
-    if (typeof(props.ws) === "undefined") {
-      window.alert("正在连接到服务器, 请稍等")
-      return
-    }
-    const _postData: c2sChangeSubtitle = {
-      head: {
-        cmd: "changeSubtitle"
-      },
-      body: {
-        subtitle: subtitle
-      }
-    }
-    const postData = new TextEncoder().encode(JSON.stringify(_postData))
-    props.ws.send(postData)
-    console.log("change subtitle: ", _postData);
   }
 
   const onSubmitHandler = (
@@ -144,7 +118,7 @@ const CheckArea: ParentComponent<{
 
     subtitle.subtitle = formElem.subtitle.value
     subtitle.origin = formElem.origin.value
-    postChange(subtitle)
+    wsSend.changeSubtitle({ws: props.ws, subtitle: subtitle})
   }
 
   const formKeyDownHander = (
@@ -201,7 +175,7 @@ const CheckArea: ParentComponent<{
 
       subtitle.subtitle = formElem.subtitle.value
       subtitle.origin = formElem.origin.value
-      postChange(subtitle)
+      wsSend.changeSubtitle({ws: props.ws, subtitle: subtitle})
     }
   }
 
@@ -259,13 +233,13 @@ const CheckArea: ParentComponent<{
         && moveY >= 0
       ) {
         // 开始拖拽
-        const deepcopy = (floatingElem() as FloatingElem[]).map(x => x)
+        const deepcopy = (attachedInfo() as AttachedInfo[]).map(x => x)
         deepcopy[idx].zIndex = 1000
         deepcopy[idx].position = "absolute"
         deepcopy[idx].isFloating = true,
         deepcopy[idx].y = moveY
         deepcopy[idx].hidden = true
-        setFloatingElem(deepcopy)
+        setAttachedInfo(deepcopy)
       }
       // 拖动瞬间设置元素为hidden, 获取下方要素
       belowElem = document.elementFromPoint(e.clientX, e.clientY)
@@ -274,9 +248,9 @@ const CheckArea: ParentComponent<{
         && moveY >= 0
       ) {
         // 成功获取之后再设置hidden为false, 展现元素给用户
-        const deepcopy = (floatingElem() as FloatingElem[]).map(x => x)
+        const deepcopy = (attachedInfo() as AttachedInfo[]).map(x => x)
         deepcopy[idx].hidden = false
-        setFloatingElem(deepcopy)
+        setAttachedInfo(deepcopy)
       }
       if (!belowElem) {
         return
@@ -289,18 +263,18 @@ const CheckArea: ParentComponent<{
         afterFormWrapper = belowElem.closest("form")?.parentNode
         if (afterFormWrapper) {
           const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
-          const reorderIdx = (floatingElem() as FloatingElem[]).findIndex(elem => elem.id === elemId)
-          const spliceElem = (floatingElem() as FloatingElem[])[reorderIdx]
-          spliceElem.id = (floatingElem() as FloatingElem[])[reorderIdx].id
+          const reorderIdx = (attachedInfo() as AttachedInfo[]).findIndex(elem => elem.id === elemId)
+          const spliceElem = (attachedInfo() as AttachedInfo[])[reorderIdx]
+          spliceElem.id = (attachedInfo() as AttachedInfo[])[reorderIdx].id
           spliceElem.isDrop = true
-          floatingElem()?.splice(reorderIdx, 1, spliceElem)
+          attachedInfo()?.splice(reorderIdx, 1, spliceElem)
         }
       }
       if (
         belowElem instanceof HTMLDivElement
         && !belowElem.closest("form")
       ) {
-        setFloatingElem(floatingElem()?.map(elem => {
+        setAttachedInfo(attachedInfo()?.map(elem => {
           elem.isDrop = false
           return elem
         }))
@@ -315,23 +289,23 @@ const CheckArea: ParentComponent<{
         // 如果放开鼠标时在指定元素上
         afterFormWrapper = belowElem.closest("form")?.parentNode
         const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-form", ""))
-        const reorderIdx = (floatingElem() as FloatingElem[]).findIndex(elem => elem.id === elemId)
+        const reorderIdx = (attachedInfo() as AttachedInfo[]).findIndex(elem => elem.id === elemId)
 
         if (reorderIdx > idx) {
           // 从前往后拖
-          const dc_floatingElem = floatingElem()?.map(x => x)
-          if (!dc_floatingElem) {
+          const dc_attachedInfo = attachedInfo()?.map(x => x)
+          if (!dc_attachedInfo) {
             return
           }
-          dc_floatingElem[idx].zIndex = "auto"
-          dc_floatingElem[idx].position = "static"
-          dc_floatingElem[idx].isFloating = false
-          dc_floatingElem[idx].y = 0
-          dc_floatingElem[idx].isDrop = false
-          dc_floatingElem[idx].hidden = false
-          dc_floatingElem[reorderIdx].isDrop = false
-          dc_floatingElem.splice(idx, 1)
-          dc_floatingElem.splice(reorderIdx-1, 0, {
+          dc_attachedInfo[idx].zIndex = "auto"
+          dc_attachedInfo[idx].position = "static"
+          dc_attachedInfo[idx].isFloating = false
+          dc_attachedInfo[idx].y = 0
+          dc_attachedInfo[idx].isDrop = false
+          dc_attachedInfo[idx].hidden = false
+          dc_attachedInfo[reorderIdx].isDrop = false
+          dc_attachedInfo.splice(idx, 1)
+          dc_attachedInfo.splice(reorderIdx-1, 0, {
             id: (subtitles() as Subtitle[])[idx].id,
             zIndex: "auto",
             position: "static",
@@ -339,8 +313,10 @@ const CheckArea: ParentComponent<{
             y: 0,
             hidden: false,
             isDrop: false,
+            isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
+            changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
           })
-          setFloatingElem(dc_floatingElem)
+          setAttachedInfo(dc_attachedInfo)
 
           const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
           dc_subtitles.splice(idx, 1)
@@ -348,19 +324,19 @@ const CheckArea: ParentComponent<{
           setSubtitles(dc_subtitles)
         } else {
           // 从后往前拖
-          const dc_floatingElem = floatingElem()?.map(x => x)
-          if (!dc_floatingElem) {
+          const dc_attachedInfo = attachedInfo()?.map(x => x)
+          if (!dc_attachedInfo) {
             return
           }
-          dc_floatingElem[idx].zIndex = "auto"
-          dc_floatingElem[idx].position = "static"
-          dc_floatingElem[idx].isFloating = false
-          dc_floatingElem[idx].y = 0
-          dc_floatingElem[idx].isDrop = false
-          dc_floatingElem[idx].hidden = false
-          dc_floatingElem[reorderIdx].isDrop = false
-          dc_floatingElem.splice(idx, 1)
-          dc_floatingElem.splice(reorderIdx, 0, {
+          dc_attachedInfo[idx].zIndex = "auto"
+          dc_attachedInfo[idx].position = "static"
+          dc_attachedInfo[idx].isFloating = false
+          dc_attachedInfo[idx].y = 0
+          dc_attachedInfo[idx].isDrop = false
+          dc_attachedInfo[idx].hidden = false
+          dc_attachedInfo[reorderIdx].isDrop = false
+          dc_attachedInfo.splice(idx, 1)
+          dc_attachedInfo.splice(reorderIdx, 0, {
             id: (subtitles() as Subtitle[])[idx].id,
             zIndex: "auto",
             position: "static",
@@ -368,8 +344,10 @@ const CheckArea: ParentComponent<{
             y: 0,
             hidden: false,
             isDrop: false,
+            isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
+            changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
           })
-          setFloatingElem(dc_floatingElem)
+          setAttachedInfo(dc_attachedInfo)
   
           const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
           dc_subtitles.splice(idx, 1)
@@ -378,22 +356,40 @@ const CheckArea: ParentComponent<{
         }
       } else {
         // 如果不在指定元素上
-        const dc_floatingElem = floatingElem()?.map(x => x)
-        if (!dc_floatingElem) {
+        const dc_attachedInfo = attachedInfo()?.map(x => x)
+        if (!dc_attachedInfo) {
           return
         }
-        dc_floatingElem[idx].zIndex = "auto"
-        dc_floatingElem[idx].position = "static"
-        dc_floatingElem[idx].isFloating = false
-        dc_floatingElem[idx].y = 0
-        dc_floatingElem[idx].hidden = false
-        setFloatingElem(dc_floatingElem)
+        dc_attachedInfo[idx].zIndex = "auto"
+        dc_attachedInfo[idx].position = "static"
+        dc_attachedInfo[idx].isFloating = false
+        dc_attachedInfo[idx].y = 0
+        dc_attachedInfo[idx].hidden = false
+        setAttachedInfo(dc_attachedInfo)
       }
-      console.log(floatingElem(), subtitles());
+      console.log(attachedInfo(), subtitles());
 
       onmousemove = () => null
       onmouseup = () => null
     }
+  }
+
+  const editStart = (idx: number) => {
+    const dc_attachedInfo = attachedInfo()?.map(x => x)
+    if (!dc_attachedInfo) {
+      return
+    }
+    dc_attachedInfo[idx].isEditing = true
+    setAttachedInfo(dc_attachedInfo)
+  }
+
+  const editEnd = (idx: number) => {
+    const dc_attachedInfo = attachedInfo()?.map(x => x)
+    if (!dc_attachedInfo) {
+      return
+    }
+    dc_attachedInfo[idx].isEditing = false
+    setAttachedInfo(dc_attachedInfo)
   }
 
   createEffect(() => {
@@ -407,7 +403,7 @@ const CheckArea: ParentComponent<{
           wsOn.addUser(data, setUserList)
           break;
         case "sGetRoomSubtitles":
-          wsOn.getRoomSubtitles(data, setSubtitles, setFloatingElem)
+          wsOn.getRoomSubtitles(data, setSubtitles, setAttachedInfo)
           break;
         case "sAddSubtitleUp":
           const addUpBody: s2cAddSubtitleBody = data.body
@@ -427,6 +423,27 @@ const CheckArea: ParentComponent<{
             checked_by: addDownBody.checked_by
           })
           break;
+        case "sChangeSubtitle":
+          const changeSubBody: s2cChangeSubtitleBody = data.body
+          const dc_attachedInfo = attachedInfo()?.map(x => x)
+          if (!dc_attachedInfo) {
+            return
+          }
+          console.log("on change msg", changeSubBody);
+          
+          const idx = dc_attachedInfo.findIndex(elem => elem.id === changeSubBody.subtitle_id)
+          console.log("on change msg idx: ", idx);
+          
+          if (!changeSubBody.status) {
+            dc_attachedInfo[idx].changeStatus = false
+            setAttachedInfo(dc_attachedInfo)
+          } else {
+            if (dc_attachedInfo[idx].changeStatus === false) {
+              dc_attachedInfo[idx].changeStatus = true
+              setAttachedInfo(dc_attachedInfo)
+            }
+          }
+          break;
         default:
           console.log("unknow cmd: ", data);
           break;
@@ -444,69 +461,72 @@ const CheckArea: ParentComponent<{
           <div
             id={`${elem.id}-form`}
             style={{
-              "z-index": (floatingElem() as FloatingElem[])[idx()].zIndex,
-              "position": `${(floatingElem() as FloatingElem[])[idx()].position}`,
-              "top": `${(floatingElem() as FloatingElem[])[idx()].y}px`,
+              "z-index": (attachedInfo() as AttachedInfo[])[idx()].zIndex,
+              "position": `${(attachedInfo() as AttachedInfo[])[idx()].position}`,
+              "top": `${(attachedInfo() as AttachedInfo[])[idx()].y}px`,
             }}
             classList={{
-              "mt-2": (floatingElem() as FloatingElem[])[idx()].isDrop === false,
-              "mt-2 border-t-2 border-sky-500": (floatingElem() as FloatingElem[])[idx()].isDrop === true,
+              "mt-2": (attachedInfo() as AttachedInfo[])[idx()].isDrop === false,
+              "mt-2 border-t-2 border-sky-500": (attachedInfo() as AttachedInfo[])[idx()].isDrop === true,
             }}
-            hidden={(floatingElem() as FloatingElem[])[idx()].hidden}
+            hidden={(attachedInfo() as AttachedInfo[])[idx()].hidden}
           >
             <form
               onCompositionStart={() => setIsComposition(true)}
               onCompositionEnd={() => setIsComposition(false)}
               onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}
               onSubmit={(e) => onSubmitHandler(e, idx(), elem)}
+              onFocusIn={() => editStart(idx())}
+              onFocusOut={() => editEnd(idx())}
               class="flex px-2 gap-2 items-center"
+              classList={{
+                "flex px-2 gap-2 items-center": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === true,
+                "flex px-2 gap-2 items-center border-2 border-red-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === false,
+              }}
             >
-              {/* <button onClick={() => console.log(afterFormWrapperRefs[idx()])}>C-me</button> */}
               <Switch fallback={
                 <div
                   onMouseDown={(e) => startDragHandler(e, idx(), elem)}
                   classList={{
-                    "cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none": canOrder() === true,
-                    "flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none": canOrder() === false,
+                    "cursor-move flex gap-3 w-[180px] items-center px-1 rounded-md bg-orange-500/70 select-none": canOrder() === true,
+                    "flex gap-3 w-[180px] items-center px-1 rounded-md bg-orange-500/70 select-none": canOrder() === false,
                   }}
                 >
                   <div class="flex-1">
-                    12:50:23
+                    {elem.input_time}
                   </div>
                   <div class="flex-1 truncate text-center">
-                    翻译
+                    {elem.translated_by}
                   </div>
                 </div>
               }>
-                <Match when={elem.send_time !== null}>
-                  <div
+                <Match when={(attachedInfo() as AttachedInfo[])[idx()].isEditing}>
+                <div
                     onMouseDown={(e) => startDragHandler(e, idx(), elem)}
                     classList={{
-                      "cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none": canOrder() === true,
-                      "flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none": canOrder() === false,
+                      "cursor-move flex gap-3 w-[180px] items-center px-1 rounded-md bg-red-500/70 select-none": canOrder() === true,
+                      "flex gap-3 w-[180px] items-center px-1 rounded-md bg-red-500/70 select-none": canOrder() === false,
                     }}
                   >
-                    <div class="flex-1">
-                      12:50:23
-                    </div>
-                    <div class="flex-1 truncate text-center">
-                      发送aaasd
-                    </div>
+                  <div class="flex gap-1 justify-center items-center flex-1">
+                    <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                    <div>{editingUser()} 输入中...</div>
                   </div>
+                </div>
                 </Match>
-                <Match when={elem.checked_by !== null}>
+                <Match when={elem.checked_by !== null && elem.checked_by !== ""}>
                   <div
                     onMouseDown={(e) => startDragHandler(e, idx(), elem)}
                     classList={{
-                      "cursor-move flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none": canOrder() === true,
-                      "flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none": canOrder() === false,
+                      "cursor-move flex gap-3 w-[180px] items-center px-1 rounded-md bg-green-500/70 select-none": canOrder() === true,
+                      "flex gap-3 w-[180px] items-center px-1 rounded-md bg-green-500/70 select-none": canOrder() === false,
                     }}
                   >
                     <div class="flex-1">
-                      12:50:23
+                      {elem.input_time}
                     </div>
                     <div class="flex-1 truncate text-center">
-                      校对asdadsssasdasd
+                      {elem.checked_by}
                     </div>
                   </div>
                 </Match>

@@ -42,7 +42,9 @@ const currentUserInfo = () => {
 
   return (
     <div>
-      <span>{ cUserInfo.loading && "Loading..." }</span>
+      <span>{ cUserInfo.loading &&
+        <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+      }</span>
       {cUserInfo()?.user_name}
     </div>
   )

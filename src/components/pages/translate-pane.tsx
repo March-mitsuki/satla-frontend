@@ -4,7 +4,7 @@ import { createSignal, For, Match, Switch } from "solid-js"
 // local dependencies
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
-import { Subtitle, FloatingElem } from "@/interfaces"
+import { Subtitle, AttachedInfo } from "@/interfaces"
 
 // type
 import type { Component } from "solid-js"
@@ -22,7 +22,7 @@ const TranslatePane: Component = () => {
   } = _pagetype
   const {
     subtitles, setSubtitles,
-    floatingElem, setFloatingElem,
+    attachedInfo, setAttachedInfo,
   } = _subtitles
   const [checkMemo, setCheckMemo] = createSignal<string[]>([""])
 
@@ -30,12 +30,17 @@ const TranslatePane: Component = () => {
     e.stopPropagation()
     e.preventDefault()
     const formElem = e.currentTarget
-    const newSub = new Subtitle()
-    const newFloating = new FloatingElem()
+    const newSub = new Subtitle({
+      // 暂时写的假东西, 别忘记改
+      id: Date.now(),
+      project_id: 1,
+      translated_by: "current user",
+    })
+    const newAttachedInfo = new AttachedInfo(Date.now())
     newSub.subtitle = formElem.subtitle.value
     newSub.origin = formElem.origin.value
-    floatingElem()?.push(newFloating)
-    setFloatingElem(floatingElem()?.map(x => x))
+    attachedInfo()?.push(newAttachedInfo)
+    setAttachedInfo(attachedInfo()?.map(x => x))
     subtitles()?.push(newSub)
     setSubtitles(subtitles()?.map(x => x))
     formElem.subtitle.value = ""

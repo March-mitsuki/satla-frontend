@@ -47,7 +47,13 @@ const Home: Component = () => {
             minRightElem="20%"
             leftElem={
               <div class="p-2">
-                <div class="flex justify-end p-2 border-x-2 border-t-2">
+                <div class="flex justify-end gap-5 p-2 border-x-2 border-t-2">
+                  {projects.loading &&
+                    <div class="flex gap-2 items-center">
+                      <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                      <div>connecting...</div>
+                    </div>
+                  }
                   <button
                     onClick={refetch}
                     class="flex justify-center items-center"
@@ -60,7 +66,6 @@ const Home: Component = () => {
                     </div>
                   </button>
                 </div>
-                {projects.loading && <span>connecting to server...</span>}
                 <ProjectOverview projects={projects()}></ProjectOverview>
               </div>
             }

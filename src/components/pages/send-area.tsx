@@ -8,7 +8,7 @@ import { wsOn, wsSend } from "@/controllers"
 
 // type
 import type { ParentComponent } from "solid-js"
-import { Subtitle, FloatingElem } from "@/interfaces"
+import { Subtitle, AttachedInfo } from "@/interfaces"
 import type {
   c2sChangeSubtitle,
   s2cEventMap,
@@ -25,7 +25,7 @@ const SendArea: ParentComponent<{
 }> = (props) => {
   const {
     subtitles, setSubtitles,
-    floatingElem, setFloatingElem,
+    attachedInfo, setAttachedInfo,
   } = _subtitles
   const { setUserList } = _currentInfo
 
@@ -33,22 +33,14 @@ const SendArea: ParentComponent<{
   if (typeof subtitles() === "undefined") {
     setSubtitles(dummySub)
   }
-  let initialFloatingElem: FloatingElem[] = [];
+  let initialattachedInfo: AttachedInfo[] = [];
   for (let i = 0; i < (subtitles() as Subtitle[]).length; i++) {
     const elem = (subtitles() as Subtitle[])[i]
-    const floatingElem: FloatingElem = {
-      id: elem.id,
-      zIndex: "auto",
-      position: "static",
-      isFloating: false,
-      y: 0,
-      hidden: false,
-      isDrop: false,
-    }
-    initialFloatingElem.push(floatingElem)
+    const attachedInfo = new AttachedInfo(elem.id)
+    initialattachedInfo.push(attachedInfo)
   }
-  if (typeof floatingElem() === "undefined") {
-    setFloatingElem(initialFloatingElem)
+  if (typeof attachedInfo() === "undefined") {
+    setAttachedInfo(initialattachedInfo)
   }
 
   // 定义复用函数, 便于维护
@@ -72,11 +64,11 @@ const SendArea: ParentComponent<{
       checked_by: checked_by,
       translated_by: checked_by,
     })
-    const newFloatingElem: FloatingElem = new FloatingElem(newSubId)
-    newFloatingElem.id = newSub.id
+    const newattachedInfo = new AttachedInfo(newSubId)
+    newattachedInfo.id = newSub.id
 
-    floatingElem()?.splice(idx, 0, newFloatingElem)
-    setFloatingElem(floatingElem()?.map(x => x))
+    attachedInfo()?.splice(idx, 0, newattachedInfo)
+    setAttachedInfo(attachedInfo()?.map(x => x))
 
     subtitles()?.splice(idx, 0, newSub)
     setSubtitles(subtitles()?.map(x => x))
@@ -100,11 +92,11 @@ const SendArea: ParentComponent<{
       checked_by: checked_by,
       translated_by: checked_by,
     })
-    const newFloatingElem: FloatingElem = new FloatingElem(newSubId)
-    newFloatingElem.id = newSub.id
+    const newattachedInfo = new AttachedInfo(newSubId)
+    newattachedInfo.id = newSub.id
 
-    floatingElem()?.splice(idx + 1, 0, newFloatingElem)
-    setFloatingElem(floatingElem()?.map(x => x))
+    attachedInfo()?.splice(idx + 1, 0, newattachedInfo)
+    setAttachedInfo(attachedInfo()?.map(x => x))
 
     subtitles()?.splice(idx + 1, 0, newSub)
     setSubtitles(subtitles()?.map(x => x))
@@ -241,7 +233,7 @@ const SendArea: ParentComponent<{
           wsOn.addUser(data, setUserList)
           break;
         case "sGetRoomSubtitles":
-          wsOn.getRoomSubtitles(data, setSubtitles, setFloatingElem)
+          wsOn.getRoomSubtitles(data, setSubtitles, setAttachedInfo)
           break;
         case "sAddSubtitleUp":
           const addUpBody: s2cAddSubtitleBody = data.body
@@ -279,15 +271,15 @@ const SendArea: ParentComponent<{
           <div
             id={`${elem.id}-form`}
             style={{
-              "z-index": (floatingElem() as FloatingElem[])[idx()].zIndex,
-              "position": `${(floatingElem() as FloatingElem[])[idx()].position}`,
-              "top": `${(floatingElem() as FloatingElem[])[idx()].y}px`,
+              "z-index": (attachedInfo() as AttachedInfo[])[idx()].zIndex,
+              "position": `${(attachedInfo() as AttachedInfo[])[idx()].position}`,
+              "top": `${(attachedInfo() as AttachedInfo[])[idx()].y}px`,
             }}
             classList={{
-              "mt-2": (floatingElem() as FloatingElem[])[idx()].isDrop === false,
-              "mt-2 border-t-2 border-sky-500": (floatingElem() as FloatingElem[])[idx()].isDrop === true,
+              "mt-2": (attachedInfo() as AttachedInfo[])[idx()].isDrop === false,
+              "mt-2 border-t-2 border-sky-500": (attachedInfo() as AttachedInfo[])[idx()].isDrop === true,
             }}
-            hidden={(floatingElem() as FloatingElem[])[idx()].hidden}
+            hidden={(attachedInfo() as AttachedInfo[])[idx()].hidden}
           >
             <form
               onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}

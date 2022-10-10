@@ -2,14 +2,14 @@
 import { createRoot, createSignal } from "solid-js";
 
 // type
-import { Subtitle, FloatingElem } from "@/interfaces";
+import { Subtitle, AttachedInfo } from "@/interfaces";
 
 const handlerSubtitles = () => {
   const [subtitles, setSubtitles] = createSignal<Subtitle[]>()
-  const [floatingElem, setFloatingElem] = createSignal<FloatingElem[]>()
+  const [attachedInfo, setAttachedInfo] = createSignal<AttachedInfo[]>()
   return {
     subtitles, setSubtitles,
-    floatingElem, setFloatingElem,
+    attachedInfo, setAttachedInfo,
   }
 }
 

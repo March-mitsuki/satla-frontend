@@ -63,6 +63,8 @@ export const changeSubtitle = (
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))
   ws.send(postData)
+  console.log("send change subtitle: ", JSON.stringify(_postData));
+
 }
 
 export const addSubtitleUp = (

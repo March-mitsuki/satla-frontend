@@ -4,7 +4,7 @@ import { createSignal, Match, Switch } from "solid-js"
 // local dependencies
 import _pagetype from "../contexts/page-type"
 import _subtitles from "../contexts/subtitles"
-import { Subtitle, FloatingElem } from "@/interfaces"
+import { Subtitle, AttachedInfo } from "@/interfaces"
 
 // type
 import type { Component } from "solid-js"
@@ -19,7 +19,7 @@ const SendPane: Component<{
   const [sendType, setSendType] = createSignal(true) // true = 双语, false = 单语
   const {
     subtitles, setSubtitles,
-    floatingElem, setFloatingElem,
+    attachedInfo, setAttachedInfo,
   } = _subtitles
 
   const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
@@ -31,20 +31,31 @@ const SendPane: Component<{
       // 输入
       console.log("输入");
       
-      const newSub = new Subtitle()
-      const newFloating = new FloatingElem()
+      const newSub = new Subtitle({
+        // 暂时写的假东西, 别忘记改
+        id: Date.now(),
+        project_id: 1,
+        translated_by: "current user",
+      })
+      const newAttachedInfo = new AttachedInfo(Date.now())
       newSub.subtitle = formElem.subtitle.value
       newSub.origin = formElem.origin.value
-      floatingElem()?.push(newFloating)
-      setFloatingElem(floatingElem()?.map(x => x))
+      attachedInfo()?.push(newAttachedInfo)
+      setAttachedInfo(attachedInfo()?.map(x => x))
       subtitles()?.push(newSub)
       setSubtitles(subtitles()?.map(x => x))
     } else {
       // 发送
       console.log("发送");
       
-      const newSub = new Subtitle()
-      const newFloating = new FloatingElem()
+      const newSub = new Subtitle({
+        // 暂时写的假东西, 别忘记改
+        id: Date.now(),
+        project_id: 1,
+        translated_by: "current user",
+      })
+      // 直接发送好像不需要增加attached info
+      const newAttachedInfo = new AttachedInfo(Date.now())
       newSub.subtitle = formElem.subtitle.value
       newSub.origin = formElem.origin.value
       console.log("will post", newSub);

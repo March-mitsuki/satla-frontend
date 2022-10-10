@@ -39,8 +39,9 @@ export class Subtitle {
   }
 }
 
-// 前端subtitle配套的附加属性, 用于判断拖动状态
-export class FloatingElem {
+// 前端subtitle配套的附加属性
+// 用于判断拖动状态, 是否在编辑, 更改是否成功等
+export class AttachedInfo {
   id: number
   zIndex: number | "auto"
   position: "static" | "relative" | "absolute" | "sticky" | "fixed"
@@ -48,6 +49,8 @@ export class FloatingElem {
   y: number
   hidden: boolean
   isDrop: boolean
+  isEditing: boolean
+  changeStatus: boolean
 
   constructor(id: number) {
     this.id = id
@@ -57,6 +60,8 @@ export class FloatingElem {
     this.y = 0
     this.hidden = false
     this.isDrop = false
+    this.isEditing = false
+    this.changeStatus = true // 初始为ture, 当为false的时候说明改行更改失败
   }
 }
 
