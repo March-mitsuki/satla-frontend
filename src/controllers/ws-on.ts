@@ -1,6 +1,7 @@
 // local dependencies
 import _currentInfo from "@/components/contexts/current-info-ctx";
 import { wsSend } from "."
+import { sleep } from "@/components/tools";
 
 // type
 import { Subtitle } from "@/interfaces";
@@ -21,7 +22,7 @@ export const addUser = (
   console.log("add user msg: ", body);
 }
 
-export const getRoomSubtitles = (
+export const getRoomSubtitles = async (
   data: s2cEventMap,
   setSubtitles: Setter<Subtitle[] | undefined>,
   setAttachedInfo: Setter<AttachedInfo[] | undefined>,
@@ -33,14 +34,15 @@ export const getRoomSubtitles = (
   body.subtitles.sort((a, b) => {
     return orderList.indexOf(a.id.toString()) - orderList.indexOf(b.id.toString());
   })
-  let attachedInfo: AttachedInfo[] = [];
+  const attachedInfo: AttachedInfo[] = [];
   for (let i = 0; i < (body.subtitles as Subtitle[]).length; i++) {
     const elem = (body.subtitles as Subtitle[])[i]
     const _attachedInfo = new AttachedInfo(elem.id)
     attachedInfo.push(_attachedInfo)
   }
   setAttachedInfo(attachedInfo)
-  setSubtitles(body.subtitles)  
+  // await sleep(100)
+  setSubtitles(body.subtitles)
 }
 
 export const onopen = (

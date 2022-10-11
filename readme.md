@@ -43,8 +43,8 @@ https://github.com/March-mitsuki/vvvorld
     - [x] 加行(up down)
     - [x] 修改行
     - [x] 修改显示(当别人正在修改的时候)
-    - [ ] 加翻译行
-    - [ ] 删除行
+    - [x] 加翻译行
+    - [x] 删除行
     - [ ] 拖动行
   - [ ] 发送页面
     - [x] 加行(up down)

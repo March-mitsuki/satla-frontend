@@ -12,6 +12,7 @@ import type {
   c2sEditStart,
   c2sEditEnd,
   c2sAddTranslatedSubtitle,
+  c2sDeleteSubtitle,
 } from "@/interfaces/ws"
 
 export const addUser = (ws: WebSocket) => {
@@ -202,6 +203,24 @@ export const addTranslatedSubtitle = (
     body: {
       project_name: project_name,
       new_subtitle: subtitle
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+}
+
+export const deleteSubtitle = (ws: WebSocket | undefined, subtitle: Subtitle) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sDeleteSubtitle = {
+    head: {
+      cmd: "deleteSubtitle"
+    },
+    body: {
+      subtitle: subtitle
     }
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))

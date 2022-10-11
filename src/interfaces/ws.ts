@@ -85,6 +85,15 @@ export interface c2sAddTranslatedSubtitle {
   }
 }
 
+export interface c2sDeleteSubtitle {
+  head: {
+    cmd: "deleteSubtitle"
+  }
+  body: {
+    subtitle: Subtitle
+  }
+}
+
 
 // s2c -> server to client msg
 
@@ -95,7 +104,7 @@ export interface s2cEventMap {
       "sChangeUser" | "sGetRoomSubtitles" |
       "sAddSubtitleUp" | "sAddSubtitleDown" |
       "sChangeSubtitle" | "sEditStart" | "sEditEnd" |
-      "sAddTransSub"
+      "sAddTransSub" | "sDeleteSubtitle"
   }
   body: any
 }
@@ -133,4 +142,9 @@ export interface s2cEditChangeBody {
 
 export interface s2cAddTranslatedSubtitleBody {
   new_subtitle: Subtitle
+}
+
+export interface s2cDeleteSubtitleBody {
+  status: boolean // 是否删除成功
+  subtitle_id: number // 删除的subtitle
 }
