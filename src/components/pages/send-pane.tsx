@@ -45,16 +45,21 @@ const SendPane: Component<{
       console.log("直接发送");
       const newSub = new Subtitle({
         id: 0,
-        project_id: 1,
+        project_id: 0,
         translated_by: _currentInfo.currentUser().user_name,
         checked_by: _currentInfo.currentUser().user_name,
+        send_by: _currentInfo.currentUser().user_name,
         origin: formElem.origin.value,
         subtitle: formElem.subtitle.value,
       })
-      // 直接发送好像不需要增加attached info
-      const newAttachedInfo = new AttachedInfo(Date.now())
-      newSub.subtitle = formElem.subtitle.value
-      newSub.origin = formElem.origin.value
+      // 直接发送不需要更新任何发送和操作页面的元素, 只需要更新display中的字幕就行
+      // 即check-area不需要监听这个cmd的onmessage
+      // send-area只需要监听之后清空send-form就行了
+      wsSend.sendSubtitleDirect({
+        ws: props.ws,
+        subtitle: newSub,
+        roomid: props.roomid
+      })
     }
   }
 

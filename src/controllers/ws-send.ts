@@ -15,6 +15,8 @@ import type {
   c2sDeleteSubtitle,
   c2sReordrSubFront,
   c2sReordrSubBack,
+  c2sSendSubtitle,
+  c2sSendSubDirect,
 } from "@/interfaces/ws"
 
 export const addUser = (ws: WebSocket) => {
@@ -289,6 +291,61 @@ export const reorderSubBack = (
       project_id: project_id,
       drag_id: drag_id,
       drop_id: drop_id,
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+}
+
+export const sendSubtitle = (
+  {
+    ws,
+    subtitle,
+  }:{
+    ws: WebSocket | undefined
+    subtitle: Subtitle
+  }
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sSendSubtitle = {
+    head: {
+      cmd: "sendSubtitle"
+    },
+    body: {
+      subtitle: subtitle
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+}
+
+export const sendSubtitleDirect = (
+  {
+    ws,
+    subtitle,
+    roomid,
+  }:{
+    ws: WebSocket | undefined
+    subtitle: Subtitle
+    roomid: string
+  }
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sSendSubDirect = {
+    head: {
+      cmd: "sendSubtitleDirect"
+    },
+    body: {
+      roomid: roomid,
+      subtitle: subtitle,
     }
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))

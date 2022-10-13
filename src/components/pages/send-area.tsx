@@ -14,6 +14,7 @@ import type {
   s2cDeleteSubtitleBody,
   s2cReorderSubBody,
   s2cAddTranslatedSubtitleBody,
+  s2cSendSubtitleBody,
 } from "@/interfaces/ws"
 
 // for test
@@ -22,7 +23,7 @@ import dummySub from "@/assets/dummy-subtitles"
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const SendArea: ParentComponent<{
-  ws: WebSocket | undefined,
+  ws: WebSocket | undefined
 }> = (props) => {
   const {
     subtitles, setSubtitles,
@@ -56,9 +57,11 @@ const SendArea: ParentComponent<{
 
     subtitle.subtitle = formElem.subtitle.value
     subtitle.origin = formElem.origin.value
-    subtitle.checked_by = currentUser().user_name
-    // wsSend.changeSubtitle({ws: props.ws, subtitle: subtitle})
-    console.log("会发送字幕");
+    subtitle.send_by = currentUser().user_name
+    wsSend.sendSubtitle({
+      ws: props.ws,
+      subtitle: subtitle,
+    })
   }
 
   const formKeyDownHander = (
@@ -144,9 +147,7 @@ const SendArea: ParentComponent<{
     wsSend.deleteSubtitle(props.ws, subtitle)
   }
 
-  const onInputHandler = (idx: number) => {
-    console.log("on input");
-    
+  const onInputHandler = (idx: number) => {    
     const dc_attachedInfo = attachedInfo()?.map(x => x)
     if (!dc_attachedInfo) {
       return
@@ -233,6 +234,29 @@ const SendArea: ParentComponent<{
                 drop_id: reorderBackBody.drop_id,
               })
             }
+          }
+          break;
+        case "sSendSubtitle":
+          const sendSubtitleBody: s2cSendSubtitleBody = data.body
+          if (!sendSubtitleBody.status) {
+            console.log("send subtitle failed, please check the server side");
+            return
+          }
+          wsOn.deleteSubtitle(sendSubtitleBody.subtitle.id)
+          break;
+        case "sSendSubtitleDirect":
+          const sendSubtitleDirectBody: s2cSendSubtitleBody = data.body
+          if (!sendSubtitleDirectBody.status) {
+            console.log("send subtitle failed, please check the server side");
+            return
+          }
+          console.log("send sub direct on: ", data);
+          
+          if (sendSubtitleDirectBody.subtitle.send_by === currentUser().user_name) {
+            // 直接发送成功, 并且send_by是自己时清空send-form
+            const translateForm = document.getElementById("send-form");
+            (translateForm as HTMLFormElement).subtitle.value = "";
+            (translateForm as HTMLFormElement).origin.value = "";  
           }
           break;
         default:

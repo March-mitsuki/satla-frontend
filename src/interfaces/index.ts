@@ -6,6 +6,7 @@ export class Subtitle {
   project_id: number
   translated_by: string
   checked_by: string // 为空字符串则为未校对
+  send_by: string
   subtitle: string // 翻译
   origin: string // 原文
 
@@ -18,6 +19,7 @@ export class Subtitle {
       subtitle,
       origin,
       input_time,
+      send_by,
     }:{
       id: number
       project_id: number
@@ -26,6 +28,7 @@ export class Subtitle {
       subtitle?: string
       origin?: string
       input_time?: string
+      send_by?: string
     }
   ){
     if (checked_by) {
@@ -47,6 +50,11 @@ export class Subtitle {
       this.input_time = input_time
     } else {
       this.input_time = "00:00:00"
+    }
+    if (send_by) {
+      this.send_by = send_by
+    } else {
+      this.send_by = ""
     }
 
     this.id = id

@@ -118,6 +118,25 @@ export interface c2sReordrSubBack {
   }
 }
 
+export interface c2sSendSubtitle {
+  head: {
+    cmd: "sendSubtitle"
+  }
+  body: {
+    subtitle: Subtitle
+  }
+}
+
+export interface c2sSendSubDirect {
+  head: {
+    cmd: "sendSubtitleDirect"
+  }
+  body: {
+    roomid: string
+    subtitle: Subtitle
+  }
+}
+
 
 // s2c -> server to client msg
 
@@ -129,7 +148,8 @@ export interface s2cEventMap {
       "sAddSubtitleUp" | "sAddSubtitleDown" |
       "sChangeSubtitle" | "sEditStart" | "sEditEnd" |
       "sAddTransSub" | "sDeleteSubtitle" |
-      "sReorderSubFront" | "sReorderSubBack"
+      "sReorderSubFront" | "sReorderSubBack" |
+      "sSendSubtitle" | "sSendSubtitleDirect"
   }
   body: any
 }
@@ -184,3 +204,14 @@ export interface s2cReorderSubBody {
   drag_id: number
   drop_id: number
 }
+
+export interface s2cSendSubtitleBody {
+  // 是否是直接发送body都相同
+  status: boolean
+  subtitle: Subtitle
+}
+
+// export interface s2cSendSubtitleDirectBody {
+//   status: boolean
+//   subtitle: Subtitle
+// }

@@ -14,6 +14,7 @@ import type {
   s2cDeleteSubtitleBody,
   s2cReorderSubBody,
   s2cAddTranslatedSubtitleBody,
+  s2cSendSubtitleBody,
 } from "@/interfaces/ws"
 import { wsOn, wsSend } from "@/controllers";
 
@@ -447,6 +448,14 @@ const CheckArea: ParentComponent<{
               })
             }
           }
+          break;
+        case "sSendSubtitle":
+          const sendSubtitleBody: s2cSendSubtitleBody = data.body
+          if (!sendSubtitleBody.status) {
+            console.log("send subtitle failed, please check the server side");
+            return
+          }
+          wsOn.deleteSubtitle(sendSubtitleBody.subtitle.id)
           break;
         default:
           console.log("unknow cmd: ", data);

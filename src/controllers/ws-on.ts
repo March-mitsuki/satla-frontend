@@ -59,11 +59,13 @@ export const changeSubtitle = (data: s2cEventMap) => {
     return
   }
   const idx = dc_attachedInfo.findIndex(elem => elem.id === body.subtitle.id)       
-  if (!body.status && body.subtitle.checked_by === _currentInfo.currentUser().user_name) {
-    // 如果操作不成功并且进行操作的是自己, 那么则通知此行操作不成功
+  if (!body.status) {
+    if (body.subtitle.checked_by === _currentInfo.currentUser().user_name) {
+      // 如果操作不成功并且进行操作的是自己, 那么则通知此行操作不成功
+      dc_attachedInfo[idx].changeStatus = 2
+      setAttachedInfo(dc_attachedInfo)
+    }
     // 如果操作不成功但不是自己进行操作, 那么不更新任何东西
-    dc_attachedInfo[idx].changeStatus = 2
-    setAttachedInfo(dc_attachedInfo)
   } else {
     if (dc_attachedInfo[idx].changeStatus === 2 || 1) {
       // 如果成功并且change status还在未提交或者不成功, 那么设置为普通
