@@ -10,10 +10,10 @@ import { wsOn, wsSend } from "@/controllers"
 import type { ParentComponent } from "solid-js"
 import { Subtitle, AttachedInfo } from "@/interfaces"
 import type {
-  c2sChangeSubtitle,
   s2cEventMap,
   s2cDeleteSubtitleBody,
   s2cReorderSubBody,
+  s2cAddTranslatedSubtitleBody,
 } from "@/interfaces/ws"
 
 // for test
@@ -186,11 +186,14 @@ const SendArea: ParentComponent<{
           break;
         case "sAddTransSub":
           wsOn.addTranslatedSub(data)
-          // 这里是否要清空translateForm要再思考
-          const translateForm = document.getElementById("translate-form");
-          (translateForm as HTMLFormElement).subtitle.value = "";
-          (translateForm as HTMLFormElement).origin.value = "";
-          document.getElementById(((subtitles() as Subtitle[]).length-1).toString() + "-sub")?.scrollIntoView()
+          const addTranslatedSubBody: s2cAddTranslatedSubtitleBody = data.body
+          if (addTranslatedSubBody.new_subtitle.translated_by === currentUser().user_name) {
+            // 如果是自己加的行, 那么加了之后清空send-form (位于同一page不同components)
+            // 与send-pane是发送模式还是输入模式无关, 只要是自己发送的就该清空
+            const translateForm = document.getElementById("send-form");
+            (translateForm as HTMLFormElement).subtitle.value = "";
+            (translateForm as HTMLFormElement).origin.value = "";
+          }
           break;
         case "sDeleteSubtitle":
           const deleteSubBody: s2cDeleteSubtitleBody = data.body

@@ -27,7 +27,7 @@ const TranslatePane: Component<{
   } = _pagetype
   const [checkMemo, setCheckMemo] = createSignal<string[]>([""])
 
-  const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
+  const addTranslateSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
     e.stopPropagation()
     e.preventDefault()
     const formElem = e.currentTarget
@@ -172,7 +172,7 @@ const TranslatePane: Component<{
         <Match when={pagetype() === false}>
           <form
             id="translate-form"
-            onSubmit={(e) => onSubmitHandler(e)}
+            onSubmit={(e) => addTranslateSubmitHandler(e)}
             class="flex gap-1 px-1"
           >
             <input

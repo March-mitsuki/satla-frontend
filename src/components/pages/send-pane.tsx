@@ -2,9 +2,9 @@
 import { createSignal, Match, Switch } from "solid-js"
 
 // local dependencies
-import _pagetype from "../contexts/page-type"
-import _subtitles from "../contexts/subtitles"
+import _currentInfo from "../contexts/current-info-ctx"
 import { Subtitle, AttachedInfo } from "@/interfaces"
+import { wsSend } from "@/controllers"
 
 // type
 import type { Component } from "solid-js"
@@ -12,15 +12,11 @@ import type { Component } from "solid-js"
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const SendPane: Component<{
-  current_room: string
+  roomid: string
   ws: WebSocket | undefined
 }> = (props) => {
-  const [inputType, seInputType] = createSignal(false) // true = 输入, false = 发送
+  const [inputType, setInputType] = createSignal(false) // true = 输入, false = 发送
   const [sendType, setSendType] = createSignal(true) // true = 双语, false = 单语
-  const {
-    subtitles, setSubtitles,
-    attachedInfo, setAttachedInfo,
-  } = _subtitles
 
   const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
     e.stopPropagation()
@@ -30,51 +26,47 @@ const SendPane: Component<{
     if (inputType()) {
       // 输入
       console.log("输入");
-      
       const newSub = new Subtitle({
-        // 暂时写的假东西, 别忘记改
-        id: Date.now(),
-        project_id: 1,
-        translated_by: "current user",
+        // project_id和id都为0, 服务器会根据roomid寻找对应project进行插入
+        id: 0,
+        project_id: 0,
+        translated_by: _currentInfo.currentUser().user_name,
+        checked_by: _currentInfo.currentUser().user_name,
+        origin: formElem.origin.value,
+        subtitle: formElem.subtitle.value,
       })
-      const newAttachedInfo = new AttachedInfo(Date.now())
-      newSub.subtitle = formElem.subtitle.value
-      newSub.origin = formElem.origin.value
-      attachedInfo()?.push(newAttachedInfo)
-      setAttachedInfo(attachedInfo()?.map(x => x))
-      subtitles()?.push(newSub)
-      setSubtitles(subtitles()?.map(x => x))
+      wsSend.addTranslatedSubtitle({
+        ws: props.ws,
+        subtitle: newSub,
+        project_name: props.roomid
+      })
     } else {
       // 发送
-      console.log("发送");
-      
+      console.log("直接发送");
       const newSub = new Subtitle({
-        // 暂时写的假东西, 别忘记改
-        id: Date.now(),
+        id: 0,
         project_id: 1,
-        translated_by: "current user",
+        translated_by: _currentInfo.currentUser().user_name,
+        checked_by: _currentInfo.currentUser().user_name,
+        origin: formElem.origin.value,
+        subtitle: formElem.subtitle.value,
       })
       // 直接发送好像不需要增加attached info
       const newAttachedInfo = new AttachedInfo(Date.now())
       newSub.subtitle = formElem.subtitle.value
       newSub.origin = formElem.origin.value
-      console.log("will post", newSub);
-      // props.ws.send(newSub)
     }
-    formElem.subtitle.value = ""
-    formElem.origin.value = ""
-    document.getElementById(((subtitles() as Subtitle[]).length-1).toString() + "-sub")?.scrollIntoView()
   }
 
   const inputTypeToggleHander = (e: Event & { currentTarget: HTMLInputElement }) => {
-    seInputType(!inputType())
+    setInputType(!inputType())
   }
   const sendTypeToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
     setSendType(!sendType())
   }
 
   const openDisplayPage = () => {
-    window.open(`/display/${props.current_room}`, "_blank")
+    window.open(`/display/${props.roomid}`, "_blank")
   }
 
   return (
@@ -156,7 +148,8 @@ const SendPane: Component<{
         </div>
       </div>
       <form
-        id={inputType() ? "translate-form" : "send-form"}
+        // id={inputType() ? "translate-form" : "send-form"}
+        id="send-form"
         onSubmit={(e) => onSubmitHandler(e)}
         class="flex gap-1 px-1"
       >

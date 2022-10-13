@@ -120,7 +120,7 @@ const SendPage = () => {
               risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
               <SendPane
-                current_room={param.roomid}
+                roomid={param.roomid}
                 ws={_ws()}
               ></SendPane>
             </FloatingWindow>
