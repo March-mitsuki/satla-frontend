@@ -12,7 +12,8 @@ import { Subtitle, AttachedInfo } from "@/interfaces"
 import type {
   c2sChangeSubtitle,
   s2cEventMap,
-  s2cAddSubtitleBody,
+  s2cDeleteSubtitleBody,
+  s2cReorderSubBody,
 } from "@/interfaces/ws"
 
 // for test
@@ -27,103 +28,20 @@ const SendArea: ParentComponent<{
     subtitles, setSubtitles,
     attachedInfo, setAttachedInfo,
   } = _subtitles
-  const { setUserList } = _currentInfo
+  const { currentUser, setUserList } = _currentInfo
 
   // 各种初始化操作
   if (typeof subtitles() === "undefined") {
     setSubtitles(dummySub)
   }
-  let initialattachedInfo: AttachedInfo[] = [];
-  for (let i = 0; i < (subtitles() as Subtitle[]).length; i++) {
-    const elem = (subtitles() as Subtitle[])[i]
-    const attachedInfo = new AttachedInfo(elem.id)
-    initialattachedInfo.push(attachedInfo)
-  }
   if (typeof attachedInfo() === "undefined") {
+    let initialattachedInfo: AttachedInfo[] = [];
+    for (let i = 0; i < (subtitles() as Subtitle[]).length; i++) {
+      const elem = (subtitles() as Subtitle[])[i]
+      const attachedInfo = new AttachedInfo(elem.id)
+      initialattachedInfo.push(attachedInfo)
+    }
     setAttachedInfo(initialattachedInfo)
-  }
-
-  // 定义复用函数, 便于维护
-  // 更新逻辑: 监听用户操作 -> ws.send -> ws.onmessage -> 页面更新(启动更新函数)
-  const addUp = (
-    {
-      idx,
-      newSubId,
-      project_id,
-      checked_by,
-    }:{
-      idx: number,
-      newSubId: number,
-      project_id: number,
-      checked_by: string,
-    }
-  ) => {
-    const newSub: Subtitle = new Subtitle({
-      id: newSubId,
-      project_id: project_id,
-      checked_by: checked_by,
-      translated_by: checked_by,
-    })
-    const newattachedInfo = new AttachedInfo(newSubId)
-    newattachedInfo.id = newSub.id
-
-    attachedInfo()?.splice(idx, 0, newattachedInfo)
-    setAttachedInfo(attachedInfo()?.map(x => x))
-
-    subtitles()?.splice(idx, 0, newSub)
-    setSubtitles(subtitles()?.map(x => x))
-  }
-  const addDown = (
-    {
-      idx,
-      newSubId,
-      project_id,
-      checked_by,
-    }:{
-      idx: number,
-      newSubId: number,
-      project_id: number,
-      checked_by: string,
-    }
-  ) => {
-    const newSub: Subtitle = new Subtitle({
-      id: newSubId,
-      project_id: project_id,
-      checked_by: checked_by,
-      translated_by: checked_by,
-    })
-    const newattachedInfo = new AttachedInfo(newSubId)
-    newattachedInfo.id = newSub.id
-
-    attachedInfo()?.splice(idx + 1, 0, newattachedInfo)
-    setAttachedInfo(attachedInfo()?.map(x => x))
-
-    subtitles()?.splice(idx + 1, 0, newSub)
-    setSubtitles(subtitles()?.map(x => x))
-  }
-
-  // poster函数
-  const postChange = (subtitle: Subtitle) => {
-    if (!props.ws) {
-      console.log("props.ws is undifiend");
-      return
-    }
-    const postSubtitle: c2sChangeSubtitle = {
-      head: {
-        cmd: "changeSubtitle"
-      },
-      body: {
-        subtitle: subtitle
-      }
-    }
-    const postData = new TextEncoder().encode(JSON.stringify(postSubtitle))
-    props.ws.send(postData)
-    console.log("subtitle posted:", subtitle);
-  }
-
-  // 更新函数
-  const changeSubtitle = () => {
-
   }
 
   const onSubmitHandler = (
@@ -131,13 +49,16 @@ const SendArea: ParentComponent<{
     idx: number,
     subtitle: Subtitle
   ) => {
+    // 点击发送发送字幕
     e.stopPropagation()
     e.preventDefault()
     const formElem = e.currentTarget
 
     subtitle.subtitle = formElem.subtitle.value
     subtitle.origin = formElem.origin.value
-    postChange(subtitle)
+    subtitle.checked_by = currentUser().user_name
+    // wsSend.changeSubtitle({ws: props.ws, subtitle: subtitle})
+    console.log("会发送字幕");
   }
 
   const formKeyDownHander = (
@@ -188,13 +109,14 @@ const SendArea: ParentComponent<{
         }
       }
     }
-    // 按回车提交
+    // 按回车更改字幕
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault()
 
       subtitle.subtitle = formElem.subtitle.value
       subtitle.origin = formElem.origin.value
-      postChange(subtitle)
+      subtitle.checked_by = currentUser().user_name
+      wsSend.changeSubtitle({ws: props.ws, subtitle: subtitle})
     }
   }
 
@@ -219,10 +141,22 @@ const SendArea: ParentComponent<{
 
   const delClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault()
-    setSubtitles(subtitles()?.filter(elem => elem.id !== subtitle.id))
+    wsSend.deleteSubtitle(props.ws, subtitle)
+  }
+
+  const onInputHandler = (idx: number) => {
+    console.log("on input");
+    
+    const dc_attachedInfo = attachedInfo()?.map(x => x)
+    if (!dc_attachedInfo) {
+      return
+    }
+    dc_attachedInfo[idx].changeStatus = 1
+    setAttachedInfo(dc_attachedInfo)
   }
 
   createEffect(() => {
+    // 更新逻辑: 监听用户操作 -> ws.send -> ws.onmessage -> 页面更新(启动更新函数)
     if (!props.ws) {
       return
     }
@@ -233,25 +167,70 @@ const SendArea: ParentComponent<{
           wsOn.addUser(data, setUserList)
           break;
         case "sGetRoomSubtitles":
-          wsOn.getRoomSubtitles(data, setSubtitles, setAttachedInfo)
+          wsOn.getRoomSubtitles(data)
           break;
         case "sAddSubtitleUp":
-          const addUpBody: s2cAddSubtitleBody = data.body
-          addUp({
-            idx: addUpBody.pre_subtitle_idx,
-            newSubId: addUpBody.new_subtitle_id,
-            project_id: addUpBody.project_id,
-            checked_by: addUpBody.checked_by
-          })
+          wsOn.addSubtitleUp(data)
           break;
         case "sAddSubtitleDown":
-          const addDownBody: s2cAddSubtitleBody = data.body
-          addDown({
-            idx: addDownBody.pre_subtitle_idx,
-            newSubId: addDownBody.new_subtitle_id,
-            project_id: addDownBody.project_id,
-            checked_by: addDownBody.checked_by
-          })
+          wsOn.addSubtitleDown(data)
+          break;
+        case "sChangeSubtitle":
+          wsOn.changeSubtitle(data)
+          break;
+        case "sEditStart":       
+          wsOn.editStart(data)
+          break;
+        case "sEditEnd":
+          wsOn.editEnd(data)
+          break;
+        case "sAddTransSub":
+          wsOn.addTranslatedSub(data)
+          // 这里是否要清空translateForm要再思考
+          const translateForm = document.getElementById("translate-form");
+          (translateForm as HTMLFormElement).subtitle.value = "";
+          (translateForm as HTMLFormElement).origin.value = "";
+          document.getElementById(((subtitles() as Subtitle[]).length-1).toString() + "-sub")?.scrollIntoView()
+          break;
+        case "sDeleteSubtitle":
+          const deleteSubBody: s2cDeleteSubtitleBody = data.body
+          if (!deleteSubBody.status) {
+            console.log("delete failed, please check the server side");
+            return
+          }
+          wsOn.deleteSubtitle(deleteSubBody.subtitle_id)
+          break;
+        case "sReorderSubFront":
+          const reorderFrontBody: s2cReorderSubBody = data.body
+          if (reorderFrontBody.operation_user === currentUser().user_name) {
+            if (!reorderFrontBody.status) {
+              // 如果是自己操作, 那么成功了则什么都不做, 失败了则通知失败
+              window.alert("拖动失败, 请刷新重试")
+            }
+          } else {
+            if (reorderFrontBody.status) {
+              // 若是别人操作, 则成功了还行, 失败了什么都不做
+              wsOn.reorderSubFrontOther({
+                drag_id: reorderFrontBody.drag_id,
+                drop_id: reorderFrontBody.drop_id,
+              })
+            }
+          }
+          break;
+        case "sReorderSubBack":
+          const reorderBackBody: s2cReorderSubBody = data.body
+          if (reorderBackBody.operation_user === currentUser().user_name) {
+            if (!reorderBackBody.status) {
+              window.alert("拖动失败, 请刷新重试")
+            }
+          } else {
+            if (reorderBackBody.status) {
+              wsOn.reorderSubBackOther({
+                drag_id: reorderBackBody.drag_id,
+                drop_id: reorderBackBody.drop_id,
+              })
+            }
+          }
           break;
         default:
           console.log("unknow cmd: ", data);
@@ -269,7 +248,6 @@ const SendArea: ParentComponent<{
         console.log("creat For!");
         return (
           <div
-            id={`${elem.id}-form`}
             style={{
               "z-index": (attachedInfo() as AttachedInfo[])[idx()].zIndex,
               "position": `${(attachedInfo() as AttachedInfo[])[idx()].position}`,
@@ -282,44 +260,49 @@ const SendArea: ParentComponent<{
             hidden={(attachedInfo() as AttachedInfo[])[idx()].hidden}
           >
             <form
+              id={`${elem.id}-form`}
               onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}
               onSubmit={(e) => onSubmitHandler(e, idx(), elem)}
-              class="flex px-2 gap-2 items-center"
+              onInput={() => onInputHandler(idx())}
+              classList={{
+                "flex px-2 gap-2 items-center": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 0,
+                "flex px-2 gap-2 items-center border-2 border-sky-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 1,
+                "flex px-2 gap-2 items-center border-2 border-red-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 2,
+              }}
             >
-              {/* <button onClick={() => console.log(afterFormWrapperRefs[idx()])}>C-me</button> */}
               <Switch fallback={
                 <div
-                  class="flex gap-3 w-[150px] items-center px-1 rounded-md bg-orange-500/70 select-none"
+                  class="flex gap-3 w-[180px] items-center px-1 rounded-md bg-orange-500/70 select-none"
                 >
                   <div class="flex-1">
-                    12:50:23
+                    {elem.input_time}
                   </div>
                   <div class="flex-1 truncate text-center">
-                    翻译
+                    {elem.translated_by}
                   </div>
                 </div>
               }>
-                <Match when={elem.send_time !== null}>
+                <Match when={(attachedInfo() as AttachedInfo[])[idx()].isEditing}>
                   <div
-                    class="flex gap-3 w-[150px] items-center px-1 rounded-md bg-gray-500/70 select-none"
+                    class="flex gap-3 w-[180px] items-center px-1 rounded-md bg-red-500/70 select-none"
                   >
-                    <div class="flex-1">
-                      12:50:23
-                    </div>
-                    <div class="flex-1 truncate text-center">
-                      发送aaasd
+                    <div class="flex gap-1 justify-between items-center flex-1 truncate">
+                      <div class="flex-1">
+                        <div class="shrink-0 animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                      </div>
+                      <div class="flex-1">{(attachedInfo() as AttachedInfo[])[idx()].editingUser}</div>
                     </div>
                   </div>
                 </Match>
-                <Match when={elem.checked_by !== null}>
+                <Match when={elem.checked_by !== null && elem.checked_by !== ""}>
                   <div
-                    class="flex gap-3 w-[150px] items-center px-1 rounded-md bg-green-500/70 select-none"
+                    class="flex gap-3 w-[180px] items-center px-1 rounded-md bg-green-500/70 select-none"
                   >
                     <div class="flex-1">
-                      12:50:23
+                      {elem.input_time}
                     </div>
                     <div class="flex-1 truncate text-center">
-                      校对asdadsssasdasd
+                      {elem.checked_by}
                     </div>
                   </div>
                 </Match>
@@ -366,6 +349,8 @@ const SendArea: ParentComponent<{
                 name="subtitle"
                 autocomplete="off"
                 placeholder="请输入翻译"
+                onfocus={() => wsSend.editStart(props.ws, elem.id)}
+                onBlur={() => wsSend.editEnd(props.ws, elem.id)}
                 value={elem.subtitle}
                 class={inputStyle}
               />
@@ -375,6 +360,8 @@ const SendArea: ParentComponent<{
                 name="origin"
                 autocomplete="off"
                 placeholder="请输入原文"
+                onfocus={() => wsSend.editStart(props.ws, elem.id)}
+                onBlur={() => wsSend.editEnd(props.ws, elem.id)}
                 value={elem.origin}
                 class={inputStyle}
               />

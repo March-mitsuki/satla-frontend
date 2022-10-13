@@ -11,12 +11,9 @@ import type { ParentComponent } from "solid-js"
 import { Subtitle, AttachedInfo } from "@/interfaces"
 import type {
   s2cEventMap,
-  s2cAddSubtitleBody,
-  s2cChangeSubtitleBody,
-  s2cEditChangeBody,
-  s2cAddTranslatedSubtitleBody,
   s2cDeleteSubtitleBody,
   s2cReorderSubBody,
+  s2cAddTranslatedSubtitleBody,
 } from "@/interfaces/ws"
 import { wsOn, wsSend } from "@/controllers";
 
@@ -28,7 +25,6 @@ const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-5
 const CheckArea: ParentComponent<{
   ws: WebSocket | undefined
 }> = (props) => {
-  // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype, isBilingual, canOrder } = _pagetype
   const {
     subtitles, setSubtitles,
@@ -40,82 +36,17 @@ const CheckArea: ParentComponent<{
   if (typeof subtitles() === "undefined") {
     setSubtitles(dummySub)
   }
-  let initialAttachedInfo: AttachedInfo[] = [];
-  for (let i = 0; i < (subtitles() as Subtitle[]).length; i++) {
-    const elem = (subtitles() as Subtitle[])[i]
-    const attachedInfo = new AttachedInfo(elem.id)
-    initialAttachedInfo.push(attachedInfo)
-  }
   if (typeof attachedInfo() === "undefined") {
     // attachedInfo会根据首次传进来的subtitles进行设定
+    let initialAttachedInfo: AttachedInfo[] = [];
+    for (let i = 0; i < (subtitles() as Subtitle[]).length; i++) {
+      const elem = (subtitles() as Subtitle[])[i]
+      const attachedInfo = new AttachedInfo(elem.id)
+      initialAttachedInfo.push(attachedInfo)
+    }
     setAttachedInfo(initialAttachedInfo)
   }
 
-  // 定义复用函数, 便于维护
-  // 更新逻辑: 监听用户操作 -> ws.send -> ws.onmessage -> 页面更新(启动更新函数)
-  const addUp = (
-    {
-      idx,
-      newSubId,
-      project_id,
-      checked_by,
-    }:{
-      idx: number,
-      newSubId: number,
-      project_id: number,
-      checked_by: string,
-    }
-  ) => {
-    const newSub: Subtitle = new Subtitle({
-      id: newSubId,
-      project_id: project_id,
-      checked_by: checked_by,
-      translated_by: checked_by,
-    })
-    const newAttachedInfo = new AttachedInfo(newSubId)
-    newAttachedInfo.id = newSub.id
-
-    attachedInfo()?.splice(idx, 0, newAttachedInfo)
-    setAttachedInfo(attachedInfo()?.map(x => x))
-
-    subtitles()?.splice(idx, 0, newSub)
-    setSubtitles(subtitles()?.map(x => x))
-  }
-  const addDown = (
-    {
-      idx,
-      newSubId,
-      project_id,
-      checked_by,
-    }:{
-      idx: number,
-      newSubId: number,
-      project_id: number,
-      checked_by: string,
-    }
-  ) => {
-    const newSub: Subtitle = new Subtitle({
-      id: newSubId,
-      project_id: project_id,
-      checked_by: checked_by,
-      translated_by: checked_by,
-    })
-    const newAttachedInfo = new AttachedInfo(newSubId)
-    newAttachedInfo.id = newSub.id
-
-    attachedInfo()?.splice(idx + 1, 0, newAttachedInfo)
-    setAttachedInfo(attachedInfo()?.map(x => x))
-
-    subtitles()?.splice(idx + 1, 0, newSub)
-    setSubtitles(subtitles()?.map(x => x))
-  }
-  const addTranslatedSub = (subtitle: Subtitle) => {
-    const newAttachedInfo = new AttachedInfo(subtitle.id)
-    attachedInfo()?.push(newAttachedInfo)
-    setAttachedInfo(attachedInfo()?.map(x => x))
-    subtitles()?.push(subtitle)
-    setSubtitles(subtitles()?.map(x => x))
-  }
 
   const onSubmitHandler = (
     e: SubmitEvent & { currentTarget: HTMLFormElement},
@@ -230,7 +161,7 @@ const CheckArea: ParentComponent<{
     shiftY = e.clientY - (currentFormWrapper as HTMLDivElement).getBoundingClientRect().top;
     const docHeight = document.documentElement.clientHeight;
     // 拖动之后clientrect的计算会出错, 还不知道为啥
-    console.log((currentFormWrapper as HTMLDivElement).getBoundingClientRect().top);
+    // console.log((currentFormWrapper as HTMLDivElement).getBoundingClientRect().top);
 
     // 拖动后的form wrapper
     let afterFormWrapper: ParentNode | null | undefined;
@@ -335,7 +266,6 @@ const CheckArea: ParentComponent<{
         dc_attachedInfo[idx].hidden = false
         setAttachedInfo(dc_attachedInfo)
       }
-      console.log(attachedInfo(), subtitles());
 
       onmousemove = () => null
       onmouseup = () => null
@@ -359,31 +289,6 @@ const CheckArea: ParentComponent<{
     }
     dc_attachedInfo[idx].changeStatus = 1
     setAttachedInfo(dc_attachedInfo)
-  }
-
-  const editStart = (idx: number, editingUser: string) => {
-    const dc_attachedInfo = attachedInfo()?.map(x => x)
-    if (!dc_attachedInfo) {
-      return
-    }
-    dc_attachedInfo[idx].isEditing = true
-    dc_attachedInfo[idx].editingUser = editingUser
-    setAttachedInfo(dc_attachedInfo)
-  }
-
-  const editEnd = (idx: number, editingUser: string) => {
-    const dc_attachedInfo = attachedInfo()?.map(x => x)
-    if (!dc_attachedInfo) {
-      return
-    }
-    dc_attachedInfo[idx].isEditing = false
-    dc_attachedInfo[idx].editingUser = editingUser
-    setAttachedInfo(dc_attachedInfo)
-  }
-
-  const deleteSubtitle = (id: number) => {
-    setSubtitles(subtitles()?.filter(elem => elem.id !== id))
-    setAttachedInfo(attachedInfo()?.filter(elem => elem.id !== id))
   }
 
   const reorderSubFrontSelf = (
@@ -460,100 +365,11 @@ const CheckArea: ParentComponent<{
     setSubtitles(dc_subtitles)
   }
 
-  const reorderSubFrontOther = (
-    drag_id: number,
-    drop_id: number,
-  ) => {
-    const idx = subtitles()?.findIndex(elem => elem.id === drag_id)
-    const reorderIdx = subtitles()?.findIndex(elem => elem.id === drop_id)
-    if (typeof idx === "undefined" || typeof reorderIdx === "undefined") {
-      return
-    }
-
-    const dc_attachedInfo = attachedInfo()?.map(x => x)
-    if (!dc_attachedInfo) {
-      return
-    }
-    dc_attachedInfo[idx].zIndex = "auto"
-    dc_attachedInfo[idx].position = "static"
-    dc_attachedInfo[idx].isFloating = false
-    dc_attachedInfo[idx].y = 0
-    dc_attachedInfo[idx].isDrop = false
-    dc_attachedInfo[idx].hidden = false
-    dc_attachedInfo[reorderIdx].isDrop = false
-    dc_attachedInfo.splice(idx, 1)
-    dc_attachedInfo.splice(reorderIdx-1, 0, {
-      id: (subtitles() as Subtitle[])[idx].id,
-      zIndex: "auto",
-      position: "static",
-      isFloating: false,
-      y: 0,
-      hidden: false,
-      isDrop: false,
-      isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
-      editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
-      changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
-    })
-    setAttachedInfo(dc_attachedInfo)
-
-    const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
-    const dragSubtitle = dc_subtitles[idx]
-    dc_subtitles.splice(idx, 1)
-    dc_subtitles.splice(reorderIdx-1, 0, dragSubtitle)
-    setSubtitles(dc_subtitles)
-    console.log("reorder other finish: ", subtitles(), attachedInfo());
-    
-  }
-
-  const reorderSubBackOther = (
-    drag_id: number,
-    drop_id: number,
-  ) => {
-    const idx = subtitles()?.findIndex(elem => elem.id === drag_id)
-    const reorderIdx = subtitles()?.findIndex(elem => elem.id === drop_id)
-    if (typeof idx === "undefined" || typeof reorderIdx === "undefined") {
-      return
-    }
-
-    const dc_attachedInfo = attachedInfo()?.map(x => x)
-    if (!dc_attachedInfo) {
-      return
-    }
-    dc_attachedInfo[idx].zIndex = "auto"
-    dc_attachedInfo[idx].position = "static"
-    dc_attachedInfo[idx].isFloating = false
-    dc_attachedInfo[idx].y = 0
-    dc_attachedInfo[idx].isDrop = false
-    dc_attachedInfo[idx].hidden = false
-    dc_attachedInfo[reorderIdx].isDrop = false
-    dc_attachedInfo.splice(idx, 1)
-    dc_attachedInfo.splice(reorderIdx, 0, {
-      id: (subtitles() as Subtitle[])[idx].id,
-      zIndex: "auto",
-      position: "static",
-      isFloating: false,
-      y: 0,
-      hidden: false,
-      isDrop: false,
-      isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
-      editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
-      changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
-    })
-    setAttachedInfo(dc_attachedInfo)
-
-    const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
-    const dragSubtitle = dc_subtitles[idx]
-    dc_subtitles.splice(idx, 1)
-    dc_subtitles.splice(reorderIdx, 0, dragSubtitle)
-    setSubtitles(dc_subtitles)
-    console.log("reorder other finish: ", subtitles(), attachedInfo());
-
-  }
-
   createEffect(() => {
     if (!props.ws) {
       return
     }
+    // 更新逻辑: 监听用户操作 -> ws.send -> ws.onmessage -> 页面更新(启动更新函数)
     props.ws.onmessage = (evt) => {
       const data: s2cEventMap = JSON.parse(evt.data)
       switch (data.head.cmd) {
@@ -561,96 +377,47 @@ const CheckArea: ParentComponent<{
           wsOn.addUser(data, setUserList)
           break;
         case "sGetRoomSubtitles":
-          wsOn.getRoomSubtitles(data, setSubtitles, setAttachedInfo)
+          wsOn.getRoomSubtitles(data)
           break;
         case "sAddSubtitleUp":
-          const addUpBody: s2cAddSubtitleBody = data.body
-          addUp({
-            idx: addUpBody.pre_subtitle_idx,
-            newSubId: addUpBody.new_subtitle_id,
-            project_id: addUpBody.project_id,
-            checked_by: addUpBody.checked_by
-          })
+          wsOn.addSubtitleUp(data)
           break;
         case "sAddSubtitleDown":
-          const addDownBody: s2cAddSubtitleBody = data.body
-          addDown({
-            idx: addDownBody.pre_subtitle_idx,
-            newSubId: addDownBody.new_subtitle_id,
-            project_id: addDownBody.project_id,
-            checked_by: addDownBody.checked_by
-          })
+          wsOn.addSubtitleDown(data)
           break;
         case "sChangeSubtitle":
-          const changeSubBody: s2cChangeSubtitleBody = data.body
-          const dc_attachedInfo = attachedInfo()?.map(x => x)
-          if (!dc_attachedInfo) {
-            return
-          }
-          const idx = dc_attachedInfo.findIndex(elem => elem.id === changeSubBody.subtitle.id)       
-          if (!changeSubBody.status) {
-            // 无论是否更新成功都要deep copy之后进行更新, 所以先.map并不会造成性能损失
-            dc_attachedInfo[idx].changeStatus = 2
-            setAttachedInfo(dc_attachedInfo)
-          } else {
-            if (dc_attachedInfo[idx].changeStatus === 2 || 1) {
-              dc_attachedInfo[idx].changeStatus = 0
-              setAttachedInfo(dc_attachedInfo)
-            }
-            if (changeSubBody.subtitle.checked_by !== currentUser().user_name) {
-              // 如果成功并且进行操作的人是别人, 那么同时更新subtitle
-              const dc_subtitles = subtitles()?.map(x => x)
-              if (!dc_subtitles) {
-                return
-              }
-              dc_subtitles[idx].subtitle = changeSubBody.subtitle.subtitle
-              dc_subtitles[idx].origin = changeSubBody.subtitle.origin
-              dc_subtitles[idx].checked_by = changeSubBody.subtitle.checked_by
-              setSubtitles(dc_subtitles);
-              // 更新subtitles之后只会反应checked_by不知道为什么
-              const currentForm = document.getElementById(`${changeSubBody.subtitle.id}-form`);
-              (currentForm as HTMLFormElement).subtitle.value = changeSubBody.subtitle.subtitle;
-              (currentForm as HTMLFormElement).origin.value = changeSubBody.subtitle.origin;
-            }
-          }
+          wsOn.changeSubtitle(data)
           break;
         case "sEditStart":
-          const editStartBody: s2cEditChangeBody = data.body
-          const startIdx = attachedInfo()?.findIndex(elem => elem.id === editStartBody.subtitle_id)
-          if (typeof startIdx === "undefined") {
-            return
-          }          
-          editStart(startIdx, editStartBody.uname)
+          wsOn.editStart(data)
           break;
         case "sEditEnd":
-          const editEndBody: s2cEditChangeBody = data.body
-          const endIdx = attachedInfo()?.findIndex(elem => elem.id === editEndBody.subtitle_id)
-          if (typeof endIdx === "undefined") {
-            return
-          }
-          editEnd(endIdx, "")
+          wsOn.editEnd(data)
           break;
         case "sAddTransSub":
-          const addTransSubBody: s2cAddTranslatedSubtitleBody = data.body
-          console.log(addTransSubBody);
-          
-          addTranslatedSub(addTransSubBody.new_subtitle)
-          const translateForm = document.getElementById("translate-form");
-          (translateForm as HTMLFormElement).subtitle.value = "";
-          (translateForm as HTMLFormElement).origin.value = "";
-          document.getElementById(((subtitles() as Subtitle[]).length-1).toString() + "-sub")?.scrollIntoView()
+          wsOn.addTranslatedSub(data)
+          const addTranslatedSubBody: s2cAddTranslatedSubtitleBody = data.body
+          if (addTranslatedSubBody.new_subtitle.translated_by === currentUser().user_name) {
+            // 如果是自己加的行, 那么加了之后清空translate-form (位于同一page不同components)
+            const translateForm = document.getElementById("translate-form");
+            (translateForm as HTMLFormElement).subtitle.value = "";
+            (translateForm as HTMLFormElement).origin.value = "";
+          }
+          if (pagetype() === false) {
+            // 如果pagetype是翻译, 那么滚动到视野中
+            document.getElementById(((subtitles() as Subtitle[]).length-1).toString() + "-sub")?.scrollIntoView()
+          }
           break;
         case "sDeleteSubtitle":
           const deleteSubBody: s2cDeleteSubtitleBody = data.body
           if (!deleteSubBody.status) {
-            console.log("delete failed, please check the server side");
+            window.alert("delete failed, please check the server side");
             return
           }
-          deleteSubtitle(deleteSubBody.subtitle_id)
+          wsOn.deleteSubtitle(deleteSubBody.subtitle_id)
           break;
         case "sReorderSubFront":
           const reorderFrontBody: s2cReorderSubBody = data.body
-          console.log("reorder sub front on", reorderFrontBody);
           if (reorderFrontBody.operation_user === currentUser().user_name) {
             if (!reorderFrontBody.status) {
               // 如果是自己操作, 那么成功了则什么都不做, 失败了则通知失败
@@ -658,23 +425,26 @@ const CheckArea: ParentComponent<{
             }
           } else {
             if (reorderFrontBody.status) {
-              // 若是别人操作, 则成功了还行, 失败了什么都不做
-              console.log("reorder other front");
-              reorderSubFrontOther(reorderFrontBody.drag_id, reorderFrontBody.drop_id)
+              // 若是别人操作, 则成功了换行, 失败了什么都不做
+              wsOn.reorderSubFrontOther({
+                drag_id: reorderFrontBody.drag_id,
+                drop_id: reorderFrontBody.drop_id,
+              })
             }
           }
           break;
         case "sReorderSubBack":
           const reorderBackBody: s2cReorderSubBody = data.body
-          console.log("reorder sub back on", reorderBackBody);
           if (reorderBackBody.operation_user === currentUser().user_name) {
             if (!reorderBackBody.status) {
               window.alert("拖动失败, 请刷新重试")
             }
           } else {
             if (reorderBackBody.status) {
-              console.log("reorder other back start");
-              reorderSubBackOther(reorderBackBody.drag_id, reorderBackBody.drop_id)
+              wsOn.reorderSubBackOther({
+                drag_id: reorderBackBody.drag_id,
+                drop_id: reorderBackBody.drop_id,
+              })
             }
           }
           break;
@@ -712,10 +482,8 @@ const CheckArea: ParentComponent<{
                   onCompositionStart={() => onCompoStartHandler(idx())}
                   onCompositionEnd={() => setIsComposition(false)}
                   onInput={() => onInputHandler(idx())}
-                  onChange={() => wsSend.editStart(props.ws, elem.id)}
                   onKeyDown={(e) => formKeyDownHander(e, idx(), elem)}
                   onSubmit={(e) => onSubmitHandler(e, idx(), elem)}
-                  class="flex px-2 gap-2 items-center"
                   classList={{
                     "flex px-2 gap-2 items-center": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 0,
                     "flex px-2 gap-2 items-center border-2 border-sky-500 rounded-lg": (attachedInfo() as AttachedInfo[])[idx()].changeStatus === 1,
@@ -746,9 +514,11 @@ const CheckArea: ParentComponent<{
                             "flex gap-3 w-[180px] items-center px-1 rounded-md bg-red-500/70 select-none": canOrder() === false,
                           }}
                         >
-                        <div class="flex gap-1 justify-center items-center flex-1">
-                          <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
-                          <div>{(attachedInfo() as AttachedInfo[])[idx()].editingUser} 输入中...</div>
+                        <div class="flex gap-1 justify-center items-center flex-1 truncate">
+                          <div class="flex-1">
+                            <div class="shrink-0 animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                          </div>
+                          <div class="flex-1">{(attachedInfo() as AttachedInfo[])[idx()].editingUser}</div>
                         </div>
                       </div>
                     </Match>

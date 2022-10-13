@@ -97,7 +97,7 @@ const SendPane: Component<{
               "
             ></div>
           </div>
-          双语显示
+          双语发送
         </label>
         <div class="border-l-2"></div>
         <label class="flex items-center gap-2 cursor-pointer select-none">
@@ -156,6 +156,7 @@ const SendPane: Component<{
         </div>
       </div>
       <form
+        id={inputType() ? "translate-form" : "send-form"}
         onSubmit={(e) => onSubmitHandler(e)}
         class="flex gap-1 px-1"
       >

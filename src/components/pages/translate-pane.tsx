@@ -4,8 +4,7 @@ import { DateTime } from "luxon";
 
 // local dependencies
 import _pagetype from "../contexts/page-type"
-import _subtitles from "../contexts/subtitles"
-import { Subtitle, AttachedInfo } from "@/interfaces"
+import { Subtitle } from "@/interfaces"
 import _currentInfo from "@/components/contexts/current-info-ctx"
 import { wsSend } from "@/controllers"
 
@@ -26,10 +25,6 @@ const TranslatePane: Component<{
     // canOrder: 是否可以拖动排序
     canOrder, switchCanOrder,
   } = _pagetype
-  const {
-    subtitles, setSubtitles,
-    attachedInfo, setAttachedInfo,
-  } = _subtitles
   const [checkMemo, setCheckMemo] = createSignal<string[]>([""])
 
   const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
@@ -57,6 +52,8 @@ const TranslatePane: Component<{
 
   const addCheckMemo = (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
     checkMemo().push("")
+    console.log("checkmemo add: ", checkMemo());
+    
     // setCheckMemo(checkMemo())
   }
 
