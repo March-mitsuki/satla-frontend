@@ -24,6 +24,7 @@ const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-5
 
 const SendArea: ParentComponent<{
   ws: WebSocket | undefined
+  roomid: string
 }> = (props) => {
   const {
     subtitles, setSubtitles,
@@ -96,7 +97,7 @@ const SendArea: ParentComponent<{
         e.preventDefault()
         if (document.activeElement?.getAttribute("name") === "subtitle") {
           document.getElementById(`${idx+1}-sub`)?.focus()
-        } else {
+        } else if (document.activeElement?.getAttribute("name") === "origin") {
           document.getElementById(`${idx+1}-ori`)?.focus()
         }
       }
@@ -107,7 +108,7 @@ const SendArea: ParentComponent<{
         e.preventDefault()
         if (document.activeElement?.getAttribute("name") === "subtitle") {
           document.getElementById(`${idx-1}-sub`)?.focus()
-        } else {
+        } else if (document.activeElement?.getAttribute("name") === "origin") {
           document.getElementById(`${idx-1}-ori`)?.focus()
         }
       }
@@ -154,6 +155,30 @@ const SendArea: ParentComponent<{
     }
     dc_attachedInfo[idx].changeStatus = 1
     setAttachedInfo(dc_attachedInfo)
+  }
+
+  const sendBlankHandler = (e: MouseEvent) => {
+    e.preventDefault()
+    console.log("发送空行");
+    // 目前的发送空行是借用direct send的逻辑
+    // 所以服务端还是先通过roomid查找project_id之后创建新字幕
+    // 但其实可以直接传入当前字幕的project_id, 这样后端就少一个操作
+    // 不过应该无伤大雅才对
+
+    const newSub = new Subtitle({
+      id: 0,
+      project_id: 0,
+      translated_by: _currentInfo.currentUser().user_name,
+      checked_by: _currentInfo.currentUser().user_name,
+      send_by: _currentInfo.currentUser().user_name,
+      origin: "",
+      subtitle: "",
+    })
+    wsSend.sendSubtitleDirect({
+      ws: props.ws,
+      subtitle: newSub,
+      roomid: props.roomid
+    })
   }
 
   createEffect(() => {
@@ -359,6 +384,15 @@ const SendArea: ParentComponent<{
                 {/* add down btn */}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => sendBlankHandler(e)}
+                class="rounded-md p-1 bg-sky-500/70 hover:bg-sky-700/70 active:bg-sky-500/70"
+              >
+                {/* submit btn */}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
                 </svg>
               </button>
               <button

@@ -137,7 +137,6 @@ export interface c2sSendSubDirect {
   }
 }
 
-
 // s2c -> server to client msg
 
 export interface s2cEventMap {

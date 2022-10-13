@@ -96,7 +96,7 @@ const CheckArea: ParentComponent<{
         e.preventDefault()
         if (document.activeElement?.getAttribute("name") === "subtitle") {
           document.getElementById(`${idx+1}-sub`)?.focus()
-        } else {
+        } else if (document.activeElement?.getAttribute("name") === "origin") {
           document.getElementById(`${idx+1}-ori`)?.focus()
         }
       }
@@ -107,7 +107,7 @@ const CheckArea: ParentComponent<{
         e.preventDefault()
         if (document.activeElement?.getAttribute("name") === "subtitle") {
           document.getElementById(`${idx-1}-sub`)?.focus()
-        } else {
+        } else if (document.activeElement?.getAttribute("name") === "origin") {
           document.getElementById(`${idx-1}-ori`)?.focus()
         }
       }

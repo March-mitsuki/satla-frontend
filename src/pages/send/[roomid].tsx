@@ -126,7 +126,7 @@ const SendPage = () => {
             </FloatingWindow>
           </div>
           <div class="flex-auto h-[calc(100vh-70px)]" >
-            <SendArea ws={_ws()}></SendArea>
+            <SendArea ws={_ws()} roomid={param.roomid}></SendArea>
           </div>
         </div>
       </div>
