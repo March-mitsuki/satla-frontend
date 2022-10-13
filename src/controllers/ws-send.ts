@@ -13,6 +13,8 @@ import type {
   c2sEditEnd,
   c2sAddTranslatedSubtitle,
   c2sDeleteSubtitle,
+  c2sReordrSubFront,
+  c2sReordrSubBack,
 } from "@/interfaces/ws"
 
 export const addUser = (ws: WebSocket) => {
@@ -221,6 +223,72 @@ export const deleteSubtitle = (ws: WebSocket | undefined, subtitle: Subtitle) =>
     },
     body: {
       subtitle: subtitle
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+}
+
+export const reorderSubFront = (
+  {
+    ws,
+    drag_id,
+    drop_id,
+    project_id,
+  }:{
+    ws: WebSocket | undefined
+    drag_id: number
+    drop_id: number
+    project_id: number
+  }
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sReordrSubFront = {
+    head: {
+      cmd: "reorderSubFront"
+    },
+    body: {
+      operation_user: _currentInfo.currentUser().user_name,
+      project_id: project_id,
+      drag_id: drag_id,
+      drop_id: drop_id,
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+}
+
+export const reorderSubBack = (
+  {
+    ws,
+    drag_id,
+    drop_id,
+    project_id
+  }:{
+    ws: WebSocket | undefined
+    drag_id: number
+    drop_id: number
+    project_id: number
+  }
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sReordrSubBack = {
+    head: {
+      cmd: "reorderSubBack"
+    },
+    body: {
+      operation_user: _currentInfo.currentUser().user_name,
+      project_id: project_id,
+      drag_id: drag_id,
+      drop_id: drop_id,
     }
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))

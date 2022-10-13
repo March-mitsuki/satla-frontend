@@ -54,7 +54,7 @@ const SignUpPage = () => {
               case 4201:
                 setIsErr({
                   status: true,
-                  msg: "已存在该用户",
+                  msg: "已存在该用户名或邮箱, 请更改后重试",
                 })
                 break;
               default:
@@ -135,8 +135,8 @@ const SignUpPage = () => {
               <input
                 type="text"
                 name="username"
-                pattern=".{1,10}"
-                placeholder="1~10文字, 可使用中文"
+                pattern=".{1,20}"
+                placeholder="1~20文字, 可使用中文"
                 autocomplete="off"
                 class="
                   rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg

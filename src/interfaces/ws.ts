@@ -94,6 +94,30 @@ export interface c2sDeleteSubtitle {
   }
 }
 
+export interface c2sReordrSubFront {
+  head: {
+    cmd: "reorderSubFront" // 从前往后拖
+  }
+  body: {
+    operation_user: string
+    project_id: number
+    drag_id: number
+    drop_id: number
+  }
+}
+
+export interface c2sReordrSubBack {
+  head: {
+    cmd: "reorderSubBack" // 从后往前拖
+  }
+  body: {
+    operation_user: string
+    project_id: number
+    drag_id: number
+    drop_id: number
+  }
+}
+
 
 // s2c -> server to client msg
 
@@ -104,7 +128,8 @@ export interface s2cEventMap {
       "sChangeUser" | "sGetRoomSubtitles" |
       "sAddSubtitleUp" | "sAddSubtitleDown" |
       "sChangeSubtitle" | "sEditStart" | "sEditEnd" |
-      "sAddTransSub" | "sDeleteSubtitle"
+      "sAddTransSub" | "sDeleteSubtitle" |
+      "sReorderSubFront" | "sReorderSubBack"
   }
   body: any
 }
@@ -147,4 +172,15 @@ export interface s2cAddTranslatedSubtitleBody {
 export interface s2cDeleteSubtitleBody {
   status: boolean // 是否删除成功
   subtitle_id: number // 删除的subtitle
+}
+
+export interface s2cReorderSubBody {
+  // body都一样, 只是cmd不同
+  // 目前的拖动逻辑分为两部分:
+  //  操作拖动的人: 之后前端自行更新页面, 若服务端更新不成功, 则通知操作者刷新页面
+  //  他人进行拖动: 当status为true的时候交换行
+  operation_user: string
+  status: boolean // 用于判断是否拖动成功
+  drag_id: number
+  drop_id: number
 }

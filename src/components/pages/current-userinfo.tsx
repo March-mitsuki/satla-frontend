@@ -13,9 +13,13 @@ const currentUserInfo = () => {
     // const response = await fetch(url)
     // const body: UserInfoFromServer = await response.json()
     const body = await new Promise<UserInfoFromServer>((resolve, reject) => {
+      const nameList = ["t01", "t02", "t03", "t04", "t05", "t06", "t07", "t08"]
+      const randomName = () => {
+        return Math.floor(Math.random() * nameList.length)
+      }
       setTimeout(() => {
         resolve({
-          user_name: "local_test",
+          user_name: nameList[randomName()],
           email: "test@email",
           id: 1234,
         })

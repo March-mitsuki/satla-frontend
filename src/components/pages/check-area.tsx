@@ -16,6 +16,7 @@ import type {
   s2cEditChangeBody,
   s2cAddTranslatedSubtitleBody,
   s2cDeleteSubtitleBody,
+  s2cReorderSubBody,
 } from "@/interfaces/ws"
 import { wsOn, wsSend } from "@/controllers";
 
@@ -273,8 +274,8 @@ const CheckArea: ParentComponent<{
       ) {
         afterFormWrapper = belowElem.closest("form")?.parentNode
         if (afterFormWrapper) {
-          const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-wrapper", ""))
-          const reorderIdx = (attachedInfo() as AttachedInfo[]).findIndex(elem => elem.id === elemId)
+          const dropElemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-wrapper", ""))
+          const reorderIdx = (attachedInfo() as AttachedInfo[]).findIndex(elem => elem.id === dropElemId)
           const spliceElem = (attachedInfo() as AttachedInfo[])[reorderIdx]
           spliceElem.id = (attachedInfo() as AttachedInfo[])[reorderIdx].id
           spliceElem.isDrop = true
@@ -299,73 +300,27 @@ const CheckArea: ParentComponent<{
       ) {
         // 如果放开鼠标时在指定元素上
         afterFormWrapper = belowElem.closest("form")?.parentNode
-        const elemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-wrapper", ""))
-        const reorderIdx = (attachedInfo() as AttachedInfo[]).findIndex(elem => elem.id === elemId)
+        const dropElemId = Number((afterFormWrapper as HTMLDivElement).id.replace("-wrapper", ""))
+        const reorderIdx = (attachedInfo() as AttachedInfo[]).findIndex(elem => elem.id === dropElemId)
 
         if (reorderIdx > idx) {
           // 从前往后拖
-          const dc_attachedInfo = attachedInfo()?.map(x => x)
-          if (!dc_attachedInfo) {
-            return
-          }
-          dc_attachedInfo[idx].zIndex = "auto"
-          dc_attachedInfo[idx].position = "static"
-          dc_attachedInfo[idx].isFloating = false
-          dc_attachedInfo[idx].y = 0
-          dc_attachedInfo[idx].isDrop = false
-          dc_attachedInfo[idx].hidden = false
-          dc_attachedInfo[reorderIdx].isDrop = false
-          dc_attachedInfo.splice(idx, 1)
-          dc_attachedInfo.splice(reorderIdx-1, 0, {
-            id: (subtitles() as Subtitle[])[idx].id,
-            zIndex: "auto",
-            position: "static",
-            isFloating: false,
-            y: 0,
-            hidden: false,
-            isDrop: false,
-            isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
-            editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
-            changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
+          wsSend.reorderSubFront({
+            ws: props.ws,
+            drag_id: subtitle.id,
+            drop_id: dropElemId,
+            project_id: subtitle.project_id,
           })
-          setAttachedInfo(dc_attachedInfo)
-
-          const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
-          dc_subtitles.splice(idx, 1)
-          dc_subtitles.splice(reorderIdx-1, 0, subtitle)
-          setSubtitles(dc_subtitles)
+          reorderSubFrontSelf(idx, reorderIdx, subtitle)
         } else {
           // 从后往前拖
-          const dc_attachedInfo = attachedInfo()?.map(x => x)
-          if (!dc_attachedInfo) {
-            return
-          }
-          dc_attachedInfo[idx].zIndex = "auto"
-          dc_attachedInfo[idx].position = "static"
-          dc_attachedInfo[idx].isFloating = false
-          dc_attachedInfo[idx].y = 0
-          dc_attachedInfo[idx].isDrop = false
-          dc_attachedInfo[idx].hidden = false
-          dc_attachedInfo[reorderIdx].isDrop = false
-          dc_attachedInfo.splice(idx, 1)
-          dc_attachedInfo.splice(reorderIdx, 0, {
-            id: (subtitles() as Subtitle[])[idx].id,
-            zIndex: "auto",
-            position: "static",
-            isFloating: false,
-            y: 0,
-            hidden: false,
-            isDrop: false,
-            isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
-            editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
-            changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
+          wsSend.reorderSubBack({
+            ws: props.ws,
+            drag_id: subtitle.id,
+            drop_id: dropElemId,
+            project_id: subtitle.project_id,
           })
-          setAttachedInfo(dc_attachedInfo)
-  
-          const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
-          dc_subtitles.splice(idx, 1)
-          dc_subtitles.splice(reorderIdx, 0, subtitle)
-          setSubtitles(dc_subtitles)
+          reorderSubBackSelf(idx, reorderIdx, subtitle)
         }
       } else {
         // 如果不在指定元素上
@@ -429,6 +384,170 @@ const CheckArea: ParentComponent<{
   const deleteSubtitle = (id: number) => {
     setSubtitles(subtitles()?.filter(elem => elem.id !== id))
     setAttachedInfo(attachedInfo()?.filter(elem => elem.id !== id))
+  }
+
+  const reorderSubFrontSelf = (
+    idx: number,
+    reorderIdx: number,
+    dragSubtitle: Subtitle,
+  ) => {
+    const dc_attachedInfo = attachedInfo()?.map(x => x)
+    if (!dc_attachedInfo) {
+      return
+    }
+    dc_attachedInfo[idx].zIndex = "auto"
+    dc_attachedInfo[idx].position = "static"
+    dc_attachedInfo[idx].isFloating = false
+    dc_attachedInfo[idx].y = 0
+    dc_attachedInfo[idx].isDrop = false
+    dc_attachedInfo[idx].hidden = false
+    dc_attachedInfo[reorderIdx].isDrop = false
+    dc_attachedInfo.splice(idx, 1)
+    dc_attachedInfo.splice(reorderIdx-1, 0, {
+      id: (subtitles() as Subtitle[])[idx].id,
+      zIndex: "auto",
+      position: "static",
+      isFloating: false,
+      y: 0,
+      hidden: false,
+      isDrop: false,
+      isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
+      editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
+      changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
+    })
+    setAttachedInfo(dc_attachedInfo)
+
+    const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
+    dc_subtitles.splice(idx, 1)
+    dc_subtitles.splice(reorderIdx-1, 0, dragSubtitle)
+    setSubtitles(dc_subtitles)
+  }
+
+  const reorderSubBackSelf = (
+    idx: number,
+    reorderIdx: number,
+    dragSubtitle: Subtitle,
+  ) => {
+    const dc_attachedInfo = attachedInfo()?.map(x => x)
+    if (!dc_attachedInfo) {
+      return
+    }
+    dc_attachedInfo[idx].zIndex = "auto"
+    dc_attachedInfo[idx].position = "static"
+    dc_attachedInfo[idx].isFloating = false
+    dc_attachedInfo[idx].y = 0
+    dc_attachedInfo[idx].isDrop = false
+    dc_attachedInfo[idx].hidden = false
+    dc_attachedInfo[reorderIdx].isDrop = false
+    dc_attachedInfo.splice(idx, 1)
+    dc_attachedInfo.splice(reorderIdx, 0, {
+      id: (subtitles() as Subtitle[])[idx].id,
+      zIndex: "auto",
+      position: "static",
+      isFloating: false,
+      y: 0,
+      hidden: false,
+      isDrop: false,
+      isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
+      editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
+      changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
+    })
+    setAttachedInfo(dc_attachedInfo)
+
+    const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
+    dc_subtitles.splice(idx, 1)
+    dc_subtitles.splice(reorderIdx, 0, dragSubtitle)
+    setSubtitles(dc_subtitles)
+  }
+
+  const reorderSubFrontOther = (
+    drag_id: number,
+    drop_id: number,
+  ) => {
+    const idx = subtitles()?.findIndex(elem => elem.id === drag_id)
+    const reorderIdx = subtitles()?.findIndex(elem => elem.id === drop_id)
+    if (typeof idx === "undefined" || typeof reorderIdx === "undefined") {
+      return
+    }
+
+    const dc_attachedInfo = attachedInfo()?.map(x => x)
+    if (!dc_attachedInfo) {
+      return
+    }
+    dc_attachedInfo[idx].zIndex = "auto"
+    dc_attachedInfo[idx].position = "static"
+    dc_attachedInfo[idx].isFloating = false
+    dc_attachedInfo[idx].y = 0
+    dc_attachedInfo[idx].isDrop = false
+    dc_attachedInfo[idx].hidden = false
+    dc_attachedInfo[reorderIdx].isDrop = false
+    dc_attachedInfo.splice(idx, 1)
+    dc_attachedInfo.splice(reorderIdx-1, 0, {
+      id: (subtitles() as Subtitle[])[idx].id,
+      zIndex: "auto",
+      position: "static",
+      isFloating: false,
+      y: 0,
+      hidden: false,
+      isDrop: false,
+      isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
+      editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
+      changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
+    })
+    setAttachedInfo(dc_attachedInfo)
+
+    const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
+    const dragSubtitle = dc_subtitles[idx]
+    dc_subtitles.splice(idx, 1)
+    dc_subtitles.splice(reorderIdx-1, 0, dragSubtitle)
+    setSubtitles(dc_subtitles)
+    console.log("reorder other finish: ", subtitles(), attachedInfo());
+    
+  }
+
+  const reorderSubBackOther = (
+    drag_id: number,
+    drop_id: number,
+  ) => {
+    const idx = subtitles()?.findIndex(elem => elem.id === drag_id)
+    const reorderIdx = subtitles()?.findIndex(elem => elem.id === drop_id)
+    if (typeof idx === "undefined" || typeof reorderIdx === "undefined") {
+      return
+    }
+
+    const dc_attachedInfo = attachedInfo()?.map(x => x)
+    if (!dc_attachedInfo) {
+      return
+    }
+    dc_attachedInfo[idx].zIndex = "auto"
+    dc_attachedInfo[idx].position = "static"
+    dc_attachedInfo[idx].isFloating = false
+    dc_attachedInfo[idx].y = 0
+    dc_attachedInfo[idx].isDrop = false
+    dc_attachedInfo[idx].hidden = false
+    dc_attachedInfo[reorderIdx].isDrop = false
+    dc_attachedInfo.splice(idx, 1)
+    dc_attachedInfo.splice(reorderIdx, 0, {
+      id: (subtitles() as Subtitle[])[idx].id,
+      zIndex: "auto",
+      position: "static",
+      isFloating: false,
+      y: 0,
+      hidden: false,
+      isDrop: false,
+      isEditing: (attachedInfo() as AttachedInfo[])[idx].isEditing,
+      editingUser: (attachedInfo() as AttachedInfo[])[idx].editingUser,
+      changeStatus: (attachedInfo() as AttachedInfo[])[idx].changeStatus,
+    })
+    setAttachedInfo(dc_attachedInfo)
+
+    const dc_subtitles = (subtitles() as Subtitle[]).map(x => x)
+    const dragSubtitle = dc_subtitles[idx]
+    dc_subtitles.splice(idx, 1)
+    dc_subtitles.splice(reorderIdx, 0, dragSubtitle)
+    setSubtitles(dc_subtitles)
+    console.log("reorder other finish: ", subtitles(), attachedInfo());
+
   }
 
   createEffect(() => {
@@ -528,6 +647,36 @@ const CheckArea: ParentComponent<{
             return
           }
           deleteSubtitle(deleteSubBody.subtitle_id)
+          break;
+        case "sReorderSubFront":
+          const reorderFrontBody: s2cReorderSubBody = data.body
+          console.log("reorder sub front on", reorderFrontBody);
+          if (reorderFrontBody.operation_user === currentUser().user_name) {
+            if (!reorderFrontBody.status) {
+              // 如果是自己操作, 那么成功了则什么都不做, 失败了则通知失败
+              window.alert("拖动失败, 请刷新重试")
+            }
+          } else {
+            if (reorderFrontBody.status) {
+              // 若是别人操作, 则成功了还行, 失败了什么都不做
+              console.log("reorder other front");
+              reorderSubFrontOther(reorderFrontBody.drag_id, reorderFrontBody.drop_id)
+            }
+          }
+          break;
+        case "sReorderSubBack":
+          const reorderBackBody: s2cReorderSubBody = data.body
+          console.log("reorder sub back on", reorderBackBody);
+          if (reorderBackBody.operation_user === currentUser().user_name) {
+            if (!reorderBackBody.status) {
+              window.alert("拖动失败, 请刷新重试")
+            }
+          } else {
+            if (reorderBackBody.status) {
+              console.log("reorder other back start");
+              reorderSubBackOther(reorderBackBody.drag_id, reorderBackBody.drop_id)
+            }
+          }
           break;
         default:
           console.log("unknow cmd: ", data);

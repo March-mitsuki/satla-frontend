@@ -1,6 +1,6 @@
 import type { Subtitle } from "@/interfaces"
 
-const subtitiles: Subtitle[] = [
+const dummySubtitles: Subtitle[] = [
   {
     id: 1,
     input_time: "99:99:99",
@@ -23,4 +23,4 @@ const subtitiles: Subtitle[] = [
   },
 ]
 
-export default subtitiles
+export default dummySubtitles
