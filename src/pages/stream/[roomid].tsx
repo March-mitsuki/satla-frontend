@@ -9,6 +9,8 @@ import { createSignal } from "solid-js";
 import { Navi } from "@/components/pages"
 
 const StreamPage = () => {
+  const api_base_url = import.meta.env.API_BASE_URL
+
   const videoJSOption: videojs.PlayerOptions = {
     controls: true,
     responsive: true,
@@ -17,7 +19,7 @@ const StreamPage = () => {
     autoplay: true,
     sources: [
       {
-        src: "http://vvvrold.mitsuki114514.com/live/test.m3u8",
+        src: api_base_url + "live/test.m3u8",
         type: "application/x-mpegURL"
       },
     ],

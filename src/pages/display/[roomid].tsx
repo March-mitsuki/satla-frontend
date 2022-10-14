@@ -8,12 +8,13 @@ import { useParams } from '@solidjs/router';
 import type { s2cEventMap, s2cSendSubtitleBody } from '@/interfaces/ws';
 
 const DisplayPage: Component = () => {
+  const ws_base_url = import.meta.env.WS_BASE_URL
+
   const [ subtitle, setSubtitle ] = createSignal<Subtitle>()
 
   createEffect(() => {
-    const baseUrl = "ws://192.168.64.3:8080/ws/"
     const param = useParams<{ roomid: string }>()
-    const url = baseUrl + param.roomid
+    const url = ws_base_url + param.roomid
     const ws = new WebSocket(url)
     ws.onopen = () => {
       console.log("ws connected");

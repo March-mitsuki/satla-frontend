@@ -15,6 +15,9 @@ import { wsOn } from "@/controllers";
 
 
 const TranslatePage = () => {
+  const api_base_url = import.meta.env.API_BASE_URL
+  const ws_base_url = import.meta.env.WS_BASE_URL
+
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype } = _pagetype
   const { currentUser, userList, setUserList } = _currentInfo
@@ -29,16 +32,15 @@ const TranslatePage = () => {
     autoplay: true,
     sources: [
       {
-        src: "http://vvvrold.mitsuki114514.com/live/test.m3u8",
+        src: api_base_url + "live/test.m3u8",
         type: "application/x-mpegURL"
       },
     ],
   }
 
   // 每个page连接不一样的ws room
-  const baseUrl = "ws://192.168.64.3:8080/ws/"
   const param = useParams<{ roomid: string }>()
-  const url = baseUrl + param.roomid
+  const url = ws_base_url + param.roomid
 
   createEffect(() => {
     if (currentUser().id === -1) {
