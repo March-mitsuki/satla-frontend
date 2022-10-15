@@ -20,7 +20,9 @@ const ProjectForm = () => {
   })
 
   const poster = async (p: Project): Promise<Response> => {
-    const url = "http://192.168.64.3:8080/api/new_project"
+    const api_base_url = import.meta.env.VITE_API_BASE_URL
+    
+    const url = api_base_url + "api/new_project"
     const postData = JSON.stringify(p)
     console.log("will post", postData);
     const response = await fetch(url, {
