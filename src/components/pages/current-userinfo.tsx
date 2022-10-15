@@ -9,22 +9,26 @@ import type { UserInfoFromServer } from "@/interfaces"
 
 const currentUserInfo = () => {
   const fetchCurrentUserInfo = async () => {
-    // const url = "http://192.168.64.3:8080/api/crrent_userinfo"
-    // const response = await fetch(url)
-    // const body: UserInfoFromServer = await response.json()
-    const body = await new Promise<UserInfoFromServer>((resolve, reject) => {
-      const nameList = ["t01", "t02", "t03", "t04", "t05", "t06", "t07", "t08"]
-      const randomName = () => {
-        return Math.floor(Math.random() * nameList.length)
-      }
-      setTimeout(() => {
-        resolve({
-          user_name: nameList[randomName()],
-          email: "test@email",
-          id: 1234,
-        })
-      }, 1000);
-    })
+    let body: UserInfoFromServer;
+    if (import.meta.env.PROD) {
+      const url = "http://192.168.64.3:8080/api/crrent_userinfo"
+      const response = await fetch(url)
+      body = await response.json()
+    } else {
+      body = await new Promise<UserInfoFromServer>((resolve, reject) => {
+        const nameList = ["t01", "t02", "t03", "t04", "t05", "t06", "t07", "t08"]
+        const randomName = () => {
+          return Math.floor(Math.random() * nameList.length)
+        }
+        setTimeout(() => {
+          resolve({
+            user_name: nameList[randomName()],
+            email: "test@email",
+            id: 1234,
+          })
+        }, 1000);
+      })
+    }
     return body
   }
 
