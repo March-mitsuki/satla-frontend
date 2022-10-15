@@ -10,6 +10,8 @@ const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 borde
 const wrongRepeatStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-red-500 lg:text-lg focus:border-red focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const SignUpPage = () => {
+  const api_base_url = import.meta.env.VITE_API_BASE_URL
+  
   const [repeatOK, setRepeatOK] = createSignal(true)
   const [confirm, setConfirm] = createSignal(false)
   const [isErr, setIsErr] = createSignal<{
@@ -21,7 +23,7 @@ const SignUpPage = () => {
   })
 
   const poster = async (user: SignupUser): Promise<Response> => {
-    const url = "http://192.168.64.3:8080/seesion/signup"
+    const url = api_base_url + "seesion/signup"
     const postData = JSON.stringify(user)
     console.log("will post", user);
     const response = await fetch(url, {

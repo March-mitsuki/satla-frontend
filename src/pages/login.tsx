@@ -7,6 +7,8 @@ import { createSignal } from "solid-js";
 import type { LoginUser, LoginResponseBody } from "@/interfaces";
 
 const SignUpPage = () => {
+  const api_base_url = import.meta.env.VITE_API_BASE_URL
+  
   const [isErr, setIsErr] = createSignal<{
     status: boolean,
     msg: string
@@ -16,7 +18,7 @@ const SignUpPage = () => {
   })
 
   const poster = async (user: LoginUser): Promise<Response> => {
-    const url = "http://192.168.64.3:8080/seesion/login"
+    const url = api_base_url + "seesion/login"
     const postData = JSON.stringify(user)
     console.log("will post", user);
     const response = await fetch(url, {

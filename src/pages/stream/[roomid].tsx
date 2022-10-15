@@ -9,7 +9,7 @@ import { createSignal } from "solid-js";
 import { Navi } from "@/components/pages"
 
 const StreamPage = () => {
-  const api_base_url = import.meta.env.API_BASE_URL
+  const api_base_url = import.meta.env.VITE_API_BASE_URL
 
   const videoJSOption: videojs.PlayerOptions = {
     controls: true,

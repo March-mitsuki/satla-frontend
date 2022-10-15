@@ -12,14 +12,15 @@ import { wsOn } from "@/controllers"
 
 
 const SendPage = () => {
+  const ws_base_url = import.meta.env.VITE_WS_BASE_URL
+
   const { currentUser, userList, setUserList } = _currentInfo
   const { setAttachedInfo, setSubtitles } = _subtitles
   const [ _ws, setWs ] = createSignal<WebSocket>()
 
   // 每个page连接不一样的ws room
-  const baseUrl = "ws://192.168.64.3:8080/ws/"
   const param = useParams<{ roomid: string }>()
-  const url = baseUrl + param.roomid
+  const url = ws_base_url + param.roomid
 
   createEffect(() => {
     if (currentUser().id === -1) {

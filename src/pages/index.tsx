@@ -17,9 +17,10 @@ import type { ProjectFromServer } from "@/interfaces";
 
 
 const Home: Component = () => {
-  // const [ projects, setProjects ] = createSignal<Project[]>(dummyProject)
+  const api_base_url = import.meta.env.VITE_API_BASE_URL
+
   const fetchAllProjects = async () => {
-    const url = "http://192.168.64.3:8080/api/all_projects"
+    const url = api_base_url + "api/all_projects"
     const response = await fetch(url)
     const body: ProjectFromServer[] = await response.json()
     console.log("get all projects respons body: ", body);

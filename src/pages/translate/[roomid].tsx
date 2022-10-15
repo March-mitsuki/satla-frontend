@@ -15,8 +15,8 @@ import { wsOn } from "@/controllers";
 
 
 const TranslatePage = () => {
-  const api_base_url = import.meta.env.API_BASE_URL
-  const ws_base_url = import.meta.env.WS_BASE_URL
+  const api_base_url = import.meta.env.VITE_API_BASE_URL
+  const ws_base_url = import.meta.env.VITE_WS_BASE_URL
 
   // pagetype: false = 翻译, true = 校对, default = false
   const { pagetype } = _pagetype
