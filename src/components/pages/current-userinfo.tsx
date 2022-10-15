@@ -11,7 +11,8 @@ const currentUserInfo = () => {
   const fetchCurrentUserInfo = async () => {
     let body: UserInfoFromServer;
     if (import.meta.env.PROD) {
-      const url = "http://192.168.64.3:8080/api/crrent_userinfo"
+      const api_base_url = import.meta.env.VITE_API_BASE_URL
+      const url = api_base_url + "api/crrent_userinfo"
       const response = await fetch(url)
       body = await response.json()
     } else {
