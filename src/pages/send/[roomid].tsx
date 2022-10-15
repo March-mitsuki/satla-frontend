@@ -5,7 +5,7 @@ import { useParams } from "@solidjs/router";
 
 // local dependencies
 import { FloatingWindow } from "@/components";
-import { Navi, SendArea, SendPane } from "@/components/pages";
+import { DisplayReview, Navi, SendArea, SendPane } from "@/components/pages";
 import _currentInfo from "@/components/contexts/current-info-ctx";
 import _subtitles from "@/components/contexts/subtitles"
 import { wsOn } from "@/controllers"
@@ -88,10 +88,12 @@ const SendPage = () => {
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               }
-              contentsWrapperClass="border-2 border-gray-500 rounded-b-lg flex-auto bg-neutral-700"
+              contentsWrapperClass="flex flex-col justify-center border-2 border-gray-500 rounded-b-lg flex-auto bg-neutral-700"
               risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
-              <div>字幕预览</div>
+              <div class="w-[calc(100%-10px)] truncate">
+                <DisplayReview ws={_ws()}></DisplayReview>
+              </div>
             </FloatingWindow>
             <FloatingWindow
               defaultWindowSize={{
@@ -99,8 +101,8 @@ const SendPage = () => {
                 height: "",
               }}
               minWindowSize={{
-                width: 435,
-                height: 80,
+                width: 500,
+                height: 205,
               }}
               wrapperClass="w-[500px] flex flex-col"
               controllerWrapperClass="flex justify-between items-center border-x-2 border-t-2 border-gray-500 rounded-t-lg bg-neutral-800"

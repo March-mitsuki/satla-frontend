@@ -17,6 +17,10 @@ import type {
   c2sReordrSubBack,
   c2sSendSubtitle,
   c2sSendSubDirect,
+  c2sChangeStyle,
+  c2sChangeBilingual,
+  StyleData,
+  c2sChangeReversed,
 } from "@/interfaces/ws"
 
 export const addUser = (ws: WebSocket) => {
@@ -350,4 +354,71 @@ export const sendSubtitleDirect = (
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))
   ws.send(postData)
+}
+
+export const changeStyle = (
+  {
+    ws,
+    styleObj,
+  }:{
+    ws: WebSocket | undefined
+    styleObj: StyleData
+  }
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sChangeStyle = {
+    head: {
+      cmd: "changeStyle"
+    },
+    body: styleObj
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+}
+
+export const changeBilingual = (
+  ws: WebSocket | undefined,
+  bilingual: boolean,
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sChangeBilingual = {
+    head: {
+      cmd: "changeBilingual"
+    },
+    body: {
+      bilingual: bilingual
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+}
+
+export const changeReversed = (
+  ws: WebSocket | undefined,
+  reversed: boolean,
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sChangeReversed = {
+    head: {
+      cmd: "changeReversed"
+    },
+    body: {
+      reversed: reversed
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
+  
 }

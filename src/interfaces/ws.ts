@@ -137,6 +137,35 @@ export interface c2sSendSubDirect {
   }
 }
 
+export interface StyleData {
+  subtitle: string
+  origin: string
+}
+export interface c2sChangeStyle {
+  head: {
+    cmd: "changeStyle"
+  }
+  body: StyleData
+}
+
+export interface c2sChangeBilingual {
+  head: {
+    cmd: "changeBilingual"
+  }
+  body: {
+    bilingual: boolean
+  }
+}
+
+export interface c2sChangeReversed {
+  head: {
+    cmd: "changeReversed"
+  }
+  body: {
+    reversed: boolean
+  }
+}
+
 // s2c -> server to client msg
 
 export interface s2cEventMap {
@@ -148,7 +177,9 @@ export interface s2cEventMap {
       "sChangeSubtitle" | "sEditStart" | "sEditEnd" |
       "sAddTransSub" | "sDeleteSubtitle" |
       "sReorderSubFront" | "sReorderSubBack" |
-      "sSendSubtitle" | "sSendSubtitleDirect"
+      "sSendSubtitle" | "sSendSubtitleDirect" |
+      "sChangeStyle" | "sChangeBilingual" |
+      "sChangeReversed"
   }
   body: any
 }
@@ -210,7 +241,12 @@ export interface s2cSendSubtitleBody {
   subtitle: Subtitle
 }
 
-// export interface s2cSendSubtitleDirectBody {
-//   status: boolean
-//   subtitle: Subtitle
-// }
+export type s2cChangeStyleBody = StyleData
+
+export interface s2cChangeBilingualBody {
+  bilingual: boolean
+}
+
+export interface s2cChangeReversedBody {
+  reversed: boolean
+}

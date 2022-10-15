@@ -457,9 +457,6 @@ const CheckArea: ParentComponent<{
           }
           wsOn.deleteSubtitle(sendSubtitleBody.subtitle.id)
           break;
-        default:
-          console.log("unknow cmd: ", data);
-          break;
       }
     }
   })

@@ -1,13 +1,15 @@
 // dependencies lib
-import { createSignal, Match, Switch } from "solid-js"
+import { createEffect, createSignal, Match, Switch } from "solid-js"
+import { createStore } from "solid-js/store"
 
 // local dependencies
 import _currentInfo from "../contexts/current-info-ctx"
-import { Subtitle, AttachedInfo } from "@/interfaces"
+import { Subtitle } from "@/interfaces"
 import { wsSend } from "@/controllers"
 
 // type
 import type { Component } from "solid-js"
+import { s2cChangeBilingualBody, s2cChangeReversedBody, s2cChangeStyleBody, s2cEventMap, StyleData } from "@/interfaces/ws"
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
@@ -16,9 +18,16 @@ const SendPane: Component<{
   ws: WebSocket | undefined
 }> = (props) => {
   const [inputType, setInputType] = createSignal(false) // true = 输入, false = 发送
-  const [sendType, setSendType] = createSignal(true) // true = 双语, false = 单语
+  const [bilingualSend, setBilingualSend] = createSignal(true) // true = 双语, false = 单语
+  const [style, setStyle] = createStore<StyleData>({
+    subtitle: "font-size:24px; line-height:32px; font-weight:700; text-align:center;",
+    origin: "font-size:18px; line-height:24px; font-weight:700; text-align:center;",
+  })
+  const [reversed, setReversed] = createSignal<boolean>(false)
 
-  const onSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
+  const onSendSubmitHandler = (
+    e: SubmitEvent & { currentTarget: HTMLFormElement}
+  ) => {
     e.stopPropagation()
     e.preventDefault()
 
@@ -63,47 +72,81 @@ const SendPane: Component<{
     }
   }
 
-  const inputTypeToggleHander = (e: Event & { currentTarget: HTMLInputElement }) => {
+  const inputTypeToggleHandler = (e: Event) => {
+    e.preventDefault()
     setInputType(!inputType())
   }
-  const sendTypeToggleHandler = (e: Event & { currentTarget: HTMLInputElement }) => {
-    setSendType(!sendType())
+  const bilingualSendToggleHandler = (e: Event) => {
+    e.preventDefault()
+    wsSend.changeBilingual(props.ws, !bilingualSend())
   }
 
   const openDisplayPage = () => {
     window.open(`/display/${props.roomid}`, "_blank")
   }
 
+  const onStyleChangeSubmitHandler = (
+    e: SubmitEvent & { currentTarget: HTMLFormElement}
+  ) => {
+    e.stopPropagation()
+    e.preventDefault()
+    wsSend.changeStyle({
+      ws: props.ws,
+      styleObj: style,
+    })
+  }
+  const styleReversedToogleHandler = (e: Event) => {
+    wsSend.changeReversed(props.ws, !reversed())
+  }
+  const subtitleStyleInputHandler = (
+    e: InputEvent & {
+      currentTarget: HTMLInputElement;
+    }
+  ) => {
+    e.preventDefault()
+    setStyle("subtitle", e.currentTarget.value)
+  }
+  const originStyleInputHandler = (
+    e: InputEvent & {
+      currentTarget: HTMLInputElement;
+    }
+  ) => {
+    e.preventDefault()
+    setStyle("origin", e.currentTarget.value)
+  }
+
+  createEffect(() => {
+    if (!props.ws) {
+      return
+    }
+    props.ws.addEventListener("message", (evt) => {
+      const data: s2cEventMap = JSON.parse(evt.data) 
+      if (data.head.cmd === "sChangeBilingual") {
+        const body: s2cChangeBilingualBody = data.body
+        setBilingualSend(body.bilingual)
+      } else if (data.head.cmd === "sChangeStyle") {
+        const body: s2cChangeStyleBody = data.body
+        setStyle({
+          subtitle: body.subtitle,
+          origin: body.origin,
+        })
+      } else if (data.head.cmd === "sChangeReversed") {
+        const body: s2cChangeReversedBody = data.body
+        setReversed(body.reversed)
+      }
+    })
+  })
+
   return (
     <div class="mt-1 flex flex-col gap-1">
       <div class="flex gap-2 px-1 justify-center">
-        <label class="flex items-center gap-1 cursor-pointer select-none">
-          <div class="relative flex items-center">
-            <input
-              type="checkbox"
-              checked={sendType()}
-              onChange={(e) => sendTypeToggleHandler(e)}
-              class="peer sr-only"
-            />
-            <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
-            <div 
-              class="
-                absolute w-4 h-4 bg-white/70 rounded-full shadow
-                peer-checked:translate-x-4 peer-checked:bg-blue-400
-                transition drop-shadow
-              "
-            ></div>
-          </div>
-          双语发送
-        </label>
-        <div class="border-l-2"></div>
         <label class="flex items-center gap-2 cursor-pointer select-none">
           发送
           <div class="relative flex items-center">
             <input
               type="checkbox"
               checked={inputType()}
-              onChange={(e) => inputTypeToggleHander(e)}
+              onChange={(e) => inputTypeToggleHandler(e)}
               class="peer sr-only"
             />
             <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
@@ -137,7 +180,7 @@ const SendPane: Component<{
           </div>
           输入
         </label>
-        <div class="border-l-2"></div>
+        <div class="border-l-2 border-neutral-400"></div>
         <div class="flex items-center">
           <button
             onClick={openDisplayPage}
@@ -153,9 +196,8 @@ const SendPane: Component<{
         </div>
       </div>
       <form
-        // id={inputType() ? "translate-form" : "send-form"}
         id="send-form"
-        onSubmit={(e) => onSubmitHandler(e)}
+        onSubmit={(e) => onSendSubmitHandler(e)}
         class="flex gap-1 px-1"
       >
         <input
@@ -181,6 +223,90 @@ const SendPane: Component<{
         >
           {inputType() ? "输入" : "发送"}
         </button>
+      </form>
+      <div class="flex flex-col items-center justify-center pt-4 pb-2">
+        <div class="w-[calc(100%-70%)] h-1 bg-neutral-400 rounded-lg"></div>
+        <div class="pt-1 text-sm">*构建样式时请遵循Tailwindcss的规则</div>
+      </div>
+      <form
+        id="send-style-form"
+        onSubmit={(e) => onStyleChangeSubmitHandler(e)}
+        class="flex flex-col gap-1 px-1 pb-1"
+      >
+        <label class="flex gap-2">
+          <div class="text-sm">
+            翻译:
+          </div>
+          <input
+            type="text"
+            name="subtitleStyle"
+            placeholder="翻译样式"
+            onInput={(e) => subtitleStyleInputHandler(e)}
+            value={style.subtitle}
+            class={inputStyle}
+          />
+        </label>
+        <label class="flex gap-2">
+          <div class="text-sm">
+            原文:
+          </div>
+          <input
+            type="text"
+            name="originStyle"
+            placeholder="原文样式"
+            onInput={(e) => originStyleInputHandler(e)}
+            value={style.origin}
+            class={inputStyle}
+          />
+        </label>
+        <div class="flex gap-2 items-center justify-center">
+          <label class="flex items-center gap-1 cursor-pointer select-none">
+            <div class="relative flex items-center">
+              <input
+                type="checkbox"
+                checked={bilingualSend()}
+                onChange={(e) => bilingualSendToggleHandler(e)}
+                class="peer sr-only"
+              />
+              <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
+              <div 
+                class="
+                  absolute w-4 h-4 bg-white/70 rounded-full shadow
+                  peer-checked:translate-x-4 peer-checked:bg-blue-400
+                  transition drop-shadow
+                "
+              ></div>
+            </div>
+            双语显示
+          </label>
+          <div class="h-4 w-[2px] bg-gray-400 rounded-full"></div>
+          <label class="flex items-center gap-1 cursor-pointer select-none">
+            <div class="relative flex items-center">
+              <input
+                type="checkbox"
+                checked={reversed()}
+                onChange={(e) => styleReversedToogleHandler(e)}
+                class="peer sr-only"
+              />
+              <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
+              <div 
+                class="
+                  absolute w-4 h-4 bg-white/70 rounded-full shadow
+                  peer-checked:translate-x-4 peer-checked:bg-blue-400
+                  transition drop-shadow
+                "
+              ></div>
+            </div>
+            调换位置
+          </label>
+          <div class="h-4 w-[2px] bg-gray-400 rounded-full"></div>
+          <button
+            type="submit"
+            class="bg-orange-500/70 hover:bg-orange-700/70 active:bg-orange-500/70 rounded-full px-3 text-white"
+          >
+            更改样式
+          </button>
+        </div>
       </form>
     </div>
   )

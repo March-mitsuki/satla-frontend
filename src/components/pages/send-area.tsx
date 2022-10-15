@@ -284,9 +284,6 @@ const SendArea: ParentComponent<{
             (translateForm as HTMLFormElement).origin.value = "";  
           }
           break;
-        default:
-          console.log("unknow cmd: ", data);
-          break;
       }
     }
   })
