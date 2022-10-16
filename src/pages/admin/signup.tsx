@@ -4,9 +4,12 @@ import { createSignal, Match, Switch } from "solid-js"
 
 // local dependencies
 import { AdminNavi } from "@/components/pages/admin"
+import _currentInfo from "@/components/contexts/current-info-ctx"
 
 // type
-import type { SignupUser, SignupResponseBody } from "@/interfaces"
+import type { SignupResponseBody } from "@/interfaces"
+import type { SignupUser } from "@/interfaces/admin";
+
 
 const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 const wrongRepeatStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-red-500 lg:text-lg focus:border-red focus:ring-0 focus:outline-0 focus:bg-neutral-600"
@@ -25,8 +28,8 @@ const SignUpPage = () => {
   })
 
   const poster = async (user: SignupUser): Promise<Response> => {
-    const url = api_base_url + "seesion/signup"
-    const postData = JSON.stringify(user)
+    const url = api_base_url + "api/admin/new_user"
+    const postData = new TextEncoder().encode(JSON.stringify(user))
     console.log("will post", user);
     const response = await fetch(url, {
       method: "POST",

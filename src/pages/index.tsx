@@ -12,7 +12,7 @@ import {
 
 // type
 import type { Component } from "solid-js";
-import type { ProjectFromServer } from "@/interfaces";
+import type { Project } from "@/interfaces";
 
 
 const Home: Component = () => {
@@ -21,11 +21,11 @@ const Home: Component = () => {
   const fetchAllProjects = async () => {
     const url = api_base_url + "api/all_projects"
     const response = await fetch(url)
-    const body: ProjectFromServer[] = await response.json()
+    const body: Project[] = await response.json()
     console.log("get all projects respons body: ", body);
     return body
   }
-  const [ projects, { refetch } ] = createResource<ProjectFromServer[]>(fetchAllProjects)
+  const [ projects, { refetch } ] = createResource<Project[]>(fetchAllProjects)
 
   return (
     <>

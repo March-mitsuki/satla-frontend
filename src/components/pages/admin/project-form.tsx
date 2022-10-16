@@ -5,7 +5,8 @@ import { createSignal } from "solid-js";
 import _currentInfo from "@/components/contexts/current-info-ctx"
 
 // type
-import type { NewProjectResponseBody, Project } from "@/interfaces";
+import type { NewProjectResponseBody } from "@/interfaces";
+import type { PostCreateProject } from "@/interfaces/admin";
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 p-3 border-2 border-gray-500 focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
@@ -19,12 +20,12 @@ const NewProjectForm = () => {
     msg: ""
   })
 
-  const poster = async (p: Project): Promise<Response> => {
+  const poster = async (p: PostCreateProject): Promise<Response> => {
     const api_base_url = import.meta.env.VITE_API_BASE_URL
     
-    const url = api_base_url + "api/new_project"
-    const postData = JSON.stringify(p)
-    console.log("will post", postData);
+    const url = api_base_url + "api/admin/new_project"
+    console.log("will post", p);
+    const postData = new TextEncoder().encode(JSON.stringify(p))
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -71,7 +72,8 @@ const NewProjectForm = () => {
       })
       return
     }
-    const newProject: Project = {
+    const newProject: PostCreateProject = {
+      id: 0,
       project_name: projectName,
       description: description,
       point_man: pointMan,

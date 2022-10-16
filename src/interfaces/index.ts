@@ -93,13 +93,6 @@ export class AttachedInfo {
   }
 }
 
-export interface SignupUser {
-  user_name: string
-  email: string
-  password: string
-  permission: 0 | 1 | 2
-}
-
 export interface LoginUser {
   email: string
   password: string
@@ -111,21 +104,13 @@ export interface UserInfoFromServer {
   email: string
 }
 
-interface DataFromServerHead {
-  id: number
-  created_at: any
-  updated_at: any
-  deleted_at: any
-}
-
 export interface Project {
+  id: number
   project_name: string
   description: string
   point_man: string
   created_by: string
 }
-
-export interface ProjectFromServer extends DataFromServerHead, Project {}
 
 // 2000番 -> 成功
 // 4000番 -> 请求不正确

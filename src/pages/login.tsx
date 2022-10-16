@@ -86,9 +86,6 @@ const SignUpPage = () => {
     <>
       <Title>Login</Title>
       <div class="h-full bg-neutral-700 text-white flex flex-col">
-        {/* <div class="bg-red-500/50">
-          navi 
-        </div> */}
         <div class="flex-auto flex flex-col justify-center items-center">
           <div class="w-[30%] text-center text-2xl pb-10">
             你必须先登录才能继续操作
