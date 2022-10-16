@@ -2,8 +2,7 @@
 import { Title } from "@solidjs/meta"
 
 // local dependencies
-import { AdminNavi } from "@/components/pages/admin"
-import { ProjectForm } from "@/components/pages"
+import { AdminNavi, NewProjectForm } from "@/components/pages/admin"
 
 const AdminNewProject = () => {
   return (
@@ -14,7 +13,7 @@ const AdminNewProject = () => {
           <AdminNavi></AdminNavi>
         </div>
         <div>
-          <ProjectForm></ProjectForm>
+          <NewProjectForm></NewProjectForm>
         </div>
       </div>
     </>

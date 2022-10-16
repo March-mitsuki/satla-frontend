@@ -9,7 +9,7 @@ import type { NewProjectResponseBody, Project } from "@/interfaces";
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
-const ProjectForm = () => {
+const NewProjectForm = () => {
   const { currentUser } = _currentInfo
   const [ postStatus, setPostStatus ] = createSignal<{
     status: 0 | 1 | 2 , // 1 -> 失败, 2 -> 成功, 默认为0
@@ -210,4 +210,4 @@ const ProjectForm = () => {
   )
 }
 
-export default ProjectForm
+export default NewProjectForm

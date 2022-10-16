@@ -6,7 +6,6 @@ import { createResource, createSignal, onMount } from "solid-js"
 import { PaneX } from "@/components";
 import {
   ProjectOverview,
-  ProjectForm,
   LogoutBtn,
   CurrentUserInfo,
 } from "@/components/pages"
@@ -72,7 +71,7 @@ const Home: Component = () => {
             }
             rightElem={
               <div class="p-2">
-                <ProjectForm></ProjectForm>
+                Details Here
               </div>
             }
             dragLineClass="bg-neutral-500 hover:bg-sky-500"
