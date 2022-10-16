@@ -1,17 +1,17 @@
-const RootNotFound = () => {
+const AdminNotFound = () => {
   return (
     <>
       <div class="text-4xl">
         404 Not Found
       </div>
       <a
-        href="/"
+        href="/admin"
         class="underline text-xl"
       >
-        Back to home
+        Back to admin page
       </a>
     </>
   )
 }
 
-export default RootNotFound
+export default AdminNotFound
