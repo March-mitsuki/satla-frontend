@@ -1,10 +1,15 @@
 const NotFound = () => {
   return (
     <>
-      <div>
+      <div class="text-4xl">
         404 Not Found
       </div>
-      <a href="/">Back to home</a>
+      <a
+        href="/"
+        class="underline text-xl"
+      >
+        Back to home
+      </a>
     </>
   )
 }
