@@ -1,6 +1,6 @@
 // dependencies lib
 import { Title } from "@solidjs/meta"
-import { createSignal } from "solid-js"
+import { createSignal, Match, Switch } from "solid-js"
 
 // local dependencies
 import { AdminNavi } from "@/components/pages/admin"
@@ -40,10 +40,26 @@ const SignUpPage = () => {
   }
 
   const submitForm = () => {
+    const permissionNum = Number(signupFormRef?.permission.value)
+    if (isNaN(permissionNum)) {
+      console.log("permission NaN error");
+      return
+    }
+    if (
+      permissionNum === 0 ||
+      permissionNum === 1 ||
+      permissionNum === 2
+    ) {
+      console.log("permissionNum is: ", permissionNum);
+    } else {
+      console.log("permission is not on value");
+      return
+    }
     const newUser: SignupUser = {
       user_name: signupFormRef?.username.value,
       email: signupFormRef?.email.value,
       password: signupFormRef?.password.value,
+      permission: permissionNum,
     }
     poster(newUser)
       .then(async res => {
@@ -78,6 +94,10 @@ const SignUpPage = () => {
         })
         console.log("login post error: ", err);
       })
+    setConfirm(false)
+  }
+
+  const cancelSubmit = () => {
     setConfirm(false)
   }
 
@@ -206,6 +226,22 @@ const SignUpPage = () => {
                 }}
               />
             </label>
+            <label
+              class="flex flex-col w-[100%]"
+            >
+              账号等级
+              <select
+                class="
+                  bg-neutral-700 rounded-lg py-2 px-5 border-2 border-gray-500
+                  focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600
+                "
+                name="permission"
+              >
+                <option value="0" selected={true}>测试用</option>
+                <option value="1">普通</option>
+                <option value="2">管理员</option>
+              </select>
+            </label>
             <div>
               *只能由管理员创建账号
             </div>
@@ -230,19 +266,40 @@ const SignUpPage = () => {
               class="bg-slate-800 p-5 rounded-lg"
             >
               <div class="text-lg pb-3">
-                确定要用这个邮箱和用户名注册吗？
+                确定要创建这个用户吗？
               </div>
               <div class="border-gray-500 border-x-2 border-t-2 rounded-t-lg p-2">
+                <Switch>
+                  <Match when={signupFormRef?.permission.value === "0"}>
+                    <div>等级: <span class="text-green-500">测试用户</span></div>
+                  </Match>
+                  <Match when={signupFormRef?.permission.value === "1"}>
+                    <div>等级: <span class="text-orange-500">普通用户</span></div>
+                  </Match>
+                  <Match when={signupFormRef?.permission.value === "2"}>
+                   <div>等级: <span class="text-red-500">管理员</span></div>
+                  </Match>
+                </Switch>
+              </div>
+              <div class="border-gray-500 border-2 p-2">
                 用户名: {signupFormRef?.username.value}
               </div>
-              <div class="border-gray-500 border-2 rounded-b-lg p-2">
+              <div class="border-gray-500 border-x-2 border-b-2 rounded-b-lg p-2">
                 邮箱: {signupFormRef?.email.value}
               </div>
-              <div
-                onClick={submitForm}
-                class="mt-5 text-center text-lg bg-orange-500/70 hover:bg-orange-700/70 active:bg-orange-500/70 rounded-lg px-2 py-1 text-white"
-              >
-                确定
+              <div class="flex gap-2">
+                <div
+                  onClick={submitForm}
+                  class="flex-1 mt-5 text-center text-lg bg-red-500/70 hover:bg-red-700/70 active:bg-red-500/70 rounded-lg px-2 py-1 text-white"
+                >
+                  确定
+                </div>
+                <div
+                  onClick={cancelSubmit}
+                  class="flex-1 mt-5 text-center text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-2 py-1 text-white"
+                >
+                  取消
+                </div>
               </div>
             </div>
           </div>

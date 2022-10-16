@@ -97,6 +97,7 @@ export interface SignupUser {
   user_name: string
   email: string
   password: string
+  permission: 0 | 1 | 2
 }
 
 export interface LoginUser {
