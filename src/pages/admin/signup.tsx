@@ -1,7 +1,9 @@
 // dependencies lib
 import { Title } from "@solidjs/meta"
 import { createSignal } from "solid-js"
-import { Link } from "@solidjs/router"
+
+// local dependencies
+import { AdminNavi } from "@/components/pages/admin"
 
 // type
 import type { SignupUser, SignupResponseBody } from "@/interfaces"
@@ -112,12 +114,12 @@ const SignUpPage = () => {
     <>
       <Title>Login</Title>
       <div class="h-full bg-neutral-700 text-white flex flex-col">
-        {/* <div class="bg-red-500/50">
-          navi 
-        </div> */}
+        <div class="shadow-lg mb-2 text-xl py-3 px-5">
+          <AdminNavi></AdminNavi>
+        </div>
         <div class="flex-auto flex flex-col justify-center items-center">
           <div class="w-[30%] text-center text-2xl pb-10">
-            注册vvvorld账号
+            新建vvvorld账号
           </div>
           <form
             id="signup-form"
@@ -204,10 +206,6 @@ const SignUpPage = () => {
                 }}
               />
             </label>
-            {/* <Link
-              href="/login"
-              class="underline"
-            >已有账号? 点我直接登录!</Link> */}
             <div>
               *只能由管理员创建账号
             </div>
