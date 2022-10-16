@@ -12,9 +12,7 @@ const AdminNewProject = () => {
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
           <AdminNavi></AdminNavi>
         </div>
-        <div>
-          <NewProjectForm></NewProjectForm>
-        </div>
+        <NewProjectForm></NewProjectForm>
       </div>
     </>
   )
