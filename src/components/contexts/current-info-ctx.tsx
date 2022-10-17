@@ -9,6 +9,7 @@ const handlerCurrentUser = () => {
     id: -1,
     user_name: "connecting...",
     email: "",
+    permission: 0,
   })
   const [userList, setUserList] = createSignal<string[]>()
   return {

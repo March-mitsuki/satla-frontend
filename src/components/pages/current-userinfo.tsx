@@ -26,6 +26,7 @@ const currentUserInfo = () => {
             user_name: nameList[randomName()],
             email: "test@email",
             id: 1234,
+            permission: 2,
           })
         }, 1000);
       })
@@ -45,6 +46,7 @@ const currentUserInfo = () => {
         id: -1,
         user_name: "connecting...",
         email: "",
+        permission: 0,
       })
     })
   })

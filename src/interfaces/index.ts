@@ -102,6 +102,7 @@ export interface UserInfoFromServer {
   id: number
   user_name: string
   email: string
+  permission: 0 | 1 | 2
 }
 
 export interface Project {

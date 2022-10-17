@@ -65,7 +65,6 @@ const TranslatePage = () => {
 
     onCleanup(() => {
       if (ws.readyState === ws.OPEN) {
-        ws.send("client clean up now")
         ws.close()
       }
       setAttachedInfo(undefined)
