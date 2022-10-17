@@ -80,3 +80,4 @@ https://github.com/March-mitsuki/vvvorld
 * ~~从translate等带有ws连接的页面迁移出来时ws不会自动断开连接~~ 已解决
   * ~~应该是用的是routes的LINk的关系所以会自动cache到本地, 所以导致现在server 的check login也出了问题, 找时候修一修~~
 * ~~每次新人连接都会更新别人的subtitles, 可以改成onopen的时候同时发两条cmd~~ 已解决
+* 在send-page加行当前是checked属性, 是否要更改可以再讨论
