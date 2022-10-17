@@ -1,9 +1,11 @@
 const LogoutBtn = () => {
+  const api_base_url = import.meta.env.VITE_API_BASE_URL
+
   const logoutBtnHandler = (
     e: MouseEvent & { currentTarget: HTMLButtonElement }
   ) => {
     e.preventDefault()
-    const url = "http://192.168.64.3:8080/seesion/logout"
+    const url = api_base_url + "seesion/logout"
     fetch(url, {
       method: "DELETE",
       redirect: "follow",
