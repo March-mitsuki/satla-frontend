@@ -457,6 +457,9 @@ const CheckArea: ParentComponent<{
           }
           wsOn.deleteSubtitle(sendSubtitleBody.subtitle.id)
           break;
+        case "heartBeat":
+          console.log("--heartbeat--");
+          break;
       }
     }
   })

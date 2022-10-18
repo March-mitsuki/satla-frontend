@@ -8,7 +8,7 @@ import { FloatingWindow } from "@/components";
 import { DisplayReview, Navi, SendArea, SendPane } from "@/components/pages";
 import _currentInfo from "@/components/contexts/current-info-ctx";
 import _subtitles from "@/components/contexts/subtitles"
-import { wsOn } from "@/controllers"
+import { wsOn, wsSend } from "@/controllers"
 
 
 const SendPage = () => {
@@ -42,10 +42,16 @@ const SendPage = () => {
     ws.onerror = (evt) => {
       console.log("ws err", evt);
     }
+
+    const heartBeatTimer = setInterval(() => {
+      wsSend.heartBeat(ws)
+    }, 1000*30)
+
     onCleanup(() => {
       if (ws.readyState === ws.OPEN) {
         ws.close()
       }
+      clearInterval(heartBeatTimer)
       setAttachedInfo(undefined)
       setSubtitles(undefined)
       setUserList(undefined)

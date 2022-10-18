@@ -1,7 +1,10 @@
 // dependencies lib
-import { Component, createEffect, createSignal, Match, onCleanup, Switch } from 'solid-js';
+import { Component, createEffect, onCleanup } from 'solid-js';
 import { Title } from '@solidjs/meta';
 import { useParams } from '@solidjs/router';
+
+// local dependencies
+import { wsSend } from '@/controllers';
 
 // type
 import { DisplayReview } from '@/components/pages';
@@ -24,10 +27,15 @@ const DisplayPage: Component = () => {
       console.log("ws err", evt);
     }
 
+    const heartBeatTimer = setInterval(() => {
+      wsSend.heartBeat(ws)
+    }, 1000*30)
+
     onCleanup(() => {
       if (ws.readyState === ws.OPEN) {
         ws.close()
       }
+      clearInterval(heartBeatTimer)
     })
   })
 

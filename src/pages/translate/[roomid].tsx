@@ -11,7 +11,7 @@ import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import _pagetype from "@/components/contexts/page-type"
 import _currentInfo from "@/components/contexts/current-info-ctx"
 import _subtitles from "@/components/contexts/subtitles"
-import { wsOn } from "@/controllers";
+import { wsOn, wsSend } from "@/controllers";
 
 
 const TranslatePage = () => {
@@ -63,10 +63,15 @@ const TranslatePage = () => {
       console.log("ws err", evt);
     }
 
+    const heartBeatTimer = setInterval(() => {
+      wsSend.heartBeat(ws)
+    }, 1000*30)
+
     onCleanup(() => {
       if (ws.readyState === ws.OPEN) {
         ws.close()
       }
+      clearInterval(heartBeatTimer)
       setAttachedInfo(undefined)
       setSubtitles(undefined)
       setUserList(undefined)

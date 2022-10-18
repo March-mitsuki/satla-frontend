@@ -166,6 +166,16 @@ export interface c2sChangeReversed {
   }
 }
 
+export interface c2sHeartBeat {
+  // 目前的心跳是复读client发过去的东西, 然后发给心跳方
+  head: {
+    cmd: "heartBeat"
+  }
+  body: {
+    obj: "[object]"
+  }
+}
+
 // s2c -> server to client msg
 
 export interface s2cEventMap {
@@ -179,7 +189,8 @@ export interface s2cEventMap {
       "sReorderSubFront" | "sReorderSubBack" |
       "sSendSubtitle" | "sSendSubtitleDirect" |
       "sChangeStyle" | "sChangeBilingual" |
-      "sChangeReversed"
+      "sChangeReversed" |
+      "heartBeat" // 因为目前心跳是复读所以这里是heartBeat,不带s
   }
   body: any
 }
@@ -249,4 +260,8 @@ export interface s2cChangeBilingualBody {
 
 export interface s2cChangeReversedBody {
   reversed: boolean
+}
+
+export interface s2cHeartBeatBody {
+  data: any
 }

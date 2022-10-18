@@ -284,6 +284,9 @@ const SendArea: ParentComponent<{
             (translateForm as HTMLFormElement).origin.value = "";  
           }
           break;
+        case "heartBeat":
+          console.log("--heartbeat--");
+          break;
       }
     }
   })

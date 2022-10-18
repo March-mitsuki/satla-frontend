@@ -21,6 +21,7 @@ import type {
   c2sChangeBilingual,
   StyleData,
   c2sChangeReversed,
+  c2sHeartBeat,
 } from "@/interfaces/ws"
 
 export const addUser = (ws: WebSocket) => {
@@ -420,5 +421,24 @@ export const changeReversed = (
   }
   const postData = new TextEncoder().encode(JSON.stringify(_postData))
   ws.send(postData)
-  
+}
+
+export const heartBeat = (
+  ws: WebSocket | undefined
+) => {
+  if (typeof(ws) === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait")
+    return
+  }
+  const _postData: c2sHeartBeat = {
+    head: {
+      cmd: "heartBeat"
+    },
+    body: {
+      obj: "[object]"
+    }
+  }
+  const postData = new TextEncoder().encode(JSON.stringify(_postData))
+  ws.send(postData)
 }

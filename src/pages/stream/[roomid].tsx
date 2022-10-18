@@ -3,7 +3,6 @@ import { VideoJS } from "@/components"
 import videojs from "video.js"
 import { useParams } from "@solidjs/router";
 import { Title } from "@solidjs/meta"
-import { createSignal } from "solid-js";
 
 // local dependencies
 import { Navi } from "@/components/pages"
