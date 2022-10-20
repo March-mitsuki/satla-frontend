@@ -7,9 +7,11 @@ import _pagetype from "../contexts/page-type"
 import { Subtitle } from "@/interfaces"
 import _currentInfo from "@/components/contexts/current-info-ctx"
 import { wsSend } from "@/controllers"
+import { STORAGE_MEMO } from "../tools";
 
 // type
 import type { Component } from "solid-js"
+import { StorageMemoData } from "@/interfaces/local-storage";
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
@@ -26,6 +28,13 @@ const TranslatePane: Component<{
     canOrder, switchCanOrder,
   } = _pagetype
   const [checkMemo, setCheckMemo] = createSignal<string[]>([""])
+  const storageMemoStr = localStorage.getItem(STORAGE_MEMO)
+  let storageMemo: StorageMemoData | undefined;
+  if (storageMemoStr) {
+    storageMemo = JSON.parse(storageMemoStr)
+    const roomMemo: string[] | null = (storageMemo as StorageMemoData)[props.roomid]
+    setCheckMemo(roomMemo)
+  }
 
   const addTranslateSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement}) => {
     e.stopPropagation()
@@ -50,36 +59,53 @@ const TranslatePane: Component<{
     })
   }
 
+  /*
+    以下校对工具栏
+  */
+
+  const updateStorageMemo = () => {
+    // 无论是删是加要做的事情都一样, 只要更改了就要改localStorage
+    if (storageMemo) {
+      // 无论是否存在房间写的东西都一样(更改已存在和增加新要素都是同一个写法)
+      storageMemo[props.roomid] = checkMemo()
+    } else {
+      // 若不存在则需要新建一整个storage构造体
+      storageMemo = {
+        [props.roomid]: checkMemo()
+      }
+    }
+    localStorage.setItem(STORAGE_MEMO, JSON.stringify(storageMemo))
+  }
+
   const addCheckMemo = (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
     checkMemo().push("")
-    console.log("checkmemo add: ", checkMemo());
-    
-    // setCheckMemo(checkMemo())
+    updateStorageMemo()
+  }
+
+  const changeCheckMemo = (idx: number, value: string) => {
+    checkMemo()[idx] = value
+    setCheckMemo(checkMemo().map(x => x))
+    updateStorageMemo()
+    console.log("change memo: ", checkMemo());
   }
 
   const checkMemoKeyDownHandler = (
     e: KeyboardEvent & { currentTarget: HTMLFormElement},
     idx: number,
-    _checkmemo: string
   ) => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault()
       const formElem = e.currentTarget
-      _checkmemo = formElem.checkmemo.value
-      checkMemo()[idx] = _checkmemo
-      setCheckMemo(checkMemo().map(x => x))
+      changeCheckMemo(idx, formElem.checkmemo.value)
     }
   }
   const checkMemoSubmitHandler = (
     e: Event & { currentTarget: HTMLFormElement},
     idx: number,
-    _checkmemo: string
   ) => {
     e.preventDefault()
     const formElem = e.currentTarget
-    _checkmemo = formElem.checkmemo.value
-    checkMemo()[idx] = _checkmemo
-    setCheckMemo(checkMemo().map(x => x))
+    changeCheckMemo(idx, formElem.checkmemo.value)
   }
 
   let checkMeoWrapperRef: HTMLDivElement | undefined;
@@ -203,10 +229,29 @@ const TranslatePane: Component<{
               ref={checkMeoWrapperRef}
               class="flex flex-col px-1 pb-2 gap-1 overflow-auto h-[calc(100%-35px)]"
             >
+              {checkMemo().length === 0 &&
+                <div class="flex justify-end items-center">
+                  <button
+                    onClick={(e) => {
+                      checkMemo().push("")
+                      switchPagetype()
+                      switchPagetype()
+                      updateStorageMemo()
+                    }}
+                    class="flex items-center justify-center text-sm rounded-md p-1 bg-amber-500/70 hover:bg-amber-700/70 active:bg-amber-500/70"
+                  >
+                    {/* add new btn */}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
+                    </svg>
+                    新增一行
+                  </button>
+                </div>
+              }
               <For each={checkMemo()}>{(elem, idx) =>
                 <form
-                  onKeyDown={(e) => checkMemoKeyDownHandler(e, idx(), elem)}
-                  onSubmit={(e) => checkMemoSubmitHandler(e, idx(), elem)}
+                  onKeyDown={(e) => checkMemoKeyDownHandler(e, idx())}
+                  onSubmit={(e) => checkMemoSubmitHandler(e, idx())}
                   class="flex gap-1"
                 >
                   <input
@@ -214,6 +259,7 @@ const TranslatePane: Component<{
                     name="checkmemo"
                     autocomplete="off"
                     placeholder="memo"
+                    onBlur={(e) => changeCheckMemo(idx(), e.currentTarget.value)}
                     class={inputStyle}
                     value={elem}
                   />
@@ -236,7 +282,13 @@ const TranslatePane: Component<{
                     </svg>
                   </button>
                   <button
-                    onClick={(e) => {checkMemo().splice(idx(), 1)}}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      const dc_checkMemo = checkMemo().map(x => x)
+                      dc_checkMemo.splice(idx(), 1)
+                      setCheckMemo(dc_checkMemo)
+                      updateStorageMemo()
+                    }}
                     class="rounded-md p-1 bg-red-500/70 hover:bg-red-700/70 active:bg-red-500/70"
                   >
                     {/* del btn */}

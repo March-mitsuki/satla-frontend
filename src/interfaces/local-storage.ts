@@ -9,3 +9,7 @@ export interface RoomStyleData {
 export interface StorageStyleData {
   [key: string]: RoomStyleData
 }
+
+export interface StorageMemoData {
+  [key: string]: string[]
+}
