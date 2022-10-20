@@ -16,7 +16,7 @@ const wrongRepeatStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2
 
 const SignUpPage = () => {
   const api_base_url = import.meta.env.VITE_API_BASE_URL
-  
+
   const [repeatOK, setRepeatOK] = createSignal(true)
   const [confirm, setConfirm] = createSignal(false)
   const [isErr, setIsErr] = createSignal<{

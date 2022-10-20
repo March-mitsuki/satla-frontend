@@ -12,6 +12,7 @@ import _pagetype from "@/components/contexts/page-type"
 import _currentInfo from "@/components/contexts/current-info-ctx"
 import _subtitles from "@/components/contexts/subtitles"
 import { wsOn, wsSend } from "@/controllers";
+import { Modal } from "@/components";
 
 
 const TranslatePage = () => {
@@ -23,6 +24,7 @@ const TranslatePage = () => {
   const { currentUser, userList, setUserList } = _currentInfo
   const { setAttachedInfo, setSubtitles } = _subtitles
   const [ _ws, setWs ] = createSignal<WebSocket>()
+  const [ isWsconn, setIsWsconn ] = createSignal<boolean>(false)
 
   const videoJSOption: videojs.PlayerOptions = {
     controls: true,
@@ -55,9 +57,11 @@ const TranslatePage = () => {
     }
     ws.onopen = () => {
       wsOn.onopen(ws, param.roomid)
+      setIsWsconn(true)
     }
     ws.onclose = () => {
       console.log("ws close");
+      setIsWsconn(false)
     }
     ws.onerror = (evt) => {
       console.log("ws err", evt);
@@ -153,6 +157,16 @@ const TranslatePage = () => {
             <CheckArea ws={_ws()}></CheckArea>
           </div>
         </div>
+        { isWsconn() === false && 
+          <Modal>
+            <div class="flex gap-3 justify-center items-center">
+              <div>
+                正在连接服务器, 若一直无法连接请刷新重试
+              </div>
+              <div class="animate-spin h-8 w-8 bg-neutral-400 rounded-xl"></div>
+            </div>
+          </Modal>
+        }
       </div>
     </>
   )

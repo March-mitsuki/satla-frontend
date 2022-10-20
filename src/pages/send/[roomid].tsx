@@ -2,6 +2,7 @@
 import { Title } from "@solidjs/meta";
 import { createEffect, onCleanup, createSignal } from "solid-js";
 import { useParams } from "@solidjs/router";
+import { Modal } from "@/components"
 
 // local dependencies
 import { FloatingWindow } from "@/components";
@@ -17,6 +18,7 @@ const SendPage = () => {
   const { currentUser, userList, setUserList } = _currentInfo
   const { setAttachedInfo, setSubtitles } = _subtitles
   const [ _ws, setWs ] = createSignal<WebSocket>()
+  const [ isWsconn, setIsWsconn ] = createSignal<boolean>(false)
 
   // 每个page连接不一样的ws room
   const param = useParams<{ roomid: string }>()
@@ -35,9 +37,11 @@ const SendPage = () => {
     }
     ws.onopen = () => {
       wsOn.onopen(ws, param.roomid)
+      setIsWsconn(true)
     }
     ws.onclose = () => {
       console.log("ws close");
+      setIsWsconn(false)
     }
     ws.onerror = (evt) => {
       console.log("ws err", evt);
@@ -138,6 +142,16 @@ const SendPage = () => {
             <SendArea ws={_ws()} roomid={param.roomid}></SendArea>
           </div>
         </div>
+        { isWsconn() === false && 
+          <Modal>
+            <div class="flex gap-3 justify-center items-center">
+              <div>
+                正在连接服务器, 若一直无法连接请刷新重试
+              </div>
+              <div class="animate-spin h-8 w-8 bg-neutral-400 rounded-xl"></div>
+            </div>
+          </Modal>
+        }
       </div>
     </>
   )
