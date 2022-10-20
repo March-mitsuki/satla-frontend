@@ -11,7 +11,7 @@ import { wsSend } from "@/controllers"
 import type { Component } from "solid-js"
 import { s2cChangeBilingualBody, s2cChangeReversedBody, s2cChangeStyleBody, s2cEventMap, StyleData } from "@/interfaces/ws"
 
-const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
+const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 mx-1 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
 const SendPane: Component<{
   roomid: string
@@ -34,7 +34,6 @@ const SendPane: Component<{
     const formElem = e.currentTarget
     if (inputType()) {
       // 输入
-      console.log("输入");
       const newSub = new Subtitle({
         // project_id和id都为0, 服务器会根据roomid寻找对应project进行插入
         id: 0,
@@ -51,7 +50,6 @@ const SendPane: Component<{
       })
     } else {
       // 发送
-      console.log("直接发送");
       const newSub = new Subtitle({
         id: 0,
         project_id: 0,
@@ -100,7 +98,7 @@ const SendPane: Component<{
   }
   const subtitleStyleInputHandler = (
     e: InputEvent & {
-      currentTarget: HTMLInputElement;
+      currentTarget: HTMLTextAreaElement;
     }
   ) => {
     e.preventDefault()
@@ -108,7 +106,7 @@ const SendPane: Component<{
   }
   const originStyleInputHandler = (
     e: InputEvent & {
-      currentTarget: HTMLInputElement;
+      currentTarget: HTMLTextAreaElement;
     }
   ) => {
     e.preventDefault()
@@ -138,7 +136,7 @@ const SendPane: Component<{
   })
 
   return (
-    <div class="mt-1 flex flex-col gap-1">
+    <div class="mt-1 flex flex-col gap-1 h-full">
       <div class="flex gap-2 px-1 justify-center">
         <label class="flex items-center gap-2 cursor-pointer select-none">
           发送
@@ -231,33 +229,31 @@ const SendPane: Component<{
       <form
         id="send-style-form"
         onSubmit={(e) => onStyleChangeSubmitHandler(e)}
-        class="flex flex-col gap-1 px-1 pb-1"
+        class="flex flex-col gap-1 px-1 pb-1 overflow-hidden h-[calc(100%-120px)]"
       >
         <label class="flex gap-2">
           <div class="text-sm">
             翻译:
           </div>
-          <input
-            type="text"
+          <textarea
             name="subtitleStyle"
             placeholder="翻译样式"
             onInput={(e) => subtitleStyleInputHandler(e)}
             value={style.subtitle}
             class={inputStyle}
-          />
+          ></textarea>
         </label>
         <label class="flex gap-2">
           <div class="text-sm">
             原文:
           </div>
-          <input
-            type="text"
+          <textarea
             name="originStyle"
             placeholder="原文样式"
             onInput={(e) => originStyleInputHandler(e)}
             value={style.origin}
             class={inputStyle}
-          />
+          ></textarea>
         </label>
         <div class="flex gap-2 items-center justify-center">
           <label class="flex items-center gap-1 cursor-pointer select-none">
