@@ -6,10 +6,22 @@ import { createStore } from "solid-js/store"
 import _currentInfo from "../contexts/current-info-ctx"
 import { Subtitle } from "@/interfaces"
 import { wsSend } from "@/controllers"
+import {
+  STORAGE_STYLE,
+  defaultSubtitleStyle,
+  defaultOriginStyle,
+} from "../tools"
 
 // type
 import type { Component } from "solid-js"
-import { s2cChangeBilingualBody, s2cChangeReversedBody, s2cChangeStyleBody, s2cEventMap, StyleData } from "@/interfaces/ws"
+import {
+  s2cChangeBilingualBody,
+  s2cChangeReversedBody,
+  s2cChangeStyleBody,
+  s2cEventMap,
+  StyleData,
+} from "@/interfaces/ws"
+import { RoomStyleData, StorageStyleData } from "@/interfaces/local-storage"
 
 const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 mx-1 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
 
@@ -20,10 +32,23 @@ const SendPane: Component<{
   const [inputType, setInputType] = createSignal(false) // true = 输入, false = 发送
   const [bilingualSend, setBilingualSend] = createSignal(true) // true = 双语, false = 单语
   const [style, setStyle] = createStore<StyleData>({
-    subtitle: "font-size:24px; line-height:32px; font-weight:700; text-align:center;",
-    origin: "font-size:18px; line-height:24px; font-weight:700; text-align:center;",
+    subtitle: defaultSubtitleStyle,
+    origin: defaultOriginStyle,
   })
   const [reversed, setReversed] = createSignal<boolean>(false)
+
+  // 如果有储存style那么设置style为储存style
+  const storageStyleStr = localStorage.getItem(STORAGE_STYLE)
+  let storageStyle: StorageStyleData | undefined;
+  if (storageStyleStr) {
+    storageStyle = JSON.parse(storageStyleStr)
+    const roomStyle: RoomStyleData | undefined = (storageStyle as StorageStyleData)[props.roomid]
+    if (roomStyle) {
+      setStyle(roomStyle.style)
+      setReversed(roomStyle.reversed)
+      setBilingualSend(roomStyle.bilingualSend)
+    }
+  }
 
   const onSendSubmitHandler = (
     e: SubmitEvent & { currentTarget: HTMLFormElement}
@@ -113,6 +138,18 @@ const SendPane: Component<{
     setStyle("origin", e.currentTarget.value)
   }
 
+  const delStorageRoomStyle = () => {
+    const storageStyleStr = localStorage.getItem(STORAGE_STYLE)
+    if (storageStyleStr) {
+      if (storageStyleStr !== "") {
+        const storageStyle = JSON.parse(storageStyleStr)        
+        delete storageStyle[props.roomid]
+        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle))
+      }
+    }
+    location.reload()
+  }
+
   createEffect(() => {
     if (!props.ws) {
       return
@@ -122,15 +159,108 @@ const SendPane: Component<{
       if (data.head.cmd === "sChangeBilingual") {
         const body: s2cChangeBilingualBody = data.body
         setBilingualSend(body.bilingual)
+        // 更新之后同时更新本地储存
+        if (storageStyle) {
+          if (storageStyle[props.roomid]) {
+            // 如果存在storage且存在对应房间
+            storageStyle[props.roomid].bilingualSend = body.bilingual
+          } else {
+            // 如果存在storage但不存在对应房间
+            storageStyle[props.roomid] = {
+              style: {
+                subtitle: defaultSubtitleStyle,
+                origin: defaultOriginStyle,
+              },
+              reversed: false,
+              bilingualSend: body.bilingual,
+            }
+          }
+        } else {
+          // 如果根本不存在storage
+          storageStyle = {
+            [props.roomid]: {
+              style: {
+                subtitle: defaultSubtitleStyle,
+                origin: defaultOriginStyle,
+              },
+              reversed: false,
+              bilingualSend: body.bilingual,
+            }
+          }
+        }
+        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle))
       } else if (data.head.cmd === "sChangeStyle") {
         const body: s2cChangeStyleBody = data.body
         setStyle({
           subtitle: body.subtitle,
           origin: body.origin,
         })
+        // 更新之后同时更新本地储存
+        if (storageStyle) {
+          if (storageStyle[props.roomid]) {
+            // 如果存在storage且存在对应房间
+            storageStyle[props.roomid].style = {
+              subtitle: body.subtitle,
+              origin: body.origin,
+            }
+          } else {
+            // 如果存在storage但不存在对应房间
+            storageStyle[props.roomid] = {
+              style: {
+                subtitle: body.subtitle,
+                origin: body.origin,
+              },
+              reversed: false,
+              bilingualSend: true,
+            }
+          }
+        } else {
+          // 如果根本不存在storage
+          storageStyle = {
+            [props.roomid]: {
+              style: {
+                subtitle: body.subtitle,
+                origin: body.origin,
+              },
+              reversed: false,
+              bilingualSend: true,
+            }
+          }
+        }
+        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle))
       } else if (data.head.cmd === "sChangeReversed") {
         const body: s2cChangeReversedBody = data.body
         setReversed(body.reversed)
+        // 更新之后同时更新本地储存
+        if (storageStyle) {
+          if (storageStyle[props.roomid]) {
+            // 如果存在storage且存在对应房间
+            storageStyle[props.roomid].reversed = body.reversed
+          } else {
+            // 如果存在storage但不存在对应房间
+            storageStyle[props.roomid] = {
+              style: {
+                subtitle: defaultSubtitleStyle,
+                origin: defaultOriginStyle,
+              },
+              reversed: body.reversed,
+              bilingualSend: true,
+            }
+          }
+        } else {
+          // 如果根本不存在storage
+          storageStyle = {
+            [props.roomid]: {
+              style: {
+                subtitle: defaultSubtitleStyle,
+                origin: defaultOriginStyle,
+              },
+              reversed: body.reversed,
+              bilingualSend: true,
+            }
+          }
+        }
+        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle))
       }
     })
   })
@@ -181,14 +311,28 @@ const SendPane: Component<{
         <div class="border-l-2 border-neutral-400"></div>
         <div class="flex items-center">
           <button
-            onClick={openDisplayPage}
-            class="flex bg-cyan-600/75 rounded-md px-2 hover:bg-cyan-700/75 text-sm"
+            onClick={delStorageRoomStyle}
+            class="flex justify-center items-center px-2 bg-red-500/70 hover:bg-red-700/70 rounded-md text-sm"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 18" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            <div class="pl-[2px]">
+              删除房间缓存
+            </div>
+          </button>
+        </div>
+        <div class="border-l-2 border-neutral-400"></div>
+        <div class="flex items-center">
+          <button
+            onClick={openDisplayPage}
+            class="flex justify-center items-center bg-cyan-600/75 rounded-md px-2 hover:bg-cyan-700/75 text-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 8.25V18a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 18V8.25m-18 0V6a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 6v2.25m-18 0h18M5.25 6h.008v.008H5.25V6zM7.5 6h.008v.008H7.5V6zm2.25 0h.008v.008H9.75V6z" />
             </svg>
             <div class="pl-[2px]">
-              打开视窗
+              视窗
             </div>
           </button>
         </div>
@@ -239,9 +383,10 @@ const SendPane: Component<{
             name="subtitleStyle"
             placeholder="翻译样式"
             onInput={(e) => subtitleStyleInputHandler(e)}
-            value={style.subtitle}
             class={inputStyle}
-          ></textarea>
+          >
+            {style.subtitle}
+          </textarea>
         </label>
         <label class="flex gap-2">
           <div class="text-sm">
@@ -251,9 +396,10 @@ const SendPane: Component<{
             name="originStyle"
             placeholder="原文样式"
             onInput={(e) => originStyleInputHandler(e)}
-            value={style.origin}
             class={inputStyle}
-          ></textarea>
+          >
+            {style.origin}
+          </textarea>
         </label>
         <div class="flex gap-2 items-center justify-center">
           <label class="flex items-center gap-1 cursor-pointer select-none">

@@ -5,3 +5,8 @@ export const sleep = (msec: number) => {
     }, msec);
   })
 }
+
+export const STORAGE_STYLE = "/send"
+
+export const defaultSubtitleStyle = "font-size:24px; line-height:32px; font-weight:700; text-align:center; color: white;"
+export const defaultOriginStyle = "font-size:18px; line-height:24px; font-weight:700; text-align:center; color: white;"

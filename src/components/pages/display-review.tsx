@@ -1,5 +1,6 @@
 // dependices lib
 import { createEffect, createSignal, Match, Switch } from "solid-js"
+import { defaultOriginStyle, defaultSubtitleStyle } from "../tools"
 
 // type
 import type {
@@ -18,8 +19,8 @@ const DisplayReview: Component<{
 }> = (props) => {
   const [ subtitle, setSubtitle ] = createSignal<Subtitle>()
   const [ style, setStyle ] = createSignal<StyleData>({
-    subtitle: "font-size:24px; line-height:32px; font-weight:700; text-align:center;",
-    origin: "font-size:18px; line-height:24px; font-weight:700; text-align:center;",
+    subtitle: defaultSubtitleStyle,
+    origin: defaultOriginStyle,
   })
   const [ bilingual, setBilingual ] = createSignal<boolean>(true)
   const [ reversed, setReversed ] = createSignal<boolean>(false)
