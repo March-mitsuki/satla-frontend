@@ -17,7 +17,7 @@ const currentUserInfo = () => {
       body = await response.json()
     } else {
       body = await new Promise<UserInfoFromServer>((resolve, reject) => {
-        const nameList = ["t01", "t02", "t03", "t04", "t05", "t06", "t07", "t08"]
+        const nameList = ["みつき", "三月", "川越", "東京臨海高速臨海線", "神崎", "我是神里凌华的狗", "见一个爱一个", "最爱的一个"]
         const randomName = () => {
           return Math.floor(Math.random() * nameList.length)
         }

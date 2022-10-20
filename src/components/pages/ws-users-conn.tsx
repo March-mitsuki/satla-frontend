@@ -8,7 +8,7 @@ import type { JSX } from "solid-js"
 const WsUsers: Component<{
   userList: string[]
 }> = (props) => {
-  const baseStyle = "flex justify-center items-center w-10 h-10 rounded-full overflow-hidden text-sm shadow-lg"
+  const baseStyle = "flex  w-10 h-10 rounded-full text-sm text-center overflow-hidden shadow-lg"
   const listPosition = (idx: number) => {
     if (idx === 0) {
       return ""
@@ -34,7 +34,7 @@ const WsUsers: Component<{
     return Math.floor(Math.random() * colors.length)
   }
   return (
-    <ul class="flex relative h-full">
+    <ul class="flex relative select-none">
       <For each={props.userList}>{(elem, idx) =>
         <li
           style={listStylePositon(idx())}
