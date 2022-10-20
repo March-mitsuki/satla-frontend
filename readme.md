@@ -58,11 +58,11 @@ https://github.com/March-mitsuki/vvvorld
     - [x] 直接发送
     - [x] 删除行
     - [x] 发送空行
-  - [ ] 显示页面
+  - [x] 显示页面
     - [x] 基本显示
     - [x] 调换双语位置
     - [x] css控制
-      - [ ] 储存到local-storage
+      - [x] 储存到local-storage
   - [ ] ws连接
     - [x] 当前房间人数
     - [ ] 连接显示灯
