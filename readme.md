@@ -39,7 +39,7 @@ https://github.com/March-mitsuki/vvvorld
 
 ## todo
 - [ ] 基本功能
-  - [ ] 翻译页面
+  - [x] 翻译页面
     - [x] 加行(up down)
     - [x] 修改行
     - [x] 修改显示(当别人正在修改的时候)
@@ -48,8 +48,8 @@ https://github.com/March-mitsuki/vvvorld
     - [x] 拖动行
       * 现在拖动行的逻辑是前端判断从前往后还是从后往前, 所以可能出现一两行错位的情况
       * 但使用后端判断的话必须要先读后写, 不太想先读后写
-    - [ ] 校对工具栏
-      - [ ] 储存到localStoragea
+    - [x] 校对工具栏
+      - [x] 储存到localStoragea
   - [x] 发送页面
     - [x] 发送行
     - [x] 加行(up down)
@@ -70,6 +70,7 @@ https://github.com/March-mitsuki/vvvorld
     - [x] 字幕分房间储存
     - [ ] 项目显示分页
 - [ ] 进阶功能
+  - [ ] 储存当前发送, 刷新不消失(前端存或者后端存都行)
   - [ ] 把signal改成store应该能增加性能
   - [ ] 现在getElement和ref混在, 之后需要找时间统一
   - [x] floating-window的两个signal应该可以整合到一个, 因为都是一起变化的
