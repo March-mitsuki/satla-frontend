@@ -8,7 +8,7 @@ import type { JSX } from "solid-js"
 const WsUsers: Component<{
   userList: string[]
 }> = (props) => {
-  const baseStyle = "flex  w-10 h-10 rounded-full text-sm text-center overflow-hidden shadow-lg"
+  const baseStyle = "flex justify-center items-center w-10 h-10 rounded-full text-sm text-center overflow-hidden shadow-lg"
   const listPosition = (idx: number) => {
     if (idx === 0) {
       return ""
