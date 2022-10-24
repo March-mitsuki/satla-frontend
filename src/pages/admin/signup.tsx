@@ -4,11 +4,11 @@ import { createSignal, Match, Switch } from "solid-js"
 
 // local dependencies
 import { AdminNavi } from "@/components/pages/admin"
-import _currentInfo from "@/components/contexts/current-info-ctx"
 
 // type
 import type { SignupResponseBody } from "@/interfaces"
 import type { SignupUser } from "@/interfaces/admin";
+import { Modal } from "@/components"
 
 
 const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
@@ -100,17 +100,13 @@ const SignUpPage = () => {
     setConfirm(false)
   }
 
-  const cancelSubmit = () => {
-    setConfirm(false)
-  }
-
   const onSubmitHandler = (
     e: Event & { currentTarget: HTMLFormElement }
   ) => {
     e.preventDefault()
     const formElem = e.currentTarget
-    const password: string = formElem?.password.value
-    const repeat: string = formElem?.repeat.value
+    const password: string = formElem.password.value
+    const repeat: string = formElem.repeat.value
     if (repeat !== password) {
       window.alert("两次输入的密码不一致")
       return
@@ -262,50 +258,44 @@ const SignUpPage = () => {
           </form>
         </div>
         {confirm() &&
-          <div
-            class="absolute bg-slate-500/50 flex h-full w-full justify-center items-center"
-          >
-            <div
-              class="bg-slate-800 p-5 rounded-lg"
-            >
-              <div class="text-lg pb-3">
-                确定要创建这个用户吗？
+          <Modal>
+            <div class="text-lg pb-3">
+              确定要创建这个用户吗？
+            </div>
+            <div class="border-gray-500 border-x-2 border-t-2 rounded-t-lg p-2">
+              <Switch>
+                <Match when={signupFormRef?.permission.value === "0"}>
+                  <div>等级: <span class="text-green-500">测试用户</span></div>
+                </Match>
+                <Match when={signupFormRef?.permission.value === "1"}>
+                  <div>等级: <span class="text-orange-500">普通用户</span></div>
+                </Match>
+                <Match when={signupFormRef?.permission.value === "2"}>
+                  <div>等级: <span class="text-red-500">管理员</span></div>
+                </Match>
+              </Switch>
+            </div>
+            <div class="border-gray-500 border-2 p-2">
+              用户名: {signupFormRef?.username.value}
+            </div>
+            <div class="border-gray-500 border-x-2 border-b-2 rounded-b-lg p-2">
+              邮箱: {signupFormRef?.email.value}
+            </div>
+            <div class="flex gap-2">
+              <div
+                onClick={submitForm}
+                class="flex-1 mt-5 text-center text-lg bg-red-500/70 hover:bg-red-700/70 active:bg-red-500/70 rounded-lg px-2 py-1 text-white"
+              >
+                确定
               </div>
-              <div class="border-gray-500 border-x-2 border-t-2 rounded-t-lg p-2">
-                <Switch>
-                  <Match when={signupFormRef?.permission.value === "0"}>
-                    <div>等级: <span class="text-green-500">测试用户</span></div>
-                  </Match>
-                  <Match when={signupFormRef?.permission.value === "1"}>
-                    <div>等级: <span class="text-orange-500">普通用户</span></div>
-                  </Match>
-                  <Match when={signupFormRef?.permission.value === "2"}>
-                   <div>等级: <span class="text-red-500">管理员</span></div>
-                  </Match>
-                </Switch>
-              </div>
-              <div class="border-gray-500 border-2 p-2">
-                用户名: {signupFormRef?.username.value}
-              </div>
-              <div class="border-gray-500 border-x-2 border-b-2 rounded-b-lg p-2">
-                邮箱: {signupFormRef?.email.value}
-              </div>
-              <div class="flex gap-2">
-                <div
-                  onClick={submitForm}
-                  class="flex-1 mt-5 text-center text-lg bg-red-500/70 hover:bg-red-700/70 active:bg-red-500/70 rounded-lg px-2 py-1 text-white"
-                >
-                  确定
-                </div>
-                <div
-                  onClick={cancelSubmit}
-                  class="flex-1 mt-5 text-center text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-2 py-1 text-white"
-                >
-                  取消
-                </div>
+              <div
+                onClick={() => setConfirm(false)}
+                class="flex-1 mt-5 text-center text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-2 py-1 text-white"
+              >
+                取消
               </div>
             </div>
-          </div>
+          </Modal>
         }
       </div>
     </>

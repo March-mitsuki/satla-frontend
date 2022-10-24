@@ -1,23 +1,16 @@
+import { logoutUser } from "../tools"
+
 const LogoutBtn = () => {
   const api_base_url = import.meta.env.VITE_API_BASE_URL
 
-  const logoutBtnHandler = (
+  const logoutBtnHandler = async (
     e: MouseEvent & { currentTarget: HTMLButtonElement }
   ) => {
     e.preventDefault()
-    const url = api_base_url + "seesion/logout"
-    fetch(url, {
-      method: "DELETE",
-      redirect: "follow",
-    }).then(res => {
-      if (res.redirected) {
-        location.reload()
-      } else {
-        console.log("未收到正确回复: ", res);
-      }
-    }).catch(err => {
-      console.log("logout error: ", err);
-    })
+    const results = await logoutUser()
+    if (results !== "") {
+      location.href = results
+    }
   }
 
   return (

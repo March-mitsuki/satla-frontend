@@ -1,10 +1,16 @@
-## vvvrold project
+# vvvrold project
 
 vite + solidjs + tailwind + typescript
 
 backend here:
 
 https://github.com/March-mitsuki/vvvorld
+
+## how to use
+1. create a file named `.env.production` in root dir
+1. set up `VITE_WS_BASE_URL` and `VITE_API_BASE_URL` in `.env.production` file
+1. `npm run build` build a production version
+1. `cp -r dist /path/to/your/backend/root/dir` cp the static dir to your backend server
 
 ## 实现方式
 * 后端使用golang处理，通信基于websocket协议:
@@ -69,6 +75,11 @@ https://github.com/March-mitsuki/vvvorld
   - [ ] 切换项目功能
     - [x] 字幕分房间储存
     - [ ] 项目显示分页
+  - [ ] admin
+    - [ ] 查看user一览
+    - [ ] 删除指定user
+  - [x] user control
+    - [x] 修改密码
 - [ ] 进阶功能
   - [ ] 储存当前发送, 刷新不消失(前端存或者后端存都行)
   - [ ] 把signal改成store应该能增加性能

@@ -102,7 +102,7 @@ export interface UserInfoFromServer {
   id: number
   user_name: string
   email: string
-  permission: 0 | 1 | 2
+  permission: 0 | 1 | 2 // 0 -> test account, 1 -> nomal account, 2 -> administorator
 }
 
 export interface Project {
@@ -140,5 +140,19 @@ export interface SignupResponseBody {
 export interface NewProjectResponseBody {
   code: -1 | 0
   status: 2000 | 5303
+  msg: string
+}
+
+export interface ChangePassword {
+  id: number
+  user_name: string
+  email: string
+  old_password: string
+  new_password: string
+}
+
+export interface ChangePassRespBody {
+  code: -1 | 0
+  status: 2000 | 5302 | 5305
   msg: string
 }
