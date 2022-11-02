@@ -7,23 +7,23 @@ import { createEffect, createSignal, onCleanup } from "solid-js";
 import type { Component } from "solid-js";
 
 const VideoJS: Component<videojs.PlayerOptions> = (props) => {
-  let videoNodeId: string = "videojs-player"
+  let videoNodeId: string = "videojs-player";
 
-  const [player, setPlayer] = createSignal<videojs.Player>()
+  const [player, setPlayer] = createSignal<videojs.Player>();
 
   createEffect(() => {
-    console.log("create effect once")
+    console.log("create effect once");
     setPlayer(videojs(videoNodeId, props)).ready(() => {
       console.log("videojs ready!", this);
-    })
-    onCleanup(() => player()?.dispose())
-  })
+    });
+    onCleanup(() => player()?.dispose());
+  });
 
   return (
     <div data-vjs-player>
       <video id={videoNodeId} class="video-js" />
     </div>
-  )
-}
+  );
+};
 
-export default VideoJS
+export default VideoJS;

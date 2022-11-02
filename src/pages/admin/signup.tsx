@@ -1,35 +1,36 @@
 // dependencies lib
-import { Title } from "@solidjs/meta"
-import { createSignal, Match, Switch } from "solid-js"
+import { Title } from "@solidjs/meta";
+import { createSignal, Match, Switch } from "solid-js";
 
 // local dependencies
-import { AdminNavi } from "@/components/pages/admin"
+import { AdminNavi } from "@/components/pages/admin";
 
 // type
-import type { SignupResponseBody } from "@/interfaces"
+import type { SignupResponseBody } from "@/interfaces";
 import type { SignupUser } from "@/interfaces/admin";
-import { Modal } from "@/components"
+import { Modal } from "@/components";
 
-
-const inputStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
-const wrongRepeatStyle = "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-red-500 lg:text-lg focus:border-red focus:ring-0 focus:outline-0 focus:bg-neutral-600"
+const inputStyle =
+  "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-gray-500 lg:text-lg focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600";
+const wrongRepeatStyle =
+  "flex-auto rounded-lg bg-neutral-700 px-5 py-2 border-2 border-red-500 lg:text-lg focus:border-red focus:ring-0 focus:outline-0 focus:bg-neutral-600";
 
 const SignUpPage = () => {
-  const api_base_url = import.meta.env.VITE_API_BASE_URL
+  const api_base_url = import.meta.env.VITE_API_BASE_URL;
 
-  const [repeatOK, setRepeatOK] = createSignal(true)
-  const [confirm, setConfirm] = createSignal(false)
+  const [repeatOK, setRepeatOK] = createSignal(true);
+  const [confirm, setConfirm] = createSignal(false);
   const [isErr, setIsErr] = createSignal<{
-    status: boolean,
-    msg: string
+    status: boolean;
+    msg: string;
   }>({
     status: false,
-    msg: ""
-  })
+    msg: "",
+  });
 
   const poster = async (user: SignupUser): Promise<Response> => {
-    const url = api_base_url + "api/admin/new_user"
-    const postData = new TextEncoder().encode(JSON.stringify(user))
+    const url = api_base_url + "api/admin/new_user";
+    const postData = new TextEncoder().encode(JSON.stringify(user));
     console.log("will post", user);
     const response = await fetch(url, {
       method: "POST",
@@ -38,39 +39,35 @@ const SignUpPage = () => {
       },
       body: postData,
       redirect: "follow",
-    })
-    return response
-  }
+    });
+    return response;
+  };
 
   const submitForm = () => {
-    const permissionNum = Number(signupFormRef?.permission.value)
+    const permissionNum = Number(signupFormRef?.permission.value);
     if (isNaN(permissionNum)) {
       console.log("permission NaN error");
-      return
+      return;
     }
-    if (
-      permissionNum === 0 ||
-      permissionNum === 1 ||
-      permissionNum === 2
-    ) {
+    if (permissionNum === 0 || permissionNum === 1 || permissionNum === 2) {
       console.log("permissionNum is: ", permissionNum);
     } else {
       console.log("permission is not on value");
-      return
+      return;
     }
     const newUser: SignupUser = {
       user_name: signupFormRef?.username.value,
       email: signupFormRef?.email.value,
       password: signupFormRef?.password.value,
       permission: permissionNum,
-    }
+    };
     poster(newUser)
-      .then(async res => {
+      .then(async (res) => {
         if (res.redirected) {
-          window.location.href = res.url
+          window.location.href = res.url;
         } else if (res.status === 200) {
           console.log("now status 200: ", res);
-          const body: SignupResponseBody = await res.json()
+          const body: SignupResponseBody = await res.json();
           console.log(body);
           if (body.code === -1) {
             switch (body.status) {
@@ -78,54 +75,50 @@ const SignUpPage = () => {
                 setIsErr({
                   status: true,
                   msg: "已存在该用户名或邮箱, 请更改后重试",
-                })
+                });
                 break;
               default:
                 setIsErr({
                   status: true,
-                  msg: "未知错误,请刷新后重试"
-                })
+                  msg: "未知错误,请刷新后重试",
+                });
                 break;
             }
           }
         }
       })
-      .catch(err => {
+      .catch((err) => {
         setIsErr({
           status: true,
-          msg: "未知错误,请刷新后重试"
-        })
+          msg: "未知错误,请刷新后重试",
+        });
         console.log("login post error: ", err);
-      })
-    setConfirm(false)
-  }
+      });
+    setConfirm(false);
+  };
 
-  const onSubmitHandler = (
-    e: Event & { currentTarget: HTMLFormElement }
-  ) => {
-    e.preventDefault()
-    const formElem = e.currentTarget
-    const password: string = formElem.password.value
-    const repeat: string = formElem.repeat.value
+  const onSubmitHandler = (e: Event & { currentTarget: HTMLFormElement }) => {
+    e.preventDefault();
+    const formElem = e.currentTarget;
+    const password: string = formElem.password.value;
+    const repeat: string = formElem.repeat.value;
     if (repeat !== password) {
-      window.alert("两次输入的密码不一致")
-      return
+      window.alert("两次输入的密码不一致");
+      return;
     }
-    setConfirm(true)
-  }
+    setConfirm(true);
+  };
 
-  const repeatInputHandler = (
-    e: InputEvent & { currentTarget: HTMLInputElement }
-  ) => {
-    const repeat = e.currentTarget.value
-    const formElem = e.currentTarget.closest("#signup-form")
-    const password: string = (formElem as HTMLFormElement).password.value
+  const repeatInputHandler = (e: InputEvent & { currentTarget: HTMLInputElement }) => {
+    const repeat = e.currentTarget.value;
+    const formElem = e.currentTarget.closest("#signup-form");
+    const password: string = (formElem as HTMLFormElement).password.value;
     if (repeat === password) {
-      setRepeatOK(true)
+      setRepeatOK(true);
     } else {
-      setRepeatOK(false)
+      setRepeatOK(false);
     }
-  }
+  };
 
   let signupFormRef: HTMLFormElement | undefined;
 
@@ -137,23 +130,15 @@ const SignUpPage = () => {
           <AdminNavi></AdminNavi>
         </div>
         <div class="flex-auto flex flex-col justify-center items-center">
-          <div class="w-[30%] text-center text-2xl pb-10">
-            新建vvvorld账号
-          </div>
+          <div class="w-[30%] text-center text-2xl pb-10">新建vvvorld账号</div>
           <form
             id="signup-form"
-            onSubmit={e => onSubmitHandler(e)}
+            onSubmit={(e) => onSubmitHandler(e)}
             ref={signupFormRef}
             class="flex flex-col gap-5 items-end w-[30%]"
           >
-            {isErr().status &&
-              <div class="text-red-600">
-                {isErr().msg}
-              </div>
-            }
-            <label
-              class="flex flex-col w-[100%]"
-            >
+            {isErr().status && <div class="text-red-600">{isErr().msg}</div>}
+            <label class="flex flex-col w-[100%]">
               用户名
               <input
                 type="text"
@@ -168,9 +153,7 @@ const SignUpPage = () => {
                 "
               />
             </label>
-            <label
-              class="flex flex-col w-[100%]"
-            >
+            <label class="flex flex-col w-[100%]">
               邮箱
               <input
                 type="email"
@@ -185,16 +168,10 @@ const SignUpPage = () => {
                 "
               />
             </label>
-            <label
-              class="flex flex-col w-[100%]"
-            >
+            <label class="flex flex-col w-[100%]">
               <div class="flex justify-between">
-                <div>
-                  密码
-                </div>
-                <div class="text-sm">
-                  可使用 _ ! @ # $ % ^ * ( ) & / . , - 等特殊文字
-                </div>
+                <div>密码</div>
+                <div class="text-sm">可使用 _ ! @ # $ % ^ * ( ) & / . , - 等特殊文字</div>
               </div>
               <input
                 type="password"
@@ -210,9 +187,7 @@ const SignUpPage = () => {
                 "
               />
             </label>
-            <label
-              class="flex flex-col w-[100%]"
-            >
+            <label class="flex flex-col w-[100%]">
               再次输入密码
               <input
                 type="password"
@@ -225,9 +200,7 @@ const SignUpPage = () => {
                 }}
               />
             </label>
-            <label
-              class="flex flex-col w-[100%]"
-            >
+            <label class="flex flex-col w-[100%]">
               账号等级
               <select
                 class="
@@ -236,48 +209,59 @@ const SignUpPage = () => {
                 "
                 name="permission"
               >
-                <option value="0" selected={true}>测试用</option>
+                <option value="0" selected={true}>
+                  测试用
+                </option>
                 <option value="1">普通</option>
                 <option value="2">管理员</option>
               </select>
             </label>
-            <div>
-              *只能由管理员创建账号
-            </div>
+            <div>*只能由管理员创建账号</div>
             <button
               type="submit"
               class="w-[100%] flex justify-center items-center text-lg bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-lg px-5 py-2 text-white"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"
+                />
               </svg>
-              <div class="px-1">
-                注册账号
-              </div>
+              <div class="px-1">注册账号</div>
             </button>
           </form>
         </div>
-        {confirm() &&
+        {confirm() && (
           <Modal>
-            <div class="text-lg pb-3">
-              确定要创建这个用户吗？
-            </div>
+            <div class="text-lg pb-3">确定要创建这个用户吗？</div>
             <div class="border-gray-500 border-x-2 border-t-2 rounded-t-lg p-2">
               <Switch>
                 <Match when={signupFormRef?.permission.value === "0"}>
-                  <div>等级: <span class="text-green-500">测试用户</span></div>
+                  <div>
+                    等级: <span class="text-green-500">测试用户</span>
+                  </div>
                 </Match>
                 <Match when={signupFormRef?.permission.value === "1"}>
-                  <div>等级: <span class="text-orange-500">普通用户</span></div>
+                  <div>
+                    等级: <span class="text-orange-500">普通用户</span>
+                  </div>
                 </Match>
                 <Match when={signupFormRef?.permission.value === "2"}>
-                  <div>等级: <span class="text-red-500">管理员</span></div>
+                  <div>
+                    等级: <span class="text-red-500">管理员</span>
+                  </div>
                 </Match>
               </Switch>
             </div>
-            <div class="border-gray-500 border-2 p-2">
-              用户名: {signupFormRef?.username.value}
-            </div>
+            <div class="border-gray-500 border-2 p-2">用户名: {signupFormRef?.username.value}</div>
             <div class="border-gray-500 border-x-2 border-b-2 rounded-b-lg p-2">
               邮箱: {signupFormRef?.email.value}
             </div>
@@ -296,10 +280,10 @@ const SignUpPage = () => {
               </div>
             </div>
           </Modal>
-        }
+        )}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default SignUpPage
+export default SignUpPage;

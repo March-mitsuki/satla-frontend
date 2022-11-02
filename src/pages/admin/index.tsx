@@ -1,8 +1,8 @@
 // dependencies lib
-import { Title } from "@solidjs/meta"
+import { Title } from "@solidjs/meta";
 
 // local dependencies
-import { AdminNavi } from "@/components/pages/admin"
+import { AdminNavi } from "@/components/pages/admin";
 
 const AdminHome = () => {
   return (
@@ -13,13 +13,11 @@ const AdminHome = () => {
           <AdminNavi></AdminNavi>
         </div>
         <div class="flex-auto flex flex-col justify-center items-center">
-          <div class="text-4xl">
-            看导航去想去的地方, 后台主页还不知道放啥, 可能以后会有想法
-          </div>
+          <div class="text-4xl">看导航去想去的地方, 后台主页还不知道放啥, 可能以后会有想法</div>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default AdminHome
+export default AdminHome;

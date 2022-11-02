@@ -1,45 +1,54 @@
 // dependencies lib
-import { createEffect, createResource, onCleanup } from "solid-js"
+import { createEffect, createResource, onCleanup } from "solid-js";
 
 // local dependencies
-import _currentInfo from "../contexts/current-info-ctx"
+import _currentInfo from "../contexts/current-info-ctx";
 
 // type
-import type { UserInfoFromServer } from "@/interfaces"
+import type { UserInfoFromServer } from "@/interfaces";
 
 const currentUserInfo = () => {
   const fetchCurrentUserInfo = async () => {
     let body: UserInfoFromServer;
     if (import.meta.env.PROD) {
-      const api_base_url = import.meta.env.VITE_API_BASE_URL
-      const url = api_base_url + "api/crrent_userinfo"
-      const response = await fetch(url)
-      body = await response.json()
+      const api_base_url = import.meta.env.VITE_API_BASE_URL;
+      const url = api_base_url + "api/crrent_userinfo";
+      const response = await fetch(url);
+      body = await response.json();
     } else {
       body = await new Promise<UserInfoFromServer>((resolve, reject) => {
-        const nameList = ["みつき", "三月", "川越", "東京臨海高速臨海線", "神崎", "我是神里凌华的狗", "见一个爱一个", "最爱的一个"]
+        const nameList = [
+          "みつき",
+          "三月",
+          "川越",
+          "東京臨海高速臨海線",
+          "神崎",
+          "我是神里凌华的狗",
+          "见一个爱一个",
+          "最爱的一个",
+        ];
         const randomName = () => {
-          return Math.floor(Math.random() * nameList.length)
-        }
+          return Math.floor(Math.random() * nameList.length);
+        };
         setTimeout(() => {
           resolve({
             user_name: nameList[randomName()],
             email: "test@email",
             id: 1234,
             permission: 2,
-          })
+          });
         }, 1000);
-      })
+      });
     }
-    return body
-  }
+    return body;
+  };
 
-  const { setCurrentUser } = _currentInfo
-  const [ cUserInfo ] = createResource<UserInfoFromServer>(fetchCurrentUserInfo)
+  const { setCurrentUser } = _currentInfo;
+  const [cUserInfo] = createResource<UserInfoFromServer>(fetchCurrentUserInfo);
 
   createEffect(() => {
     if (!cUserInfo.loading) {
-      setCurrentUser((cUserInfo() as UserInfoFromServer))
+      setCurrentUser(cUserInfo() as UserInfoFromServer);
     }
     onCleanup(() => {
       setCurrentUser({
@@ -47,18 +56,20 @@ const currentUserInfo = () => {
         user_name: "connecting...",
         email: "",
         permission: 0,
-      })
-    })
-  })
+      });
+    });
+  });
 
   return (
     <div>
-      <span>{ cUserInfo.loading &&
-        <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
-      }</span>
+      <span>
+        {cUserInfo.loading && (
+          <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+        )}
+      </span>
       {cUserInfo()?.user_name}
     </div>
-  )
-}
+  );
+};
 
-export default currentUserInfo
+export default currentUserInfo;

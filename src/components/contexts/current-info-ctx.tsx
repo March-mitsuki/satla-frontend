@@ -10,12 +10,14 @@ const handlerCurrentUser = () => {
     user_name: "connecting...",
     email: "",
     permission: 0,
-  })
-  const [userList, setUserList] = createSignal<string[]>()
+  });
+  const [userList, setUserList] = createSignal<string[]>();
   return {
-    currentUser, setCurrentUser,
-    userList, setUserList,
-  }
-}
+    currentUser,
+    setCurrentUser,
+    userList,
+    setUserList,
+  };
+};
 
-export default createRoot(handlerCurrentUser)
+export default createRoot(handlerCurrentUser);

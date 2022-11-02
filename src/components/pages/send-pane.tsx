@@ -1,62 +1,57 @@
 // dependencies lib
-import { createEffect, createSignal, Match, Switch } from "solid-js"
-import { createStore } from "solid-js/store"
+import { createEffect, createSignal, Match, Switch } from "solid-js";
+import { createStore } from "solid-js/store";
 
 // local dependencies
-import _currentInfo from "../contexts/current-info-ctx"
-import { Subtitle } from "@/interfaces"
-import { wsSend } from "@/controllers"
-import {
-  STORAGE_STYLE,
-  defaultSubtitleStyle,
-  defaultOriginStyle,
-} from "../tools"
+import _currentInfo from "../contexts/current-info-ctx";
+import { Subtitle } from "@/interfaces";
+import { wsSend } from "@/controllers";
+import { STORAGE_STYLE, defaultSubtitleStyle, defaultOriginStyle } from "../tools";
 
 // type
-import type { Component } from "solid-js"
+import type { Component } from "solid-js";
 import {
   s2cChangeBilingualBody,
   s2cChangeReversedBody,
   s2cChangeStyleBody,
   s2cEventMap,
   StyleData,
-} from "@/interfaces/ws"
-import { RoomStyleData, StorageStyleData } from "@/interfaces/local-storage"
+} from "@/interfaces/ws";
+import { RoomStyleData, StorageStyleData } from "@/interfaces/local-storage";
 
-const inputStyle = "flex-1 rounded-lg bg-neutral-700 px-2 mx-1 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
+const inputStyle =
+  "flex-1 rounded-lg bg-neutral-700 px-2 mx-1 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600";
 
 const SendPane: Component<{
-  roomid: string
-  ws: WebSocket | undefined
+  roomid: string;
+  ws: WebSocket | undefined;
 }> = (props) => {
-  const [inputType, setInputType] = createSignal(false) // true = 输入, false = 发送
-  const [bilingualSend, setBilingualSend] = createSignal(true) // true = 双语, false = 单语
+  const [inputType, setInputType] = createSignal(false); // true = 输入, false = 发送
+  const [bilingualSend, setBilingualSend] = createSignal(true); // true = 双语, false = 单语
   const [style, setStyle] = createStore<StyleData>({
     subtitle: defaultSubtitleStyle,
     origin: defaultOriginStyle,
-  })
-  const [reversed, setReversed] = createSignal<boolean>(false)
+  });
+  const [reversed, setReversed] = createSignal<boolean>(false);
 
   // 如果有储存style那么设置style为储存style
-  const storageStyleStr = localStorage.getItem(STORAGE_STYLE)
+  const storageStyleStr = localStorage.getItem(STORAGE_STYLE);
   let storageStyle: StorageStyleData | undefined;
   if (storageStyleStr) {
-    storageStyle = JSON.parse(storageStyleStr)
-    const roomStyle: RoomStyleData | undefined = (storageStyle as StorageStyleData)[props.roomid]
+    storageStyle = JSON.parse(storageStyleStr);
+    const roomStyle: RoomStyleData | undefined = (storageStyle as StorageStyleData)[props.roomid];
     if (roomStyle) {
-      setStyle(roomStyle.style)
-      setReversed(roomStyle.reversed)
-      setBilingualSend(roomStyle.bilingualSend)
+      setStyle(roomStyle.style);
+      setReversed(roomStyle.reversed);
+      setBilingualSend(roomStyle.bilingualSend);
     }
   }
 
-  const onSendSubmitHandler = (
-    e: SubmitEvent & { currentTarget: HTMLFormElement}
-  ) => {
-    e.stopPropagation()
-    e.preventDefault()
+  const onSendSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement }) => {
+    e.stopPropagation();
+    e.preventDefault();
 
-    const formElem = e.currentTarget
+    const formElem = e.currentTarget;
     if (inputType()) {
       // 输入
       const newSub = new Subtitle({
@@ -67,12 +62,12 @@ const SendPane: Component<{
         checked_by: _currentInfo.currentUser().user_name,
         origin: formElem.origin.value,
         subtitle: formElem.subtitle.value,
-      })
+      });
       wsSend.addTranslatedSubtitle({
         ws: props.ws,
         subtitle: newSub,
-        project_name: props.roomid
-      })
+        project_name: props.roomid,
+      });
     } else {
       // 发送
       const newSub = new Subtitle({
@@ -83,87 +78,85 @@ const SendPane: Component<{
         send_by: _currentInfo.currentUser().user_name,
         origin: formElem.origin.value,
         subtitle: formElem.subtitle.value,
-      })
+      });
       // 直接发送不需要更新任何发送和操作页面的元素, 只需要更新display中的字幕就行
       // 即check-area不需要监听这个cmd的onmessage
       // send-area只需要监听之后清空send-form就行了
       wsSend.sendSubtitleDirect({
         ws: props.ws,
         subtitle: newSub,
-        roomid: props.roomid
-      })
+        roomid: props.roomid,
+      });
     }
-  }
+  };
 
   const inputTypeToggleHandler = (e: Event) => {
-    e.preventDefault()
-    setInputType(!inputType())
-  }
+    e.preventDefault();
+    setInputType(!inputType());
+  };
   const bilingualSendToggleHandler = (e: Event) => {
-    e.preventDefault()
-    wsSend.changeBilingual(props.ws, !bilingualSend())
-  }
+    e.preventDefault();
+    wsSend.changeBilingual(props.ws, !bilingualSend());
+  };
 
   const openDisplayPage = () => {
-    window.open(`/display/${props.roomid}`, "_blank")
-  }
+    window.open(`/display/${props.roomid}`, "_blank");
+  };
 
-  const onStyleChangeSubmitHandler = (
-    e: SubmitEvent & { currentTarget: HTMLFormElement}
-  ) => {
-    e.stopPropagation()
-    e.preventDefault()
+  const onStyleChangeSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement }) => {
+    e.stopPropagation();
+    e.preventDefault();
     wsSend.changeStyle({
       ws: props.ws,
       styleObj: style,
-    })
-  }
+    });
+  };
   const styleReversedToogleHandler = (e: Event) => {
-    wsSend.changeReversed(props.ws, !reversed())
-  }
+    wsSend.changeReversed(props.ws, !reversed());
+  };
   const subtitleStyleInputHandler = (
     e: InputEvent & {
       currentTarget: HTMLTextAreaElement;
-    }
+    },
   ) => {
-    e.preventDefault()
-    setStyle("subtitle", e.currentTarget.value)
-  }
+    e.preventDefault();
+    setStyle("subtitle", e.currentTarget.value);
+  };
   const originStyleInputHandler = (
     e: InputEvent & {
       currentTarget: HTMLTextAreaElement;
-    }
+    },
   ) => {
-    e.preventDefault()
-    setStyle("origin", e.currentTarget.value)
-  }
+    e.preventDefault();
+    setStyle("origin", e.currentTarget.value);
+  };
 
   const delStorageRoomStyle = () => {
-    const storageStyleStr = localStorage.getItem(STORAGE_STYLE)
+    const storageStyleStr = localStorage.getItem(STORAGE_STYLE);
     if (storageStyleStr) {
       if (storageStyleStr !== "") {
-        const storageStyle = JSON.parse(storageStyleStr)        
-        delete storageStyle[props.roomid]
-        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle))
+        const storageStyle = JSON.parse(storageStyleStr);
+        delete storageStyle[props.roomid];
+        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle));
       }
     }
-    location.reload()
-  }
+    location.reload();
+  };
 
   createEffect(() => {
     if (!props.ws) {
-      return
+      return;
     }
     props.ws.addEventListener("message", (evt) => {
-      const data: s2cEventMap = JSON.parse(evt.data) 
+      const data: s2cEventMap = JSON.parse(evt.data);
       if (data.head.cmd === "sChangeBilingual") {
-        const body: s2cChangeBilingualBody = data.body
-        setBilingualSend(body.bilingual)
+        const body: s2cChangeBilingualBody = data.body;
+        setBilingualSend(body.bilingual);
         // 更新之后同时更新本地储存
         if (storageStyle) {
           if (storageStyle[props.roomid]) {
             // 如果存在storage且存在对应房间
-            storageStyle[props.roomid].bilingualSend = body.bilingual
+            storageStyle[props.roomid].bilingualSend = body.bilingual;
           } else {
             // 如果存在storage但不存在对应房间
             storageStyle[props.roomid] = {
@@ -173,7 +166,7 @@ const SendPane: Component<{
               },
               reversed: false,
               bilingualSend: body.bilingual,
-            }
+            };
           }
         } else {
           // 如果根本不存在storage
@@ -185,16 +178,16 @@ const SendPane: Component<{
               },
               reversed: false,
               bilingualSend: body.bilingual,
-            }
-          }
+            },
+          };
         }
-        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle))
+        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle));
       } else if (data.head.cmd === "sChangeStyle") {
-        const body: s2cChangeStyleBody = data.body
+        const body: s2cChangeStyleBody = data.body;
         setStyle({
           subtitle: body.subtitle,
           origin: body.origin,
-        })
+        });
         // 更新之后同时更新本地储存
         if (storageStyle) {
           if (storageStyle[props.roomid]) {
@@ -202,7 +195,7 @@ const SendPane: Component<{
             storageStyle[props.roomid].style = {
               subtitle: body.subtitle,
               origin: body.origin,
-            }
+            };
           } else {
             // 如果存在storage但不存在对应房间
             storageStyle[props.roomid] = {
@@ -212,7 +205,7 @@ const SendPane: Component<{
               },
               reversed: false,
               bilingualSend: true,
-            }
+            };
           }
         } else {
           // 如果根本不存在storage
@@ -224,18 +217,18 @@ const SendPane: Component<{
               },
               reversed: false,
               bilingualSend: true,
-            }
-          }
+            },
+          };
         }
-        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle))
+        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle));
       } else if (data.head.cmd === "sChangeReversed") {
-        const body: s2cChangeReversedBody = data.body
-        setReversed(body.reversed)
+        const body: s2cChangeReversedBody = data.body;
+        setReversed(body.reversed);
         // 更新之后同时更新本地储存
         if (storageStyle) {
           if (storageStyle[props.roomid]) {
             // 如果存在storage且存在对应房间
-            storageStyle[props.roomid].reversed = body.reversed
+            storageStyle[props.roomid].reversed = body.reversed;
           } else {
             // 如果存在storage但不存在对应房间
             storageStyle[props.roomid] = {
@@ -245,7 +238,7 @@ const SendPane: Component<{
               },
               reversed: body.reversed,
               bilingualSend: true,
-            }
+            };
           }
         } else {
           // 如果根本不存在storage
@@ -257,13 +250,13 @@ const SendPane: Component<{
               },
               reversed: body.reversed,
               bilingualSend: true,
-            }
-          }
+            },
+          };
         }
-        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle))
+        localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle));
       }
-    })
-  })
+    });
+  });
 
   return (
     <div class="mt-1 flex flex-col gap-1 h-full">
@@ -278,9 +271,7 @@ const SendPane: Component<{
               class="peer sr-only"
             />
             <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
-            <div 
-              class="absolute -left-1 peer-checked:translate-x-6 transition"
-            >
+            <div class="absolute -left-1 peer-checked:translate-x-6 transition">
               <Switch>
                 {/* 切换toggle的左右箭头 */}
                 <Match when={!inputType()}>
@@ -290,7 +281,11 @@ const SendPane: Component<{
                     fill="currentColor"
                     class="w-4 h-4 bg-red-500/75 rounded-full drop-shadow"
                   >
-                    <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </Match>
                 <Match when={inputType()}>
@@ -300,7 +295,11 @@ const SendPane: Component<{
                     fill="currentColor"
                     class="w-4 h-4 bg-green-500/75 rounded-full drop-shadow"
                   >
-                    <path fill-rule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clip-rule="evenodd" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </Match>
               </Switch>
@@ -314,12 +313,21 @@ const SendPane: Component<{
             onClick={delStorageRoomStyle}
             class="flex justify-center items-center px-2 bg-red-500/70 hover:bg-red-700/70 rounded-md text-sm"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-4 h-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+              />
             </svg>
-            <div class="pl-[2px]">
-              删除房间缓存
-            </div>
+            <div class="pl-[2px]">删除房间缓存</div>
           </button>
         </div>
         <div class="border-l-2 border-neutral-400"></div>
@@ -328,20 +336,25 @@ const SendPane: Component<{
             onClick={openDisplayPage}
             class="flex justify-center items-center bg-cyan-600/75 rounded-md px-2 hover:bg-cyan-700/75 text-sm"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8.25V18a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 18V8.25m-18 0V6a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 6v2.25m-18 0h18M5.25 6h.008v.008H5.25V6zM7.5 6h.008v.008H7.5V6zm2.25 0h.008v.008H9.75V6z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-4 h-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 8.25V18a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 18V8.25m-18 0V6a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 6v2.25m-18 0h18M5.25 6h.008v.008H5.25V6zM7.5 6h.008v.008H7.5V6zm2.25 0h.008v.008H9.75V6z"
+              />
             </svg>
-            <div class="pl-[2px]">
-              视窗
-            </div>
+            <div class="pl-[2px]">视窗</div>
           </button>
         </div>
       </div>
-      <form
-        id="send-form"
-        onSubmit={(e) => onSendSubmitHandler(e)}
-        class="flex gap-1 px-1"
-      >
+      <form id="send-form" onSubmit={(e) => onSendSubmitHandler(e)} class="flex gap-1 px-1">
         <input
           type="text"
           name="subtitle"
@@ -359,8 +372,10 @@ const SendPane: Component<{
         <button
           type="submit"
           classList={{
-            "bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-full px-3 text-white": inputType() === true,
-            "bg-red-500/70 hover:bg-red-700/70 active:bg-red-500/70 rounded-full px-3 text-white": inputType() === false,
+            "bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70 rounded-full px-3 text-white":
+              inputType() === true,
+            "bg-red-500/70 hover:bg-red-700/70 active:bg-red-500/70 rounded-full px-3 text-white":
+              inputType() === false,
           }}
         >
           {inputType() ? "输入" : "发送"}
@@ -376,9 +391,7 @@ const SendPane: Component<{
         class="flex flex-col gap-1 px-1 pb-1 overflow-hidden h-[calc(100%-120px)]"
       >
         <label class="flex gap-2">
-          <div class="text-sm">
-            翻译:
-          </div>
+          <div class="text-sm">翻译:</div>
           <textarea
             name="subtitleStyle"
             placeholder="翻译样式"
@@ -389,9 +402,7 @@ const SendPane: Component<{
           </textarea>
         </label>
         <label class="flex gap-2">
-          <div class="text-sm">
-            原文:
-          </div>
+          <div class="text-sm">原文:</div>
           <textarea
             name="originStyle"
             placeholder="原文样式"
@@ -411,7 +422,7 @@ const SendPane: Component<{
                 class="peer sr-only"
               />
               <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
-              <div 
+              <div
                 class="
                   absolute w-4 h-4 bg-white/70 rounded-full shadow
                   peer-checked:translate-x-4 peer-checked:bg-blue-400
@@ -431,7 +442,7 @@ const SendPane: Component<{
                 class="peer sr-only"
               />
               <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
-              <div 
+              <div
                 class="
                   absolute w-4 h-4 bg-white/70 rounded-full shadow
                   peer-checked:translate-x-4 peer-checked:bg-blue-400
@@ -451,7 +462,7 @@ const SendPane: Component<{
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default SendPane
+export default SendPane;
