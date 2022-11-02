@@ -7,8 +7,8 @@ import type { ParentComponent, JSXElement } from "solid-js";
 const PaneY: ParentComponent<{
   topElem: JSXElement;
   bottomElem: JSXElement;
-  minTopELem?: string;
-  minBottomElem?: string;
+  minTopELem: string;
+  minBottomElem: string;
   topElemWrapperClass?: string;
   bottomElemWrapperClass?: string;
   dragLineClass?: string;
@@ -16,12 +16,12 @@ const PaneY: ParentComponent<{
   const [height, setHeight] = createSignal(0);
   let paneContainerRef: HTMLDivElement | undefined;
 
-  let onMouseDownHandler = (e: MouseEvent) => {
+  const onMouseDownHandler = () => {
     onmousemove = (e: MouseEvent) => {
       e.preventDefault();
       setHeight(e.clientY);
     };
-    onmouseup = (e: MouseEvent) => {
+    onmouseup = () => {
       onmousemove = () => null;
       onmouseup = () => null;
     };

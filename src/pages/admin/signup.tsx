@@ -56,9 +56,9 @@ const SignUpPage = () => {
       return;
     }
     const newUser: SignupUser = {
-      user_name: signupFormRef?.username.value,
-      email: signupFormRef?.email.value,
-      password: signupFormRef?.password.value,
+      user_name: signupFormRef?.username.value as string,
+      email: signupFormRef?.email.value as string,
+      password: signupFormRef?.password.value as string,
       permission: permissionNum,
     };
     poster(newUser)
@@ -67,7 +67,7 @@ const SignUpPage = () => {
           window.location.href = res.url;
         } else if (res.status === 200) {
           console.log("now status 200: ", res);
-          const body: SignupResponseBody = await res.json();
+          const body = (await res.json()) as SignupResponseBody;
           console.log(body);
           if (body.code === -1) {
             switch (body.status) {
@@ -100,8 +100,8 @@ const SignUpPage = () => {
   const onSubmitHandler = (e: Event & { currentTarget: HTMLFormElement }) => {
     e.preventDefault();
     const formElem = e.currentTarget;
-    const password: string = formElem.password.value;
-    const repeat: string = formElem.repeat.value;
+    const password = formElem.password.value as string;
+    const repeat = formElem.repeat.value as string;
     if (repeat !== password) {
       window.alert("两次输入的密码不一致");
       return;
@@ -112,7 +112,7 @@ const SignUpPage = () => {
   const repeatInputHandler = (e: InputEvent & { currentTarget: HTMLInputElement }) => {
     const repeat = e.currentTarget.value;
     const formElem = e.currentTarget.closest("#signup-form");
-    const password: string = (formElem as HTMLFormElement).password.value;
+    const password = (formElem as HTMLFormElement).password.value as string;
     if (repeat === password) {
       setRepeatOK(true);
     } else {

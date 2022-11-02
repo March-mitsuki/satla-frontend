@@ -14,9 +14,9 @@ const currentUserInfo = () => {
       const api_base_url = import.meta.env.VITE_API_BASE_URL;
       const url = api_base_url + "api/crrent_userinfo";
       const response = await fetch(url);
-      body = await response.json();
+      body = (await response.json()) as UserInfoFromServer;
     } else {
-      body = await new Promise<UserInfoFromServer>((resolve, reject) => {
+      body = await new Promise<UserInfoFromServer>((resolve) => {
         const nameList = [
           "みつき",
           "三月",

@@ -35,8 +35,8 @@ const LoginPage = () => {
     e.preventDefault();
     const formElem = e.currentTarget;
     const user: LoginUser = {
-      email: formElem?.email.value,
-      password: formElem?.password.value,
+      email: formElem?.email.value as string,
+      password: formElem?.password.value as string,
     };
     poster(user)
       .then(async (res) => {
@@ -44,7 +44,7 @@ const LoginPage = () => {
           window.location.href = res.url;
         } else if (res.status === 200) {
           console.log("now status 200: ");
-          const body: LoginResponseBody = await res.json();
+          const body = (await res.json()) as LoginResponseBody;
           console.log(body);
           if (body.code === -1) {
             switch (body.status) {

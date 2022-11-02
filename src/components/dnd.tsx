@@ -1,5 +1,5 @@
 // dependencies lib
-import { createSignal, onMount } from "solid-js";
+import { createSignal } from "solid-js";
 
 const Dragpage = () => {
   const [mouseCoordinates, setMouseCoordinates] = createSignal({
@@ -19,7 +19,7 @@ const Dragpage = () => {
   let dragElemRef: HTMLDivElement | undefined;
   let dropElemRef: HTMLDivElement | undefined;
 
-  let startDragHandler = (e: MouseEvent) => {
+  const startDragHandler = () => {
     let belowElem: Element | null;
 
     onmousemove = (e: MouseEvent) => {
@@ -46,7 +46,7 @@ const Dragpage = () => {
       }
     };
 
-    onmouseup = (e: MouseEvent) => {
+    onmouseup = () => {
       setDragElem({
         zIndex: "auto",
         position: "static",
@@ -61,8 +61,6 @@ const Dragpage = () => {
       onmouseup = () => null;
     };
   };
-
-  onMount(() => {});
 
   return (
     <>

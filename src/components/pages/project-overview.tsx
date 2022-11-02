@@ -18,7 +18,7 @@ const ProjectOverview: Component<{
         <div class="text-center truncate col-span-3">操作</div>
       </div>
       <For each={props.projects}>
-        {(elem, idx) => (
+        {(elem) => (
           <div class="col-span-full grid grid-cols-7 gap-2">
             <div class="text-center truncate">{elem.id}</div>
             <div class="text-center truncate col-span-2">{elem.project_name}</div>

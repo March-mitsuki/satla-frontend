@@ -16,7 +16,7 @@ const Home: Component = () => {
   const fetchAllProjects = async () => {
     const url = api_base_url + "api/all_projects";
     const response = await fetch(url);
-    const body: Project[] = await response.json();
+    const body: Project[] = (await response.json()) as Project[];
     console.log("get all projects respons body: ", body);
     return body;
   };
@@ -42,7 +42,7 @@ const Home: Component = () => {
                       <div>connecting...</div>
                     </div>
                   )}
-                  <button onClick={refetch} class="flex justify-center items-center">
+                  <button onClick={() => refetch} class="flex justify-center items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

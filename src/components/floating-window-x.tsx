@@ -17,7 +17,7 @@ const FloatingWindow: ParentComponent<{
   defaultWindowSize: {
     width: number | "";
   };
-  minWindowSize?: {
+  minWindowSize: {
     width: number | "";
   };
 }> = (props) => {
@@ -43,7 +43,7 @@ const FloatingWindow: ParentComponent<{
   let contentsWrapperElemRef: HTMLDivElement | undefined;
   let resizeElemRef: HTMLDivElement | undefined;
 
-  let startDragHandler = (e: MouseEvent) => {
+  const startDragHandler = (e: MouseEvent) => {
     let shiftX: number;
     let shiftY: number;
     if (floatingElemRef) {
@@ -88,7 +88,7 @@ const FloatingWindow: ParentComponent<{
     };
   };
 
-  const startResize = (e: MouseEvent) => {
+  const startResize = () => {
     onmousemove = (e: MouseEvent) => {
       e.preventDefault();
       if (wrapperElemRef && contentsWrapperElemRef && floatingElemRef && resizeElemRef) {
@@ -126,8 +126,8 @@ const FloatingWindow: ParentComponent<{
     >
       <div
         style={{
-          "min-width": props.minWindowSize?.width + "px",
-          width: floatingElem().isFloating ? windowSize().width + "px" : "",
+          "min-width": `${props.minWindowSize.width}px`,
+          width: floatingElem().isFloating ? `${windowSize().width}px` : "",
         }}
         class={props.controllerWrapperClass}
       >
@@ -156,8 +156,8 @@ const FloatingWindow: ParentComponent<{
         ref={contentsWrapperElemRef}
         style={{
           position: "relative",
-          "min-width": props.minWindowSize?.width + "px",
-          width: floatingElem().isFloating ? windowSize().width + "px" : "",
+          "min-width": `${props.minWindowSize?.width}px`,
+          width: floatingElem().isFloating ? `${windowSize().width}px` : "",
         }}
         class={props.contentsWrapperClass}
       >

@@ -198,7 +198,7 @@ export interface s2cEventMap {
       | "sChangeStyle"
       | "sChangeBilingual"
       | "sChangeReversed"
-      | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,不带s
+      | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
   body: any;
 }

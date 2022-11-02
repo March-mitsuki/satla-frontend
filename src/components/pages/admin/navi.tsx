@@ -7,7 +7,7 @@ import { LogoutBtn, CurrentUserInfo } from "..";
 // type
 import { Component } from "solid-js";
 
-const AdminNavi: Component<{}> = (props) => {
+const AdminNavi: Component = () => {
   return (
     <div class="flex justify-between">
       <div class="flex gap-5 items-center">

@@ -1,8 +1,6 @@
 import { logoutUser } from "../tools";
 
 const LogoutBtn = () => {
-  const api_base_url = import.meta.env.VITE_API_BASE_URL;
-
   const logoutBtnHandler = async (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
     e.preventDefault();
     const results = await logoutUser();
@@ -13,7 +11,11 @@ const LogoutBtn = () => {
 
   return (
     <button
-      onClick={(e) => logoutBtnHandler(e)}
+      onClick={(e) => {
+        logoutBtnHandler(e).catch((err: string) => {
+          console.log(`logout err: ${err}`);
+        });
+      }}
       class="flex items-center gap-1 px-2 py-1 cursor-pointer rounded-md hover:bg-neutral-600 active:bg-neutral-500"
     >
       <svg

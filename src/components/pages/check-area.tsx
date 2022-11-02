@@ -37,7 +37,7 @@ const CheckArea: ParentComponent<{
   }
   if (typeof attachedInfo() === "undefined") {
     // attachedInfo会根据首次传进来的subtitles进行设定
-    let initialAttachedInfo: AttachedInfo[] = [];
+    const initialAttachedInfo: AttachedInfo[] = [];
     for (let i = 0; i < (subtitles() as Subtitle[]).length; i++) {
       const elem = (subtitles() as Subtitle[])[i];
       const attachedInfo = new AttachedInfo(elem.id);
@@ -55,8 +55,8 @@ const CheckArea: ParentComponent<{
     e.preventDefault();
     const formElem = e.currentTarget;
 
-    subtitle.subtitle = formElem.subtitle.value;
-    subtitle.origin = formElem.origin.value;
+    subtitle.subtitle = formElem.subtitle.value as string;
+    subtitle.origin = formElem.origin.value as string;
     subtitle.checked_by = currentUser().user_name;
     wsSend.changeSubtitle({ ws: props.ws, subtitle: subtitle });
   };
@@ -113,8 +113,8 @@ const CheckArea: ParentComponent<{
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !isComposition()) {
       e.preventDefault();
 
-      subtitle.subtitle = formElem.subtitle.value;
-      subtitle.origin = formElem.origin.value;
+      subtitle.subtitle = formElem.subtitle.value as string;
+      subtitle.origin = formElem.origin.value as string;
       subtitle.checked_by = currentUser().user_name;
       wsSend.changeSubtitle({ ws: props.ws, subtitle: subtitle });
     }
@@ -155,8 +155,9 @@ const CheckArea: ParentComponent<{
     let belowElem: Element | null;
     const currentFormWrapper = document.getElementById(`${subtitle.id}-wrapper`);
 
-    let shiftY: number;
-    shiftY = e.clientY - (currentFormWrapper as HTMLDivElement).getBoundingClientRect().top;
+    // shiftY目前还没用
+    // let shiftY: number;
+    // shiftY = e.clientY - (currentFormWrapper as HTMLDivElement).getBoundingClientRect().top;
     const docHeight = document.documentElement.clientHeight;
     // 拖动之后clientrect的计算会出错, 还不知道为啥
     // console.log((currentFormWrapper as HTMLDivElement).getBoundingClientRect().top);
@@ -353,7 +354,7 @@ const CheckArea: ParentComponent<{
     }
     // 更新逻辑: 监听用户操作 -> ws.send -> ws.onmessage -> 页面更新(启动更新函数)
     props.ws.onmessage = (evt) => {
-      const data: s2cEventMap = JSON.parse(evt.data);
+      const data: s2cEventMap = JSON.parse(evt.data as string) as s2cEventMap;
       switch (data.head.cmd) {
         case "sChangeUser":
           wsOn.addUser(data, setUserList);
@@ -376,9 +377,10 @@ const CheckArea: ParentComponent<{
         case "sEditEnd":
           wsOn.editEnd(data);
           break;
-        case "sAddTransSub":
+        case "sAddTransSub": {
           wsOn.addTranslatedSub(data);
-          const addTranslatedSubBody: s2cAddTranslatedSubtitleBody = data.body;
+          const addTranslatedSubBody: s2cAddTranslatedSubtitleBody =
+            data.body as s2cAddTranslatedSubtitleBody;
           if (addTranslatedSubBody.new_subtitle.translated_by === currentUser().user_name) {
             // 如果是自己加的行, 那么加了之后清空translate-form (位于同一page不同components)
             const translateForm = document.getElementById("translate-form");
@@ -392,54 +394,59 @@ const CheckArea: ParentComponent<{
               ?.scrollIntoView();
           }
           break;
-        case "sDeleteSubtitle":
-          const deleteSubBody: s2cDeleteSubtitleBody = data.body;
-          if (!deleteSubBody.status) {
+        }
+        case "sDeleteSubtitle": {
+          const bdoy = data.body as s2cDeleteSubtitleBody;
+          if (!bdoy.status) {
             window.alert("delete failed, please check the server side");
             return;
           }
-          wsOn.deleteSubtitle(deleteSubBody.subtitle_id);
+          wsOn.deleteSubtitle(bdoy.subtitle_id);
           break;
-        case "sReorderSubFront":
-          const reorderFrontBody: s2cReorderSubBody = data.body;
-          if (reorderFrontBody.operation_user === currentUser().user_name) {
-            if (!reorderFrontBody.status) {
+        }
+        case "sReorderSubFront": {
+          const body = data.body as s2cReorderSubBody;
+          if (body.operation_user === currentUser().user_name) {
+            if (!body.status) {
               // 如果是自己操作, 那么成功了则什么都不做, 失败了则通知失败
               window.alert("拖动失败, 请刷新重试");
             }
           } else {
-            if (reorderFrontBody.status) {
+            if (body.status) {
               // 若是别人操作, 则成功了换行, 失败了什么都不做
               wsOn.reorderSubFrontOther({
-                drag_id: reorderFrontBody.drag_id,
-                drop_id: reorderFrontBody.drop_id,
+                drag_id: body.drag_id,
+                drop_id: body.drop_id,
               });
             }
           }
           break;
-        case "sReorderSubBack":
-          const reorderBackBody: s2cReorderSubBody = data.body;
-          if (reorderBackBody.operation_user === currentUser().user_name) {
-            if (!reorderBackBody.status) {
+        }
+        case "sReorderSubBack": {
+          const body = data.body as s2cReorderSubBody;
+          if (body.operation_user === currentUser().user_name) {
+            if (!body.status) {
               window.alert("拖动失败, 请刷新重试");
             }
           } else {
-            if (reorderBackBody.status) {
+            if (body.status) {
               wsOn.reorderSubBackOther({
-                drag_id: reorderBackBody.drag_id,
-                drop_id: reorderBackBody.drop_id,
+                drag_id: body.drag_id,
+                drop_id: body.drop_id,
               });
             }
           }
           break;
-        case "sSendSubtitle":
-          const sendSubtitleBody: s2cSendSubtitleBody = data.body;
-          if (!sendSubtitleBody.status) {
+        }
+        case "sSendSubtitle": {
+          const body = data.body as s2cSendSubtitleBody;
+          if (!body.status) {
             console.log("send subtitle failed, please check the server side");
             return;
           }
-          wsOn.deleteSubtitle(sendSubtitleBody.subtitle.id);
+          wsOn.deleteSubtitle(body.subtitle.id);
           break;
+        }
         case "heartBeat":
           console.log("--heartbeat--");
           break;
@@ -537,7 +544,7 @@ const CheckArea: ParentComponent<{
                       </Match>
                     </Switch>
                     <input
-                      id={idx() + "-sub"}
+                      id={`${idx()}-sub`}
                       type="text"
                       name="subtitle"
                       autocomplete="off"
@@ -548,7 +555,7 @@ const CheckArea: ParentComponent<{
                       class={inputStyle}
                     />
                     <input
-                      id={idx() + "-ori"}
+                      id={`${idx()}-ori`}
                       type="text"
                       name="origin"
                       autocomplete="off"

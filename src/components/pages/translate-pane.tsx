@@ -35,8 +35,8 @@ const TranslatePane: Component<{
   const storageMemoStr = localStorage.getItem(STORAGE_MEMO);
   let storageMemo: StorageMemoData | undefined;
   if (storageMemoStr) {
-    storageMemo = JSON.parse(storageMemoStr);
-    const roomMemo: string[] | null = (storageMemo as StorageMemoData)[props.roomid];
+    storageMemo = JSON.parse(storageMemoStr) as StorageMemoData;
+    const roomMemo: string[] | null = storageMemo[props.roomid];
     setCheckMemo(roomMemo);
   }
 
@@ -56,8 +56,8 @@ const TranslatePane: Component<{
       input_time: fmtdt,
       project_id: 0,
       translated_by: _currentInfo.currentUser().user_name,
-      origin: formElem.origin.value,
-      subtitle: formElem.subtitle.value,
+      origin: formElem.origin.value as string,
+      subtitle: formElem.subtitle.value as string,
     });
     wsSend.addTranslatedSubtitle({
       ws: props.ws,
@@ -84,7 +84,7 @@ const TranslatePane: Component<{
     localStorage.setItem(STORAGE_MEMO, JSON.stringify(storageMemo));
   };
 
-  const addCheckMemo = (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
+  const addCheckMemo = () => {
     checkMemo().push("");
     updateStorageMemo();
   };
@@ -103,13 +103,13 @@ const TranslatePane: Component<{
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault();
       const formElem = e.currentTarget;
-      changeCheckMemo(idx, formElem.checkmemo.value);
+      changeCheckMemo(idx, formElem.checkmemo.value as string);
     }
   };
   const checkMemoSubmitHandler = (e: Event & { currentTarget: HTMLFormElement }, idx: number) => {
     e.preventDefault();
     const formElem = e.currentTarget;
-    changeCheckMemo(idx, formElem.checkmemo.value);
+    changeCheckMemo(idx, formElem.checkmemo.value as string);
   };
 
   let checkMeoWrapperRef: HTMLDivElement | undefined;
@@ -244,8 +244,9 @@ const TranslatePane: Component<{
             {checkMemo().length === 0 && (
               <div class="flex justify-end items-center">
                 <button
-                  onClick={(e) => {
+                  onClick={() => {
                     checkMemo().push("");
+                    // 通过切换两次page type来刷新列表
                     switchPagetype();
                     switchPagetype();
                     updateStorageMemo();
@@ -308,7 +309,7 @@ const TranslatePane: Component<{
                     </svg>
                   </button>
                   <button
-                    onClick={(e) => addCheckMemo(e)}
+                    onClick={() => addCheckMemo()}
                     class="rounded-md p-1 bg-amber-500/70 hover:bg-amber-700/70 active:bg-amber-500/70"
                   >
                     {/* add down btn */}

@@ -7,7 +7,7 @@ import { createEffect, createSignal, onCleanup } from "solid-js";
 import type { Component } from "solid-js";
 
 const VideoJS: Component<videojs.PlayerOptions> = (props) => {
-  let videoNodeId: string = "videojs-player";
+  const videoNodeId = "videojs-player";
 
   const [player, setPlayer] = createSignal<videojs.Player>();
 

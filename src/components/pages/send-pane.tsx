@@ -38,8 +38,8 @@ const SendPane: Component<{
   const storageStyleStr = localStorage.getItem(STORAGE_STYLE);
   let storageStyle: StorageStyleData | undefined;
   if (storageStyleStr) {
-    storageStyle = JSON.parse(storageStyleStr);
-    const roomStyle: RoomStyleData | undefined = (storageStyle as StorageStyleData)[props.roomid];
+    storageStyle = JSON.parse(storageStyleStr) as StorageStyleData;
+    const roomStyle: RoomStyleData | undefined = storageStyle[props.roomid];
     if (roomStyle) {
       setStyle(roomStyle.style);
       setReversed(roomStyle.reversed);
@@ -60,8 +60,8 @@ const SendPane: Component<{
         project_id: 0,
         translated_by: _currentInfo.currentUser().user_name,
         checked_by: _currentInfo.currentUser().user_name,
-        origin: formElem.origin.value,
-        subtitle: formElem.subtitle.value,
+        origin: formElem.origin.value as string,
+        subtitle: formElem.subtitle.value as string,
       });
       wsSend.addTranslatedSubtitle({
         ws: props.ws,
@@ -76,8 +76,8 @@ const SendPane: Component<{
         translated_by: _currentInfo.currentUser().user_name,
         checked_by: _currentInfo.currentUser().user_name,
         send_by: _currentInfo.currentUser().user_name,
-        origin: formElem.origin.value,
-        subtitle: formElem.subtitle.value,
+        origin: formElem.origin.value as string,
+        subtitle: formElem.subtitle.value as string,
       });
       // 直接发送不需要更新任何发送和操作页面的元素, 只需要更新display中的字幕就行
       // 即check-area不需要监听这个cmd的onmessage
@@ -111,7 +111,7 @@ const SendPane: Component<{
       styleObj: style,
     });
   };
-  const styleReversedToogleHandler = (e: Event) => {
+  const styleReversedToogleHandler = () => {
     wsSend.changeReversed(props.ws, !reversed());
   };
   const subtitleStyleInputHandler = (
@@ -135,7 +135,7 @@ const SendPane: Component<{
     const storageStyleStr = localStorage.getItem(STORAGE_STYLE);
     if (storageStyleStr) {
       if (storageStyleStr !== "") {
-        const storageStyle = JSON.parse(storageStyleStr);
+        const storageStyle = JSON.parse(storageStyleStr) as StorageStyleData;
         delete storageStyle[props.roomid];
         localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle));
       }
@@ -148,9 +148,9 @@ const SendPane: Component<{
       return;
     }
     props.ws.addEventListener("message", (evt) => {
-      const data: s2cEventMap = JSON.parse(evt.data);
+      const data = JSON.parse(evt.data as string) as s2cEventMap;
       if (data.head.cmd === "sChangeBilingual") {
-        const body: s2cChangeBilingualBody = data.body;
+        const body = data.body as s2cChangeBilingualBody;
         setBilingualSend(body.bilingual);
         // 更新之后同时更新本地储存
         if (storageStyle) {
@@ -183,7 +183,7 @@ const SendPane: Component<{
         }
         localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle));
       } else if (data.head.cmd === "sChangeStyle") {
-        const body: s2cChangeStyleBody = data.body;
+        const body = data.body as s2cChangeStyleBody;
         setStyle({
           subtitle: body.subtitle,
           origin: body.origin,
@@ -222,7 +222,7 @@ const SendPane: Component<{
         }
         localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle));
       } else if (data.head.cmd === "sChangeReversed") {
-        const body: s2cChangeReversedBody = data.body;
+        const body = data.body as s2cChangeReversedBody;
         setReversed(body.reversed);
         // 更新之后同时更新本地储存
         if (storageStyle) {
@@ -438,7 +438,7 @@ const SendPane: Component<{
               <input
                 type="checkbox"
                 checked={reversed()}
-                onChange={(e) => styleReversedToogleHandler(e)}
+                onChange={() => styleReversedToogleHandler()}
                 class="peer sr-only"
               />
               <div class="w-8 h-3 bg-gray-400 rounded-full"></div>

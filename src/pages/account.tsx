@@ -47,8 +47,8 @@ const AccountPage = () => {
   const onSubmitHandler = (e: Event & { currentTarget: HTMLFormElement }) => {
     e.preventDefault();
     const formElem = e.currentTarget;
-    const newPass: string = formElem.newPassword.value;
-    const repeat: string = formElem.repeat.value;
+    const newPass = formElem.newPassword.value as string;
+    const repeat = formElem.repeat.value as string;
     if (repeat !== newPass) {
       window.alert("两次输入的密码不一致");
       return;
@@ -64,13 +64,13 @@ const AccountPage = () => {
       id: currentUser().id,
       user_name: currentUser().user_name,
       email: currentUser().email,
-      old_password: signupFormRef.oldPassword.value,
-      new_password: signupFormRef.newPassword.value,
+      old_password: signupFormRef.oldPassword.value as string,
+      new_password: signupFormRef.newPassword.value as string,
     };
     poster(postData)
       .then(async (res) => {
         console.log("post successful: ", res);
-        const body: ChangePassRespBody = await res.json();
+        const body = (await res.json()) as ChangePassRespBody;
         if (body.code === -1) {
           switch (body.status) {
             case 5302:
@@ -112,7 +112,7 @@ const AccountPage = () => {
   const repeatInputHandler = (e: InputEvent & { currentTarget: HTMLInputElement }) => {
     const repeat = e.currentTarget.value;
     const formElem = e.currentTarget.closest("#signup-form");
-    const newPass: string = (formElem as HTMLFormElement).newPassword.value;
+    const newPass = (formElem as HTMLFormElement).newPassword.value as string;
     if (repeat === newPass) {
       setRepeatOK(true);
     } else {

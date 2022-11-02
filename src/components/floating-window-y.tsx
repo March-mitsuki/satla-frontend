@@ -18,7 +18,7 @@ const FloatingWindow: ParentComponent<{
     width: number | "";
     height: number | "";
   };
-  minWindowSize?: {
+  minWindowSize: {
     width: number | "";
     height: number | "";
   };
@@ -46,7 +46,7 @@ const FloatingWindow: ParentComponent<{
   let contentsWrapperElemRef: HTMLDivElement | undefined;
   let resizeElemRef: HTMLDivElement | undefined;
 
-  let startDragHandler = (e: MouseEvent) => {
+  const startDragHandler = (e: MouseEvent) => {
     let shiftX: number;
     let shiftY: number;
     if (floatingElemRef) {
@@ -91,7 +91,7 @@ const FloatingWindow: ParentComponent<{
     };
   };
 
-  const startResize = (e: MouseEvent) => {
+  const startResize = () => {
     onmousemove = (e: MouseEvent) => {
       e.preventDefault();
       if (wrapperElemRef && contentsWrapperElemRef && floatingElemRef && resizeElemRef) {
@@ -130,8 +130,8 @@ const FloatingWindow: ParentComponent<{
     >
       <div
         style={{
-          "min-width": props.minWindowSize?.width + "px",
-          width: floatingElem().isFloating ? windowSize().width + "px" : "",
+          "min-width": `${props.minWindowSize.width}px`,
+          width: floatingElem().isFloating ? `${windowSize().width}px` : "",
         }}
         class={props.controllerWrapperClass}
       >
@@ -160,10 +160,10 @@ const FloatingWindow: ParentComponent<{
         ref={contentsWrapperElemRef}
         style={{
           position: "relative",
-          "min-width": props.minWindowSize?.width + "px",
-          "min-height": props.minWindowSize?.height + "px",
-          width: floatingElem().isFloating ? windowSize().width + "px" : "",
-          height: floatingElem().isFloating ? windowSize().height + "px" : "",
+          "min-width": `${props.minWindowSize.width}px`,
+          "min-height": `${props.minWindowSize.height}px`,
+          width: floatingElem().isFloating ? `${windowSize().width}px` : "",
+          height: floatingElem().isFloating ? `${windowSize().height}px` : "",
         }}
         class={props.contentsWrapperClass}
       >

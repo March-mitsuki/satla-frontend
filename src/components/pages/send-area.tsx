@@ -35,7 +35,7 @@ const SendArea: ParentComponent<{
     setSubtitles(dummySub);
   }
   if (typeof attachedInfo() === "undefined") {
-    let initialattachedInfo: AttachedInfo[] = [];
+    const initialattachedInfo: AttachedInfo[] = [];
     for (let i = 0; i < (subtitles() as Subtitle[]).length; i++) {
       const elem = (subtitles() as Subtitle[])[i];
       const attachedInfo = new AttachedInfo(elem.id);
@@ -54,8 +54,8 @@ const SendArea: ParentComponent<{
     e.preventDefault();
     const formElem = e.currentTarget;
 
-    subtitle.subtitle = formElem.subtitle.value;
-    subtitle.origin = formElem.origin.value;
+    subtitle.subtitle = formElem.subtitle.value as string;
+    subtitle.origin = formElem.origin.value as string;
     subtitle.send_by = currentUser().user_name;
     wsSend.sendSubtitle({
       ws: props.ws,
@@ -115,8 +115,8 @@ const SendArea: ParentComponent<{
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault();
 
-      subtitle.subtitle = formElem.subtitle.value;
-      subtitle.origin = formElem.origin.value;
+      subtitle.subtitle = formElem.subtitle.value as string;
+      subtitle.origin = formElem.origin.value as string;
       subtitle.checked_by = currentUser().user_name;
       wsSend.changeSubtitle({ ws: props.ws, subtitle: subtitle });
     }
@@ -185,13 +185,13 @@ const SendArea: ParentComponent<{
       return;
     }
     props.ws.onmessage = (evt) => {
-      const data: s2cEventMap = JSON.parse(evt.data);
+      const data = JSON.parse(evt.data as string) as s2cEventMap;
       switch (data.head.cmd) {
         case "sChangeUser":
           wsOn.addUser(data, setUserList);
           break;
         case "sGetRoomSubtitles":
-          wsOn.getRoomSubtitles(data);
+          wsOn.getRoomSubtitles(data); // eslint-disable-line @typescript-eslint/no-floating-promises
           break;
         case "sAddSubtitleUp":
           wsOn.addSubtitleUp(data);
@@ -210,78 +210,85 @@ const SendArea: ParentComponent<{
           break;
         case "sAddTransSub":
           wsOn.addTranslatedSub(data);
-          const addTranslatedSubBody: s2cAddTranslatedSubtitleBody = data.body;
-          if (addTranslatedSubBody.new_subtitle.translated_by === currentUser().user_name) {
-            // 如果是自己加的行, 那么加了之后清空send-form (位于同一page不同components)
-            // 与send-pane是发送模式还是输入模式无关, 只要是自己发送的就该清空
-            const translateForm = document.getElementById("send-form");
-            (translateForm as HTMLFormElement).subtitle.value = "";
-            (translateForm as HTMLFormElement).origin.value = "";
+          {
+            const body = data.body as s2cAddTranslatedSubtitleBody;
+            if (body.new_subtitle.translated_by === currentUser().user_name) {
+              // 如果是自己加的行, 那么加了之后清空send-form (位于同一page不同components)
+              // 与send-pane是发送模式还是输入模式无关, 只要是自己发送的就该清空
+              const translateForm = document.getElementById("send-form");
+              (translateForm as HTMLFormElement).subtitle.value = "";
+              (translateForm as HTMLFormElement).origin.value = "";
+            }
+            break;
           }
-          break;
-        case "sDeleteSubtitle":
-          const deleteSubBody: s2cDeleteSubtitleBody = data.body;
-          if (!deleteSubBody.status) {
+        case "sDeleteSubtitle": {
+          const body = data.body as s2cDeleteSubtitleBody;
+          if (!body.status) {
             console.log("delete failed, please check the server side");
             return;
           }
-          wsOn.deleteSubtitle(deleteSubBody.subtitle_id);
+          wsOn.deleteSubtitle(body.subtitle_id);
           break;
-        case "sReorderSubFront":
-          const reorderFrontBody: s2cReorderSubBody = data.body;
-          if (reorderFrontBody.operation_user === currentUser().user_name) {
-            if (!reorderFrontBody.status) {
+        }
+        case "sReorderSubFront": {
+          const body = data.body as s2cReorderSubBody;
+          if (body.operation_user === currentUser().user_name) {
+            if (!body.status) {
               // 如果是自己操作, 那么成功了则什么都不做, 失败了则通知失败
               window.alert("拖动失败, 请刷新重试");
             }
           } else {
-            if (reorderFrontBody.status) {
+            if (body.status) {
               // 若是别人操作, 则成功了还行, 失败了什么都不做
               wsOn.reorderSubFrontOther({
-                drag_id: reorderFrontBody.drag_id,
-                drop_id: reorderFrontBody.drop_id,
+                drag_id: body.drag_id,
+                drop_id: body.drop_id,
               });
             }
           }
           break;
-        case "sReorderSubBack":
-          const reorderBackBody: s2cReorderSubBody = data.body;
-          if (reorderBackBody.operation_user === currentUser().user_name) {
-            if (!reorderBackBody.status) {
+        }
+        case "sReorderSubBack": {
+          const body = data.body as s2cReorderSubBody;
+          if (body.operation_user === currentUser().user_name) {
+            if (!body.status) {
               window.alert("拖动失败, 请刷新重试");
             }
           } else {
-            if (reorderBackBody.status) {
+            if (body.status) {
               wsOn.reorderSubBackOther({
-                drag_id: reorderBackBody.drag_id,
-                drop_id: reorderBackBody.drop_id,
+                drag_id: body.drag_id,
+                drop_id: body.drop_id,
               });
             }
           }
           break;
-        case "sSendSubtitle":
-          const sendSubtitleBody: s2cSendSubtitleBody = data.body;
-          if (!sendSubtitleBody.status) {
+        }
+        case "sSendSubtitle": {
+          const body = data.body as s2cSendSubtitleBody;
+          if (!body.status) {
             console.log("send subtitle failed, please check the server side");
             return;
           }
-          wsOn.deleteSubtitle(sendSubtitleBody.subtitle.id);
+          wsOn.deleteSubtitle(body.subtitle.id);
           break;
-        case "sSendSubtitleDirect":
-          const sendSubtitleDirectBody: s2cSendSubtitleBody = data.body;
-          if (!sendSubtitleDirectBody.status) {
+        }
+        case "sSendSubtitleDirect": {
+          const body = data.body as s2cSendSubtitleBody;
+          if (!body.status) {
             console.log("send subtitle failed, please check the server side");
             return;
           }
           console.log("send sub direct on: ", data);
 
-          if (sendSubtitleDirectBody.subtitle.send_by === currentUser().user_name) {
+          if (body.subtitle.send_by === currentUser().user_name) {
             // 直接发送成功, 并且send_by是自己时清空send-form
             const translateForm = document.getElementById("send-form");
             (translateForm as HTMLFormElement).subtitle.value = "";
             (translateForm as HTMLFormElement).origin.value = "";
           }
           break;
+        }
         case "heartBeat":
           console.log("--heartbeat--");
           break;
@@ -452,7 +459,7 @@ const SendArea: ParentComponent<{
                       </svg>
                     </button>
                     <input
-                      id={idx() + "-sub"}
+                      id={`${idx()}-sub`}
                       type="text"
                       name="subtitle"
                       autocomplete="off"
@@ -463,7 +470,7 @@ const SendArea: ParentComponent<{
                       class={inputStyle}
                     />
                     <input
-                      id={idx() + "-ori"}
+                      id={`${idx()}-ori`}
                       type="text"
                       name="origin"
                       autocomplete="off"

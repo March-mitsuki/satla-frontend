@@ -12,5 +12,8 @@ module.exports = {
   },
   plugins: ["@typescript-eslint"],
   root: true,
+  rules: {
+    "@typescript-eslint/no-unsafe-member-access": 0,
+  },
   ignorePatterns: [".eslintrc.*"],
 };

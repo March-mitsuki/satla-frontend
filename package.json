@@ -9,7 +9,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "fmt": "prettier --write --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx,json}'",
-    "fmt-check": "prettier --check --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx,json}'"
+    "fmt-check": "prettier --check --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx,json}'",
+    "lint": "npx eslint ./src"
   },
   "author": "mitsuki",
   "license": "ISC",

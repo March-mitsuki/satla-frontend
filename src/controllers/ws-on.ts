@@ -2,7 +2,6 @@
 import _subtitles from "@/components/contexts/subtitles";
 import _currentInfo from "@/components/contexts/current-info-ctx";
 import { wsSend } from ".";
-import { sleep } from "@/components/tools";
 
 // type
 import { Subtitle } from "@/interfaces";
@@ -21,13 +20,13 @@ import type { Setter } from "solid-js";
 const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = _subtitles;
 
 export const addUser = (data: s2cEventMap, setUserList: Setter<string[]>) => {
-  const body: s2cChangeUserBody = data.body;
+  const body = data.body as s2cChangeUserBody;
   setUserList(body.users);
   console.log("add user msg: ", body);
 };
 
-export const getRoomSubtitles = async (data: s2cEventMap) => {
-  const body: s2cGetRoomSubBody = data.body;
+export const getRoomSubtitles = (data: s2cEventMap) => {
+  const body = data.body as s2cGetRoomSubBody;
   console.log("get room subtitles msg: ", body);
   const _orderList = body.order.split(",");
   const orderList = _orderList.slice(1, -1);
@@ -35,8 +34,8 @@ export const getRoomSubtitles = async (data: s2cEventMap) => {
     return orderList.indexOf(a.id.toString()) - orderList.indexOf(b.id.toString());
   });
   const attachedInfo: AttachedInfo[] = [];
-  for (let i = 0; i < (body.subtitles as Subtitle[]).length; i++) {
-    const elem = (body.subtitles as Subtitle[])[i];
+  for (let i = 0; i < body.subtitles.length; i++) {
+    const elem = body.subtitles[i];
     const _attachedInfo = new AttachedInfo(elem.id);
     attachedInfo.push(_attachedInfo);
   }
@@ -46,7 +45,7 @@ export const getRoomSubtitles = async (data: s2cEventMap) => {
 };
 
 export const changeSubtitle = (data: s2cEventMap) => {
-  const body: s2cChangeSubtitleBody = data.body;
+  const body = data.body as s2cChangeSubtitleBody;
   // 无论是否更新成功都要deep copy之后进行更新, 所以先map并不会造成性能损失
   const dc_attachedInfo = attachedInfo()?.map((x) => x);
   if (!dc_attachedInfo) {
@@ -61,7 +60,7 @@ export const changeSubtitle = (data: s2cEventMap) => {
     }
     // 如果操作不成功但不是自己进行操作, 那么不更新任何东西
   } else {
-    if (dc_attachedInfo[idx].changeStatus === 2 || 1) {
+    if (dc_attachedInfo[idx].changeStatus === 2 || dc_attachedInfo[idx].changeStatus === 1) {
       // 如果成功并且change status还在未提交或者不成功, 那么设置为普通
       dc_attachedInfo[idx].changeStatus = 0;
       setAttachedInfo(dc_attachedInfo);
@@ -85,7 +84,7 @@ export const changeSubtitle = (data: s2cEventMap) => {
 };
 
 export const addSubtitleUp = (data: s2cEventMap) => {
-  const body: s2cAddSubtitleBody = data.body;
+  const body = data.body as s2cAddSubtitleBody;
   const newSub: Subtitle = new Subtitle({
     id: body.new_subtitle_id,
     project_id: body.project_id,
@@ -103,7 +102,7 @@ export const addSubtitleUp = (data: s2cEventMap) => {
 };
 
 export const addSubtitleDown = (data: s2cEventMap) => {
-  const body: s2cAddSubtitleBody = data.body;
+  const body = data.body as s2cAddSubtitleBody;
   const newSub: Subtitle = new Subtitle({
     id: body.new_subtitle_id,
     project_id: body.project_id,
@@ -121,7 +120,7 @@ export const addSubtitleDown = (data: s2cEventMap) => {
 };
 
 export const editStart = (data: s2cEventMap) => {
-  const body: s2cEditChangeBody = data.body;
+  const body = data.body as s2cEditChangeBody;
   const idx = attachedInfo()?.findIndex((elem) => elem.id === body.subtitle_id);
   if (typeof idx === "undefined") {
     return;
@@ -136,7 +135,7 @@ export const editStart = (data: s2cEventMap) => {
 };
 
 export const editEnd = (data: s2cEventMap) => {
-  const body: s2cEditChangeBody = data.body;
+  const body = data.body as s2cEditChangeBody;
   const idx = attachedInfo()?.findIndex((elem) => elem.id === body.subtitle_id);
   if (typeof idx === "undefined") {
     return;
@@ -151,7 +150,7 @@ export const editEnd = (data: s2cEventMap) => {
 };
 
 export const addTranslatedSub = (data: s2cEventMap) => {
-  const body: s2cAddTranslatedSubtitleBody = data.body;
+  const body = data.body as s2cAddTranslatedSubtitleBody;
   const newAttachedInfo = new AttachedInfo(body.new_subtitle.id);
   attachedInfo()?.push(newAttachedInfo);
   setAttachedInfo(attachedInfo()?.map((x) => x));

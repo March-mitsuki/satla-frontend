@@ -39,9 +39,9 @@ const NewProjectForm = () => {
 
   // 定义submit用的复用函数
   const _submitHandler = (formElem: HTMLFormElement) => {
-    const projectName: string = formElem.projectName.value;
-    const description: string = formElem.description.value;
-    const pointMan: string = formElem.pointMan.value;
+    const projectName: string = formElem.projectName.value as string;
+    const description: string = formElem.description.value as string;
+    const pointMan: string = formElem.pointMan.value as string;
     if (!projectName || !description || !pointMan) {
       setPostStatus({
         status: 1,
@@ -81,7 +81,7 @@ const NewProjectForm = () => {
     poster(newProject)
       .then(async (res) => {
         if (res.status === 200) {
-          const body: NewProjectResponseBody = await res.json();
+          const body: NewProjectResponseBody = (await res.json()) as NewProjectResponseBody;
           if (body.code === -1) {
             if (body.status === 5303) {
               setPostStatus({
@@ -103,10 +103,10 @@ const NewProjectForm = () => {
           }
         }
       })
-      .catch((err) => {
+      .catch((err: string) => {
         setPostStatus({
           status: 1,
-          msg: "网络错误: " + err,
+          msg: `网络错误: ${err}`,
         });
       });
 

@@ -30,22 +30,22 @@ const DisplayReview: Component<{
       return;
     }
     props.ws.addEventListener("message", (evt) => {
-      const data: s2cEventMap = JSON.parse(evt.data);
+      const data = JSON.parse(evt.data as string) as s2cEventMap;
       if (data.head.cmd === "sSendSubtitle" || data.head.cmd === "sSendSubtitleDirect") {
-        const body: s2cSendSubtitleBody = data.body;
+        const body = data.body as s2cSendSubtitleBody;
         if (!body.status) {
           return;
         }
         setSubtitle(body.subtitle);
       } else if (data.head.cmd === "sChangeStyle") {
         console.log("change style msg:", data);
-        const body: s2cChangeStyleBody = data.body;
+        const body = data.body as s2cChangeStyleBody;
         setStyle(body);
       } else if (data.head.cmd === "sChangeBilingual") {
-        const body: s2cChangeBilingualBody = data.body;
+        const body = data.body as s2cChangeBilingualBody;
         setBilingual(body.bilingual);
       } else if (data.head.cmd === "sChangeReversed") {
-        const body: s2cChangeReversedBody = data.body;
+        const body = data.body as s2cChangeReversedBody;
         setReversed(body.reversed);
       }
     });
