@@ -32,7 +32,7 @@ const Home: Component = () => {
         <div class="flex-auto">
           <PaneX
             minLeftElem="35%"
-            minRightElem="20%"
+            minRightElem="35%"
             leftElem={
               <div class="p-2">
                 <div class="flex justify-end gap-5 p-2 border-x-2 border-t-2">

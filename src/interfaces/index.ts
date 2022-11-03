@@ -119,7 +119,6 @@ export interface ErrJsonRes {
 
 export interface RoomData {
   id: number;
-  room_id: number;
   room_name: string;
   room_type: number; // 1 -> nomal, 2 -> auto
   description: string;
