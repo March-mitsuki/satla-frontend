@@ -1,7 +1,7 @@
 // dependencies lib
-import { createRoot, createSignal } from "solid-js";
+import { createSignal } from "solid-js";
 
-const handlerPageType = () => {
+export const handlePageType = () => {
   const [pagetype, setPagetype] = createSignal(false); // false = 翻译, true = 校对
   const switchPagetype = () => setPagetype(!pagetype());
 
@@ -20,5 +20,3 @@ const handlerPageType = () => {
     switchCanOrder,
   };
 };
-
-export default createRoot(handlerPageType);

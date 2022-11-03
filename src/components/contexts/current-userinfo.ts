@@ -1,10 +1,10 @@
 // dependencies lib
-import { createRoot, createSignal } from "solid-js";
+import { createSignal } from "solid-js";
 
 // type
 import { UserInfoFromServer } from "@/interfaces";
 
-const handlerCurrentUser = () => {
+export const handleCurrentUser = () => {
   const [currentUser, setCurrentUser] = createSignal<UserInfoFromServer>({
     id: -1,
     user_name: "connecting...",
@@ -19,5 +19,3 @@ const handlerCurrentUser = () => {
     setUserList,
   };
 };
-
-export default createRoot(handlerCurrentUser);

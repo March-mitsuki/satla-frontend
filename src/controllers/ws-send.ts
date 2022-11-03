@@ -1,5 +1,5 @@
 // local dependencies
-import _currentInfo from "@/components/contexts/current-info-ctx";
+import rootCtx from "@/components/contexts";
 
 // type
 import { Subtitle } from "@/interfaces";
@@ -24,13 +24,15 @@ import type {
   c2sHeartBeat,
 } from "@/interfaces/ws";
 
+const { currentUser } = rootCtx.currentUserCtx;
+
 export const addUser = (ws: WebSocket) => {
   const _addUser: c2sChangeUser = {
     head: {
       cmd: "changeUser",
     },
     body: {
-      uname: _currentInfo.currentUser().user_name,
+      uname: currentUser().user_name,
     },
   };
   const addUser = new TextEncoder().encode(JSON.stringify(_addUser));
@@ -98,7 +100,7 @@ export const addSubtitleUp = ({
       pre_subtitle_id: id,
       pre_subtitle_idx: idx,
       project_id: project_id,
-      checked_by: _currentInfo.currentUser().user_name,
+      checked_by: currentUser().user_name,
     },
   };
   const postData = new TextEncoder().encode(JSON.stringify(_postData));
@@ -129,7 +131,7 @@ export const addSubtitleDown = ({
       pre_subtitle_id: id,
       pre_subtitle_idx: idx,
       project_id: project_id,
-      checked_by: _currentInfo.currentUser().user_name,
+      checked_by: currentUser().user_name,
     },
   };
   const postData = new TextEncoder().encode(JSON.stringify(_postData));
@@ -147,7 +149,7 @@ export const editStart = (ws: WebSocket | undefined, subtitle_id: number) => {
       cmd: "editStart",
     },
     body: {
-      uname: _currentInfo.currentUser().user_name,
+      uname: currentUser().user_name,
       subtitle_id: subtitle_id,
     },
   };
@@ -166,7 +168,7 @@ export const editEnd = (ws: WebSocket | undefined, subtitle_id: number) => {
       cmd: "editEnd",
     },
     body: {
-      uname: _currentInfo.currentUser().user_name,
+      uname: currentUser().user_name,
       subtitle_id: subtitle_id,
     },
   };
@@ -240,7 +242,7 @@ export const reorderSubFront = ({
       cmd: "reorderSubFront",
     },
     body: {
-      operation_user: _currentInfo.currentUser().user_name,
+      operation_user: currentUser().user_name,
       project_id: project_id,
       drag_id: drag_id,
       drop_id: drop_id,
@@ -271,7 +273,7 @@ export const reorderSubBack = ({
       cmd: "reorderSubBack",
     },
     body: {
-      operation_user: _currentInfo.currentUser().user_name,
+      operation_user: currentUser().user_name,
       project_id: project_id,
       drag_id: drag_id,
       drop_id: drop_id,

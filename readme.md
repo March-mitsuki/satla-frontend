@@ -90,6 +90,10 @@ https://github.com/March-mitsuki/satla-backend
   - [x] user control
     - [x] 修改密码
 - [ ] 进阶功能
+  - [ ] 分房间改为一项目多房间
+  - [ ] 支持自动发送
+- [ ] 性能修复
+  - [ ] 改为 root 统一管理 ctx (使用自制 redux)
   - [ ] 储存当前发送, 刷新不消失(前端存或者后端存都行)
   - [ ] 把 signal 改成 store 应该能增加性能
   - [ ] 现在 getElement 和 ref 混在, 之后需要找时间统一

@@ -2,8 +2,7 @@
 import { createEffect, For, Match, Switch } from "solid-js";
 
 // local dependencies
-import _subtitles from "../contexts/subtitles";
-import _currentInfo from "@/components/contexts/current-info-ctx";
+import rootCtx from "../contexts";
 import { wsOn, wsSend } from "@/controllers";
 
 // type
@@ -27,8 +26,8 @@ const SendArea: ParentComponent<{
   ws: WebSocket | undefined;
   roomid: string;
 }> = (props) => {
-  const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = _subtitles;
-  const { currentUser, setUserList } = _currentInfo;
+  const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = rootCtx.subtitlesCtx;
+  const { currentUser, setUserList } = rootCtx.currentUserCtx;
 
   // 各种初始化操作
   if (typeof subtitles() === "undefined") {
@@ -166,9 +165,9 @@ const SendArea: ParentComponent<{
     const newSub = new Subtitle({
       id: 0,
       project_id: 0,
-      translated_by: _currentInfo.currentUser().user_name,
-      checked_by: _currentInfo.currentUser().user_name,
-      send_by: _currentInfo.currentUser().user_name,
+      translated_by: currentUser().user_name,
+      checked_by: currentUser().user_name,
+      send_by: currentUser().user_name,
       origin: "",
       subtitle: "",
     });

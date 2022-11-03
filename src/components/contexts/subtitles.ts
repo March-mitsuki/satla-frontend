@@ -1,10 +1,10 @@
 // dependencies lib
-import { createRoot, createSignal } from "solid-js";
+import { createSignal } from "solid-js";
 
 // type
 import { Subtitle, AttachedInfo } from "@/interfaces";
 
-const handlerSubtitles = () => {
+export const handleSubtitles = () => {
   const [subtitles, setSubtitles] = createSignal<Subtitle[]>();
   const [attachedInfo, setAttachedInfo] = createSignal<AttachedInfo[]>();
   return {
@@ -14,5 +14,3 @@ const handlerSubtitles = () => {
     setAttachedInfo,
   };
 };
-
-export default createRoot(handlerSubtitles);

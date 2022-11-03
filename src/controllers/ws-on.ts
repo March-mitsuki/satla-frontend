@@ -1,6 +1,5 @@
 // local dependencies
-import _subtitles from "@/components/contexts/subtitles";
-import _currentInfo from "@/components/contexts/current-info-ctx";
+import rootCtx from "@/components/contexts";
 import { wsSend } from ".";
 
 // type
@@ -17,7 +16,8 @@ import type {
 } from "@/interfaces/ws";
 import type { Setter } from "solid-js";
 
-const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = _subtitles;
+const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = rootCtx.subtitlesCtx;
+const { currentUser } = rootCtx.currentUserCtx;
 
 export const addUser = (data: s2cEventMap, setUserList: Setter<string[]>) => {
   const body = data.body as s2cChangeUserBody;
@@ -53,7 +53,7 @@ export const changeSubtitle = (data: s2cEventMap) => {
   }
   const idx = dc_attachedInfo.findIndex((elem) => elem.id === body.subtitle.id);
   if (!body.status) {
-    if (body.subtitle.checked_by === _currentInfo.currentUser().user_name) {
+    if (body.subtitle.checked_by === currentUser().user_name) {
       // 如果操作不成功并且进行操作的是自己, 那么则通知此行操作不成功
       dc_attachedInfo[idx].changeStatus = 2;
       setAttachedInfo(dc_attachedInfo);
@@ -65,7 +65,7 @@ export const changeSubtitle = (data: s2cEventMap) => {
       dc_attachedInfo[idx].changeStatus = 0;
       setAttachedInfo(dc_attachedInfo);
     }
-    if (body.subtitle.checked_by !== _currentInfo.currentUser().user_name) {
+    if (body.subtitle.checked_by !== currentUser().user_name) {
       // 如果成功并且进行操作的人是别人, 那么同时更新subtitle
       const dc_subtitles = subtitles()?.map((x) => x);
       if (!dc_subtitles) {

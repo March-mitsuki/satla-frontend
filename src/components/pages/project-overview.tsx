@@ -2,6 +2,9 @@
 import { For } from "solid-js";
 import { Link } from "@solidjs/router";
 
+// local depandencies
+import rootCtx from "../contexts";
+
 // type
 import type { Component } from "solid-js";
 import type { Project } from "@/interfaces";
@@ -9,6 +12,7 @@ import type { Project } from "@/interfaces";
 const ProjectOverview: Component<{
   projects: Project[] | undefined;
 }> = (props) => {
+  const { setCurrentProject } = rootCtx.currentProjectCtx;
   return (
     <div class="flex flex-col gap-2 border-2 p-2">
       <div class="col-span-full grid grid-cols-7 gap-2 justify-between">
@@ -41,7 +45,10 @@ const ProjectOverview: Component<{
             </div>
             <div class="text-center">
               <button
-                onClick={() => console.log("查看详情 ->", elem.project_name)}
+                onClick={() => {
+                  setCurrentProject(elem);
+                  console.log("set project");
+                }}
                 class="bg-neutral-500/60 rounded-md text-center text-sm truncate px-1 hover:bg-neutral-600/60"
               >
                 查看详情

@@ -4,7 +4,7 @@ import { createSignal } from "solid-js";
 // local dependencies
 import { Modal } from "@/components";
 import { IndexNavi } from "@/components/pages";
-import _currentInfo from "@/components/contexts/current-info-ctx";
+import rootCtx from "@/components/contexts";
 import { logoutUser } from "@/components/tools";
 
 // types
@@ -18,7 +18,7 @@ const wrongRepeatStyle =
 const AccountPage = () => {
   const api_base_url = import.meta.env.VITE_API_BASE_URL;
 
-  const { currentUser } = _currentInfo;
+  const { currentUser } = rootCtx.currentUserCtx;
   const [repeatOK, setRepeatOK] = createSignal(true);
   const [confirm, setConfirm] = createSignal(false);
   const [isErr, setIsErr] = createSignal<{

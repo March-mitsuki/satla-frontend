@@ -7,15 +7,14 @@ import { Modal } from "@/components";
 // local dependencies
 import { FloatingWindow } from "@/components";
 import { DisplayReview, Navi, SendArea, SendPane } from "@/components/pages";
-import _currentInfo from "@/components/contexts/current-info-ctx";
-import _subtitles from "@/components/contexts/subtitles";
+import rootCtx from "@/components/contexts";
 import { wsOn, wsSend } from "@/controllers";
 
 const SendPage = () => {
   const ws_base_url = import.meta.env.VITE_WS_BASE_URL;
 
-  const { currentUser, userList, setUserList } = _currentInfo;
-  const { setAttachedInfo, setSubtitles } = _subtitles;
+  const { currentUser, userList, setUserList } = rootCtx.currentUserCtx;
+  const { setAttachedInfo, setSubtitles } = rootCtx.subtitlesCtx;
   const [_ws, setWs] = createSignal<WebSocket>();
   const [isWsconn, setIsWsconn] = createSignal<boolean>(false);
 

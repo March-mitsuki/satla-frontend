@@ -111,6 +111,20 @@ export interface Project {
   created_by: string;
 }
 
+export interface ErrJsonRes {
+  code: 0 | -1;
+  status: number;
+  msg: string;
+}
+
+export interface RoomData {
+  id: number;
+  room_id: number;
+  room_name: string;
+  room_type: number; // 1 -> nomal, 2 -> auto
+  description: string;
+}
+
 // 2000番 -> 成功
 // 4000番 -> 请求不正确
 //   4100番 -> login相关, 4200番 -> signup相关

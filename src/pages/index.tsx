@@ -4,7 +4,7 @@ import { createResource } from "solid-js";
 
 // local dependencies
 import { PaneX } from "@/components";
-import { ProjectOverview, IndexNavi } from "@/components/pages";
+import { ProjectOverview, ProjectDetailOverview, IndexNavi } from "@/components/pages";
 
 // type
 import type { Component } from "solid-js";
@@ -16,7 +16,7 @@ const Home: Component = () => {
   const fetchAllProjects = async () => {
     const url = api_base_url + "api/all_projects";
     const response = await fetch(url);
-    const body: Project[] = (await response.json()) as Project[];
+    const body = (await response.json()) as Project[];
     console.log("get all projects respons body: ", body);
     return body;
   };
@@ -63,12 +63,7 @@ const Home: Component = () => {
                 <ProjectOverview projects={projects()}></ProjectOverview>
               </div>
             }
-            rightElem={
-              <div class="p-2">
-                Details Here
-                <input type="file" />
-              </div>
-            }
+            rightElem={<ProjectDetailOverview></ProjectDetailOverview>}
             dragLineClass="bg-neutral-500 hover:bg-sky-500"
           ></PaneX>
         </div>

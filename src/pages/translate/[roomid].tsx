@@ -8,9 +8,7 @@ import { useParams } from "@solidjs/router";
 // local dependencies
 import { FloatingWindowX, FloatingWindow } from "@/components";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
-import _pagetype from "@/components/contexts/page-type";
-import _currentInfo from "@/components/contexts/current-info-ctx";
-import _subtitles from "@/components/contexts/subtitles";
+import rootCtx from "@/components/contexts";
 import { wsOn, wsSend } from "@/controllers";
 import { Modal } from "@/components";
 
@@ -19,9 +17,9 @@ const TranslatePage = () => {
   const ws_base_url = import.meta.env.VITE_WS_BASE_URL;
 
   // pagetype: false = 翻译, true = 校对, default = false
-  const { pagetype } = _pagetype;
-  const { currentUser, userList, setUserList } = _currentInfo;
-  const { setAttachedInfo, setSubtitles } = _subtitles;
+  const { pagetype } = rootCtx.pageTypeCtx;
+  const { currentUser, userList, setUserList } = rootCtx.currentUserCtx;
+  const { setAttachedInfo, setSubtitles } = rootCtx.subtitlesCtx;
   const [_ws, setWs] = createSignal<WebSocket>();
   const [isWsconn, setIsWsconn] = createSignal<boolean>(false);
 

@@ -4,7 +4,7 @@ import { Match, Switch } from "solid-js";
 
 // local dependencies
 import { LogoutBtn, CurrentUserInfo } from ".";
-import _currentInfo from "../contexts/current-info-ctx";
+import rootCtx from "../contexts";
 
 const IndexNavi = () => {
   return (
@@ -28,7 +28,7 @@ const IndexNavi = () => {
           主页
         </Link>
         <Switch>
-          <Match when={_currentInfo.currentUser().permission === 2}>
+          <Match when={rootCtx.currentUserCtx.currentUser().permission === 2}>
             <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
             <Link
               href="/account"
@@ -77,7 +77,7 @@ const IndexNavi = () => {
               后台页面
             </Link>
           </Match>
-          <Match when={_currentInfo.currentUser().permission === 1}>
+          <Match when={rootCtx.currentUserCtx.currentUser().permission === 1}>
             <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
             <Link
               href="/account"
@@ -106,6 +106,7 @@ const IndexNavi = () => {
             </Link>
           </Match>
         </Switch>
+        <div>当前项目: {rootCtx.currentProjectCtx.currentProject()?.project_name}</div>
       </div>
       <div class="flex justify-center items-center gap-5">
         <CurrentUserInfo></CurrentUserInfo>

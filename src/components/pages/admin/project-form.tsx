@@ -2,7 +2,7 @@
 import { createSignal } from "solid-js";
 
 // local dependencies
-import _currentInfo from "@/components/contexts/current-info-ctx";
+import rootCtx from "@/components/contexts";
 
 // type
 import type { NewProjectResponseBody } from "@/interfaces";
@@ -12,7 +12,7 @@ const inputStyle =
   "flex-1 rounded-lg bg-neutral-700 p-3 border-2 border-gray-500 focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600";
 
 const NewProjectForm = () => {
-  const { currentUser } = _currentInfo;
+  const { currentUser } = rootCtx.currentUserCtx;
   const [postStatus, setPostStatus] = createSignal<{
     status: 0 | 1 | 2; // 1 -> 失败, 2 -> 成功, 默认为0
     msg: string;

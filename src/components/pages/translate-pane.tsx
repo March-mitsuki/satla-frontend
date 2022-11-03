@@ -3,9 +3,8 @@ import { createSignal, For, Match, Switch } from "solid-js";
 import { DateTime } from "luxon";
 
 // local dependencies
-import _pagetype from "../contexts/page-type";
+import rootCtx from "../contexts";
 import { Subtitle } from "@/interfaces";
-import _currentInfo from "@/components/contexts/current-info-ctx";
 import { wsSend } from "@/controllers";
 import { STORAGE_MEMO } from "../tools";
 
@@ -30,7 +29,7 @@ const TranslatePane: Component<{
     // canOrder: 是否可以拖动排序
     canOrder,
     switchCanOrder,
-  } = _pagetype;
+  } = rootCtx.pageTypeCtx;
   const [checkMemo, setCheckMemo] = createSignal<string[]>([""]);
   const storageMemoStr = localStorage.getItem(STORAGE_MEMO);
   let storageMemo: StorageMemoData | undefined;
@@ -55,7 +54,7 @@ const TranslatePane: Component<{
       id: 0,
       input_time: fmtdt,
       project_id: 0,
-      translated_by: _currentInfo.currentUser().user_name,
+      translated_by: rootCtx.currentUserCtx.currentUser().user_name,
       origin: formElem.origin.value as string,
       subtitle: formElem.subtitle.value as string,
     });

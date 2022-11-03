@@ -2,9 +2,7 @@
 import { createSignal, For, Match, Switch, createEffect } from "solid-js";
 
 // local dependencies
-import _pagetype from "../contexts/page-type";
-import _subtitles from "../contexts/subtitles";
-import _currentInfo from "@/components/contexts/current-info-ctx";
+import rootCtx from "@/components/contexts";
 
 // type
 import type { ParentComponent } from "solid-js";
@@ -27,9 +25,11 @@ const inputStyle =
 const CheckArea: ParentComponent<{
   ws: WebSocket | undefined;
 }> = (props) => {
-  const { pagetype, isBilingual, canOrder } = _pagetype;
-  const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = _subtitles;
-  const { currentUser, setUserList } = _currentInfo;
+  const { currentUserCtx, subtitlesCtx, pageTypeCtx } = rootCtx;
+  const { pagetype, isBilingual, canOrder } = pageTypeCtx;
+  const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = subtitlesCtx;
+  const { currentUser, setUserList } = currentUserCtx;
+
   const [isComposition, setIsComposition] = createSignal(false);
 
   if (typeof subtitles() === "undefined") {

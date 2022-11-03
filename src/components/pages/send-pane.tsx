@@ -3,7 +3,7 @@ import { createEffect, createSignal, Match, Switch } from "solid-js";
 import { createStore } from "solid-js/store";
 
 // local dependencies
-import _currentInfo from "../contexts/current-info-ctx";
+import rootCtx from "../contexts";
 import { Subtitle } from "@/interfaces";
 import { wsSend } from "@/controllers";
 import { STORAGE_STYLE, defaultSubtitleStyle, defaultOriginStyle } from "../tools";
@@ -26,6 +26,8 @@ const SendPane: Component<{
   roomid: string;
   ws: WebSocket | undefined;
 }> = (props) => {
+  const { currentUser } = rootCtx.currentUserCtx;
+
   const [inputType, setInputType] = createSignal(false); // true = 输入, false = 发送
   const [bilingualSend, setBilingualSend] = createSignal(true); // true = 双语, false = 单语
   const [style, setStyle] = createStore<StyleData>({
@@ -58,8 +60,8 @@ const SendPane: Component<{
         // project_id和id都为0, 服务器会根据roomid寻找对应project进行插入
         id: 0,
         project_id: 0,
-        translated_by: _currentInfo.currentUser().user_name,
-        checked_by: _currentInfo.currentUser().user_name,
+        translated_by: currentUser().user_name,
+        checked_by: currentUser().user_name,
         origin: formElem.origin.value as string,
         subtitle: formElem.subtitle.value as string,
       });
@@ -73,9 +75,9 @@ const SendPane: Component<{
       const newSub = new Subtitle({
         id: 0,
         project_id: 0,
-        translated_by: _currentInfo.currentUser().user_name,
-        checked_by: _currentInfo.currentUser().user_name,
-        send_by: _currentInfo.currentUser().user_name,
+        translated_by: currentUser().user_name,
+        checked_by: currentUser().user_name,
+        send_by: currentUser().user_name,
         origin: formElem.origin.value as string,
         subtitle: formElem.subtitle.value as string,
       });
