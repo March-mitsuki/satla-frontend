@@ -95,14 +95,10 @@ const TranslatePane: Component<{
     console.log("change memo: ", checkMemo());
   };
 
-  const checkMemoKeyDownHandler = (
-    e: KeyboardEvent & { currentTarget: HTMLFormElement },
-    idx: number,
-  ) => {
+  const checkMemoKeyDownHandler = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault();
-      const formElem = e.currentTarget;
-      changeCheckMemo(idx, formElem.checkmemo.value as string);
+      e.currentTarget.blur();
     }
   };
   const checkMemoSubmitHandler = (e: Event & { currentTarget: HTMLFormElement }, idx: number) => {
@@ -272,89 +268,89 @@ const TranslatePane: Component<{
               </div>
             )}
             <For each={checkMemo()}>
-              {(elem, idx) => (
-                <form
-                  onKeyDown={(e) => checkMemoKeyDownHandler(e, idx())}
-                  onSubmit={(e) => checkMemoSubmitHandler(e, idx())}
-                  class="flex gap-1"
-                >
-                  <input
-                    type="text"
-                    name="checkmemo"
-                    autocomplete="off"
-                    placeholder="memo"
-                    onBlur={(e) => changeCheckMemo(idx(), e.currentTarget.value)}
-                    class={inputStyle}
-                    value={elem}
-                  />
-                  <button
-                    type="submit"
-                    class="rounded-md p-1 bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70"
-                  >
-                    {/* submit btn */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-4 h-4"
+              {(elem, idx) => {
+                console.log("translate pane for render");
+                return (
+                  <form onSubmit={(e) => checkMemoSubmitHandler(e, idx())} class="flex gap-1">
+                    <input
+                      type="text"
+                      name="checkmemo"
+                      autocomplete="off"
+                      placeholder="memo"
+                      onKeyDown={(e) => checkMemoKeyDownHandler(e)}
+                      onBlur={(e) => changeCheckMemo(idx(), e.currentTarget.value)}
+                      class={inputStyle}
+                      value={elem}
+                    />
+                    <button
+                      type="submit"
+                      class="rounded-md p-1 bg-green-500/70 hover:bg-green-700/70 active:bg-green-500/70"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M4.5 12.75l6 6 9-13.5"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => addCheckMemo()}
-                    class="rounded-md p-1 bg-amber-500/70 hover:bg-amber-700/70 active:bg-amber-500/70"
-                  >
-                    {/* add down btn */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-4 h-4"
+                      {/* submit btn */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-4 h-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M4.5 12.75l6 6 9-13.5"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => addCheckMemo()}
+                      class="rounded-md p-1 bg-amber-500/70 hover:bg-amber-700/70 active:bg-amber-500/70"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const dc_checkMemo = checkMemo().map((x) => x);
-                      dc_checkMemo.splice(idx(), 1);
-                      setCheckMemo(dc_checkMemo);
-                      updateStorageMemo();
-                    }}
-                    class="rounded-md p-1 bg-red-500/70 hover:bg-red-700/70 active:bg-red-500/70"
-                  >
-                    {/* del btn */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-4 h-4"
+                      {/* add down btn */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-4 h-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const dc_checkMemo = checkMemo().map((x) => x);
+                        dc_checkMemo.splice(idx(), 1);
+                        setCheckMemo(dc_checkMemo);
+                        updateStorageMemo();
+                      }}
+                      class="rounded-md p-1 bg-red-500/70 hover:bg-red-700/70 active:bg-red-500/70"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                      />
-                    </svg>
-                  </button>
-                </form>
-              )}
+                      {/* del btn */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-4 h-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                    </button>
+                  </form>
+                );
+              }}
             </For>
           </div>
         </Match>
