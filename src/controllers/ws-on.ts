@@ -85,9 +85,9 @@ export const changeSubtitle = (data: s2cEventMap) => {
 
 export const addSubtitleUp = (data: s2cEventMap) => {
   const body = data.body as s2cAddSubtitleBody;
-  const newSub: Subtitle = new Subtitle({
+  const newSub = new Subtitle({
     id: body.new_subtitle_id,
-    project_id: body.project_id,
+    room_id: body.room_id,
     checked_by: body.checked_by,
     translated_by: body.checked_by,
   });
@@ -105,7 +105,7 @@ export const addSubtitleDown = (data: s2cEventMap) => {
   const body = data.body as s2cAddSubtitleBody;
   const newSub: Subtitle = new Subtitle({
     id: body.new_subtitle_id,
-    project_id: body.project_id,
+    room_id: body.room_id,
     checked_by: body.checked_by,
     translated_by: body.checked_by,
   });

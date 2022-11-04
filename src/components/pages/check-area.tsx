@@ -74,18 +74,18 @@ const CheckArea: ParentComponent<{
         e.preventDefault();
         wsSend.addSubtitleUp({
           ws: props.ws,
-          id: subtitle.id,
-          idx: idx,
-          project_id: subtitle.project_id,
+          pre_id: subtitle.id,
+          pre_idx: idx,
+          room_id: subtitle.room_id,
         });
       }
       if (e.key === "ArrowDown") {
         e.preventDefault();
         wsSend.addSubtitleDown({
           ws: props.ws,
-          id: subtitle.id,
-          idx: idx,
-          project_id: subtitle.project_id,
+          pre_id: subtitle.id,
+          pre_idx: idx,
+          room_id: subtitle.room_id,
         });
       }
       // shift + enter 移动到下一行
@@ -124,18 +124,18 @@ const CheckArea: ParentComponent<{
     e.preventDefault();
     wsSend.addSubtitleUp({
       ws: props.ws,
-      id: subtitle.id,
-      idx: idx,
-      project_id: subtitle.project_id,
+      pre_id: subtitle.id,
+      pre_idx: idx,
+      room_id: subtitle.room_id,
     });
   };
   const addDownClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault();
     wsSend.addSubtitleDown({
       ws: props.ws,
-      id: subtitle.id,
-      idx: idx,
-      project_id: subtitle.project_id,
+      pre_id: subtitle.id,
+      pre_idx: idx,
+      room_id: subtitle.room_id,
     });
   };
 
@@ -231,7 +231,7 @@ const CheckArea: ParentComponent<{
             ws: props.ws,
             drag_id: subtitle.id,
             drop_id: dropElemId,
-            project_id: subtitle.project_id,
+            room_id: subtitle.room_id,
           });
           reorderSubFrontSelf(idx, reorderIdx, subtitle);
         } else {
@@ -240,7 +240,7 @@ const CheckArea: ParentComponent<{
             ws: props.ws,
             drag_id: subtitle.id,
             drop_id: dropElemId,
-            project_id: subtitle.project_id,
+            room_id: subtitle.room_id,
           });
           reorderSubBackSelf(idx, reorderIdx, subtitle);
         }

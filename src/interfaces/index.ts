@@ -3,7 +3,7 @@ export class Subtitle {
   id: number;
   input_time: string; // 行左边显示的时间
   send_time: Date | null; // 为null则为未发送
-  project_id: number;
+  room_id: number;
   translated_by: string;
   checked_by: string; // 为空字符串则为未校对
   send_by: string;
@@ -12,7 +12,7 @@ export class Subtitle {
 
   constructor({
     id,
-    project_id,
+    room_id,
     translated_by,
     checked_by,
     subtitle,
@@ -21,7 +21,7 @@ export class Subtitle {
     send_by,
   }: {
     id: number;
-    project_id: number;
+    room_id: number;
     translated_by: string;
     checked_by?: string;
     subtitle?: string;
@@ -56,7 +56,7 @@ export class Subtitle {
     }
 
     this.id = id;
-    this.project_id = project_id;
+    this.room_id = room_id;
     this.translated_by = translated_by;
 
     this.send_time = null;
@@ -119,6 +119,7 @@ export interface ErrJsonRes {
 
 export interface RoomData {
   id: number;
+  project_id: number;
   room_name: string;
   room_type: number; // 1 -> nomal, 2 -> auto
   description: string;

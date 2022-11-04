@@ -39,13 +39,13 @@ export const addUser = (ws: WebSocket) => {
   ws.send(addUser);
 };
 
-export const getRoomSubtitles = (ws: WebSocket, roomid: string) => {
+export const getRoomSubtitles = (ws: WebSocket, wsroom: string) => {
   const _getRoomSubtitles: c2sGetRoomSubtitles = {
     head: {
       cmd: "getRoomSubtitles",
     },
     body: {
-      roomid: roomid,
+      wsroom: wsroom,
     },
   };
   const getRoomSubtitles = new TextEncoder().encode(JSON.stringify(_getRoomSubtitles));
@@ -78,14 +78,14 @@ export const changeSubtitle = ({
 
 export const addSubtitleUp = ({
   ws,
-  id,
-  idx,
-  project_id,
+  pre_id,
+  pre_idx,
+  room_id,
 }: {
   ws: WebSocket | undefined;
-  id: number;
-  idx: number;
-  project_id: number;
+  pre_id: number;
+  pre_idx: number;
+  room_id: number;
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
@@ -97,9 +97,9 @@ export const addSubtitleUp = ({
       cmd: "addSubtitleUp",
     },
     body: {
-      pre_subtitle_id: id,
-      pre_subtitle_idx: idx,
-      project_id: project_id,
+      pre_subtitle_id: pre_id,
+      pre_subtitle_idx: pre_idx,
+      room_id: room_id,
       checked_by: currentUser().user_name,
     },
   };
@@ -109,14 +109,14 @@ export const addSubtitleUp = ({
 
 export const addSubtitleDown = ({
   ws,
-  id,
-  idx,
-  project_id,
+  pre_id,
+  pre_idx,
+  room_id,
 }: {
   ws: WebSocket | undefined;
-  id: number;
-  idx: number;
-  project_id: number;
+  pre_id: number;
+  pre_idx: number;
+  room_id: number;
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
@@ -128,9 +128,9 @@ export const addSubtitleDown = ({
       cmd: "addSubtitleDown",
     },
     body: {
-      pre_subtitle_id: id,
-      pre_subtitle_idx: idx,
-      project_id: project_id,
+      pre_subtitle_id: pre_id,
+      pre_subtitle_idx: pre_idx,
+      room_id: room_id,
       checked_by: currentUser().user_name,
     },
   };
@@ -179,11 +179,9 @@ export const editEnd = (ws: WebSocket | undefined, subtitle_id: number) => {
 export const addTranslatedSubtitle = ({
   ws,
   subtitle,
-  project_name,
 }: {
   ws: WebSocket | undefined;
   subtitle: Subtitle;
-  project_name: string;
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
@@ -195,7 +193,6 @@ export const addTranslatedSubtitle = ({
       cmd: "addTransSub",
     },
     body: {
-      project_name: project_name,
       new_subtitle: subtitle,
     },
   };
@@ -225,12 +222,12 @@ export const reorderSubFront = ({
   ws,
   drag_id,
   drop_id,
-  project_id,
+  room_id,
 }: {
   ws: WebSocket | undefined;
   drag_id: number;
   drop_id: number;
-  project_id: number;
+  room_id: number;
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
@@ -243,7 +240,7 @@ export const reorderSubFront = ({
     },
     body: {
       operation_user: currentUser().user_name,
-      project_id: project_id,
+      room_id: room_id,
       drag_id: drag_id,
       drop_id: drop_id,
     },
@@ -256,12 +253,12 @@ export const reorderSubBack = ({
   ws,
   drag_id,
   drop_id,
-  project_id,
+  room_id,
 }: {
   ws: WebSocket | undefined;
   drag_id: number;
   drop_id: number;
-  project_id: number;
+  room_id: number;
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
@@ -274,7 +271,7 @@ export const reorderSubBack = ({
     },
     body: {
       operation_user: currentUser().user_name,
-      project_id: project_id,
+      room_id: room_id,
       drag_id: drag_id,
       drop_id: drop_id,
     },
@@ -310,11 +307,9 @@ export const sendSubtitle = ({
 export const sendSubtitleDirect = ({
   ws,
   subtitle,
-  roomid,
 }: {
   ws: WebSocket | undefined;
   subtitle: Subtitle;
-  roomid: string;
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
@@ -326,7 +321,6 @@ export const sendSubtitleDirect = ({
       cmd: "sendSubtitleDirect",
     },
     body: {
-      roomid: roomid,
       subtitle: subtitle,
     },
   };

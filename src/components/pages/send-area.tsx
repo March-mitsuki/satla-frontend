@@ -23,8 +23,9 @@ const inputStyle =
   "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600";
 
 const SendArea: ParentComponent<{
+  room_id: number;
   ws: WebSocket | undefined;
-  roomid: string;
+  wsroom: string;
 }> = (props) => {
   const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = rootCtx.subtitlesCtx;
   const { currentUser, setUserList } = rootCtx.currentUserCtx;
@@ -75,18 +76,18 @@ const SendArea: ParentComponent<{
         e.preventDefault();
         wsSend.addSubtitleUp({
           ws: props.ws,
-          id: subtitle.id,
-          idx: idx,
-          project_id: subtitle.project_id,
+          pre_id: subtitle.id,
+          pre_idx: idx,
+          room_id: subtitle.room_id,
         });
       }
       if (e.key === "ArrowDown") {
         e.preventDefault();
         wsSend.addSubtitleDown({
           ws: props.ws,
-          id: subtitle.id,
-          idx: idx,
-          project_id: subtitle.project_id,
+          pre_id: subtitle.id,
+          pre_idx: idx,
+          room_id: subtitle.room_id,
         });
       }
       // shift + enter 移动到下一行
@@ -125,18 +126,18 @@ const SendArea: ParentComponent<{
     e.preventDefault();
     wsSend.addSubtitleUp({
       ws: props.ws,
-      id: subtitle.id,
-      idx: idx,
-      project_id: subtitle.project_id,
+      pre_id: subtitle.id,
+      pre_idx: idx,
+      room_id: subtitle.room_id,
     });
   };
   const addDownClickHandler = (e: MouseEvent, idx: number, subtitle: Subtitle) => {
     e.preventDefault();
     wsSend.addSubtitleDown({
       ws: props.ws,
-      id: subtitle.id,
-      idx: idx,
-      project_id: subtitle.project_id,
+      pre_id: subtitle.id,
+      pre_idx: idx,
+      room_id: subtitle.room_id,
     });
   };
 
@@ -158,13 +159,11 @@ const SendArea: ParentComponent<{
     e.preventDefault();
     console.log("发送空行");
     // 目前的发送空行是借用direct send的逻辑
-    // 所以服务端还是先通过roomid查找project_id之后创建新字幕
-    // 但其实可以直接传入当前字幕的project_id, 这样后端就少一个操作
-    // 不过应该无伤大雅才对
+    // 所以服务端是先通过subtitle.room_id查找room之后创建新字幕
 
     const newSub = new Subtitle({
       id: 0,
-      project_id: 0,
+      room_id: props.room_id,
       translated_by: currentUser().user_name,
       checked_by: currentUser().user_name,
       send_by: currentUser().user_name,
@@ -174,7 +173,6 @@ const SendArea: ParentComponent<{
     wsSend.sendSubtitleDirect({
       ws: props.ws,
       subtitle: newSub,
-      roomid: props.roomid,
     });
   };
 

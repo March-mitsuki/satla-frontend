@@ -9,7 +9,7 @@ export interface c2sAddSubtitleUp {
   body: {
     pre_subtitle_id: number;
     pre_subtitle_idx: number;
-    project_id: number;
+    room_id: number;
     checked_by: string;
   };
 }
@@ -21,7 +21,7 @@ export interface c2sAddSubtitleDown {
   body: {
     pre_subtitle_id: number;
     pre_subtitle_idx: number;
-    project_id: number;
+    room_id: number;
     checked_by: string;
   };
 }
@@ -51,7 +51,7 @@ export interface c2sGetRoomSubtitles {
     cmd: "getRoomSubtitles";
   };
   body: {
-    roomid: string;
+    wsroom: string;
   };
 }
 
@@ -81,7 +81,6 @@ export interface c2sAddTranslatedSubtitle {
   };
   body: {
     new_subtitle: Subtitle;
-    project_name: string;
   };
 }
 
@@ -100,7 +99,7 @@ export interface c2sReordrSubFront {
   };
   body: {
     operation_user: string;
-    project_id: number;
+    room_id: number;
     drag_id: number;
     drop_id: number;
   };
@@ -112,7 +111,7 @@ export interface c2sReordrSubBack {
   };
   body: {
     operation_user: string;
-    project_id: number;
+    room_id: number;
     drag_id: number;
     drop_id: number;
   };
@@ -132,7 +131,6 @@ export interface c2sSendSubDirect {
     cmd: "sendSubtitleDirect";
   };
   body: {
-    roomid: string;
     subtitle: Subtitle;
   };
 }
@@ -200,7 +198,7 @@ export interface s2cEventMap {
       | "sChangeReversed"
       | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
-  body: any;
+  body: any; // eslint-disable-line
 }
 
 export interface s2cChangeUserBody {
@@ -215,7 +213,7 @@ export interface s2cGetRoomSubBody {
 export interface s2cAddSubtitleBody {
   // 无论往上加还是往下加, client需要的body资料都相同
   // 只是通过不同的cmd判断是往上加还是往下加而已
-  project_id: number;
+  room_id: number;
   new_subtitle_id: number;
   pre_subtitle_idx: number;
   checked_by: string;
@@ -271,5 +269,5 @@ export interface s2cChangeReversedBody {
 }
 
 export interface s2cHeartBeatBody {
-  data: any;
+  data: any; // eslint-disable-line
 }

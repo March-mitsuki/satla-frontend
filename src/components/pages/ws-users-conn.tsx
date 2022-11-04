@@ -41,14 +41,17 @@ const WsUsers: Component<{
   return (
     <ul class="flex relative select-none">
       <For each={props.userList}>
-        {(elem, idx) => (
-          <li
-            style={listStylePositon(idx())}
-            class={`${baseStyle} ${colors[randomColor()]} ${listPosition(idx())}`}
-          >
-            {elem}
-          </li>
-        )}
+        {(elem, idx) => {
+          console.log("WsUsers compo For render now");
+          return (
+            <li
+              style={listStylePositon(idx())}
+              class={`${baseStyle} ${colors[randomColor()]} ${listPosition(idx())}`}
+            >
+              {elem}
+            </li>
+          );
+        }}
       </For>
     </ul>
   );

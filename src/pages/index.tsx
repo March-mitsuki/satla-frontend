@@ -4,7 +4,7 @@ import { createResource } from "solid-js";
 
 // local dependencies
 import { PaneX } from "@/components";
-import { ProjectOverview, ProjectDetailOverview, IndexNavi } from "@/components/pages";
+import { ProjectOverview, ProjectDetail, IndexNavi } from "@/components/pages";
 
 // type
 import type { Component } from "solid-js";
@@ -63,7 +63,7 @@ const Home: Component = () => {
                 <ProjectOverview projects={projects()}></ProjectOverview>
               </div>
             }
-            rightElem={<ProjectDetailOverview></ProjectDetailOverview>}
+            rightElem={<ProjectDetail></ProjectDetail>}
             dragLineClass="bg-neutral-500 hover:bg-sky-500"
           ></PaneX>
         </div>

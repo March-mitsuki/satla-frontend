@@ -12,8 +12,8 @@ import { DisplayReview } from "@/components/pages";
 const DisplayPage: Component = () => {
   const ws_base_url = import.meta.env.VITE_WS_BASE_URL;
 
-  const param = useParams<{ roomid: string }>();
-  const url = ws_base_url + param.roomid;
+  const param = useParams<{ wsroom: string }>();
+  const url = ws_base_url + param.wsroom;
   const ws = new WebSocket(url);
 
   createEffect(() => {

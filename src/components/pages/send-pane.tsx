@@ -23,7 +23,8 @@ const inputStyle =
   "flex-1 rounded-lg bg-neutral-700 px-2 mx-1 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600";
 
 const SendPane: Component<{
-  roomid: string;
+  room_id: number;
+  wsroom: string;
   ws: WebSocket | undefined;
 }> = (props) => {
   const { currentUser } = rootCtx.currentUserCtx;
@@ -41,7 +42,7 @@ const SendPane: Component<{
   let storageStyle: StorageStyleData | undefined;
   if (storageStyleStr) {
     storageStyle = JSON.parse(storageStyleStr) as StorageStyleData;
-    const roomStyle: RoomStyleData | undefined = storageStyle[props.roomid];
+    const roomStyle: RoomStyleData | undefined = storageStyle[props.wsroom];
     if (roomStyle) {
       setStyle(roomStyle.style);
       setReversed(roomStyle.reversed);
@@ -57,9 +58,8 @@ const SendPane: Component<{
     if (inputType()) {
       // 输入
       const newSub = new Subtitle({
-        // project_id和id都为0, 服务器会根据roomid寻找对应project进行插入
         id: 0,
-        project_id: 0,
+        room_id: props.room_id,
         translated_by: currentUser().user_name,
         checked_by: currentUser().user_name,
         origin: formElem.origin.value as string,
@@ -68,13 +68,12 @@ const SendPane: Component<{
       wsSend.addTranslatedSubtitle({
         ws: props.ws,
         subtitle: newSub,
-        project_name: props.roomid,
       });
     } else {
-      // 发送
+      // 直接发送
       const newSub = new Subtitle({
         id: 0,
-        project_id: 0,
+        room_id: props.room_id,
         translated_by: currentUser().user_name,
         checked_by: currentUser().user_name,
         send_by: currentUser().user_name,
@@ -87,7 +86,6 @@ const SendPane: Component<{
       wsSend.sendSubtitleDirect({
         ws: props.ws,
         subtitle: newSub,
-        roomid: props.roomid,
       });
     }
   };
@@ -102,7 +100,7 @@ const SendPane: Component<{
   };
 
   const openDisplayPage = () => {
-    window.open(`/display/${props.roomid}`, "_blank");
+    window.open(`/display/${props.wsroom}`, "_blank");
   };
 
   const onStyleChangeSubmitHandler = (e: SubmitEvent & { currentTarget: HTMLFormElement }) => {
@@ -138,7 +136,7 @@ const SendPane: Component<{
     if (storageStyleStr) {
       if (storageStyleStr !== "") {
         const storageStyle = JSON.parse(storageStyleStr) as StorageStyleData;
-        delete storageStyle[props.roomid];
+        delete storageStyle[props.wsroom];
         localStorage.setItem(STORAGE_STYLE, JSON.stringify(storageStyle));
       }
     }
@@ -156,12 +154,12 @@ const SendPane: Component<{
         setBilingualSend(body.bilingual);
         // 更新之后同时更新本地储存
         if (storageStyle) {
-          if (storageStyle[props.roomid]) {
+          if (storageStyle[props.wsroom]) {
             // 如果存在storage且存在对应房间
-            storageStyle[props.roomid].bilingualSend = body.bilingual;
+            storageStyle[props.wsroom].bilingualSend = body.bilingual;
           } else {
             // 如果存在storage但不存在对应房间
-            storageStyle[props.roomid] = {
+            storageStyle[props.wsroom] = {
               style: {
                 subtitle: defaultSubtitleStyle,
                 origin: defaultOriginStyle,
@@ -173,7 +171,7 @@ const SendPane: Component<{
         } else {
           // 如果根本不存在storage
           storageStyle = {
-            [props.roomid]: {
+            [props.wsroom]: {
               style: {
                 subtitle: defaultSubtitleStyle,
                 origin: defaultOriginStyle,
@@ -192,15 +190,15 @@ const SendPane: Component<{
         });
         // 更新之后同时更新本地储存
         if (storageStyle) {
-          if (storageStyle[props.roomid]) {
+          if (storageStyle[props.wsroom]) {
             // 如果存在storage且存在对应房间
-            storageStyle[props.roomid].style = {
+            storageStyle[props.wsroom].style = {
               subtitle: body.subtitle,
               origin: body.origin,
             };
           } else {
             // 如果存在storage但不存在对应房间
-            storageStyle[props.roomid] = {
+            storageStyle[props.wsroom] = {
               style: {
                 subtitle: body.subtitle,
                 origin: body.origin,
@@ -212,7 +210,7 @@ const SendPane: Component<{
         } else {
           // 如果根本不存在storage
           storageStyle = {
-            [props.roomid]: {
+            [props.wsroom]: {
               style: {
                 subtitle: body.subtitle,
                 origin: body.origin,
@@ -228,12 +226,12 @@ const SendPane: Component<{
         setReversed(body.reversed);
         // 更新之后同时更新本地储存
         if (storageStyle) {
-          if (storageStyle[props.roomid]) {
+          if (storageStyle[props.wsroom]) {
             // 如果存在storage且存在对应房间
-            storageStyle[props.roomid].reversed = body.reversed;
+            storageStyle[props.wsroom].reversed = body.reversed;
           } else {
             // 如果存在storage但不存在对应房间
-            storageStyle[props.roomid] = {
+            storageStyle[props.wsroom] = {
               style: {
                 subtitle: defaultSubtitleStyle,
                 origin: defaultOriginStyle,
@@ -245,7 +243,7 @@ const SendPane: Component<{
         } else {
           // 如果根本不存在storage
           storageStyle = {
-            [props.roomid]: {
+            [props.wsroom]: {
               style: {
                 subtitle: defaultSubtitleStyle,
                 origin: defaultOriginStyle,

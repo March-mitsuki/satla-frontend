@@ -38,8 +38,14 @@ const TranslatePage = () => {
   };
 
   // 每个page连接不一样的ws room
-  const param = useParams<{ roomid: string }>();
-  const url = ws_base_url + param.roomid;
+  const param = useParams<{ wsroom: string }>();
+  const url = ws_base_url + param.wsroom;
+  const room_id = Number(param.wsroom.split("_")[1]);
+  if (isNaN(room_id)) {
+    window.alert("错误的url: " + JSON.stringify(param.wsroom.split("_")));
+    console.log("wrong params: ", param.wsroom.split("_"));
+    return;
+  }
 
   createEffect(() => {
     if (currentUser().id === -1) {
@@ -53,7 +59,7 @@ const TranslatePage = () => {
       return;
     }
     ws.onopen = () => {
-      wsOn.onopen(ws, param.roomid);
+      wsOn.onopen(ws, param.wsroom);
       setIsWsconn(true);
     };
     ws.onclose = () => {
@@ -84,7 +90,7 @@ const TranslatePage = () => {
       <Title>翻译页面</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
-          <Navi currentProject={param.roomid} userList={userList()}></Navi>
+          <Navi currentProject={param.wsroom} userList={userList()}></Navi>
         </div>
         <div class="flex flex-auto pl-2">
           <div class="flex flex-col">
@@ -176,7 +182,7 @@ const TranslatePage = () => {
               contentsWrapperClass="border-2 border-gray-500 rounded-b-lg flex-auto bg-neutral-700"
               risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
-              <TranslatePane ws={_ws()} roomid={param.roomid}></TranslatePane>
+              <TranslatePane room_id={room_id} ws={_ws()} wsroom={param.wsroom}></TranslatePane>
             </FloatingWindow>
           </div>
           <div class="flex-auto h-[calc(100vh-70px)]">

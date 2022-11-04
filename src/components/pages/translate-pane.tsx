@@ -16,8 +16,9 @@ const inputStyle =
   "flex-1 rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600";
 
 const TranslatePane: Component<{
+  room_id: number;
   ws: WebSocket | undefined;
-  roomid: string;
+  wsroom: string;
 }> = (props) => {
   const {
     // pagetype: false = 翻译, true = 校对, default = false
@@ -35,7 +36,7 @@ const TranslatePane: Component<{
   let storageMemo: StorageMemoData | undefined;
   if (storageMemoStr) {
     storageMemo = JSON.parse(storageMemoStr) as StorageMemoData;
-    const roomMemo: string[] | null = storageMemo[props.roomid];
+    const roomMemo: string[] | null = storageMemo[props.wsroom];
     setCheckMemo(roomMemo);
   }
 
@@ -53,7 +54,7 @@ const TranslatePane: Component<{
       // project_id和新id都从服务器拿, 服务器根据roomid进行插入
       id: 0,
       input_time: fmtdt,
-      project_id: 0,
+      room_id: props.room_id,
       translated_by: rootCtx.currentUserCtx.currentUser().user_name,
       origin: formElem.origin.value as string,
       subtitle: formElem.subtitle.value as string,
@@ -61,7 +62,6 @@ const TranslatePane: Component<{
     wsSend.addTranslatedSubtitle({
       ws: props.ws,
       subtitle: newSub,
-      project_name: props.roomid,
     });
   };
 
@@ -73,11 +73,11 @@ const TranslatePane: Component<{
     // 无论是删是加要做的事情都一样, 只要更改了就要改localStorage
     if (storageMemo) {
       // 无论是否存在房间写的东西都一样(更改已存在和增加新要素都是同一个写法)
-      storageMemo[props.roomid] = checkMemo();
+      storageMemo[props.wsroom] = checkMemo();
     } else {
       // 若不存在则需要新建一整个storage构造体
       storageMemo = {
-        [props.roomid]: checkMemo(),
+        [props.wsroom]: checkMemo(),
       };
     }
     localStorage.setItem(STORAGE_MEMO, JSON.stringify(storageMemo));

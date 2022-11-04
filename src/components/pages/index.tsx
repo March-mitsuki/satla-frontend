@@ -9,4 +9,4 @@ export { default as WsUsers } from "./ws-users-conn";
 export { default as CurrentUserInfo } from "./current-userinfo";
 export { default as DisplayReview } from "./display-review";
 export { default as IndexNavi } from "./index-navi";
-export { default as ProjectDetailOverview } from "./project-detail";
+export { default as ProjectDetail } from "./project-detail";
