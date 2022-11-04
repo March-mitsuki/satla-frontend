@@ -59,7 +59,7 @@ const TranslatePage = () => {
       return;
     }
     ws.onopen = () => {
-      wsOn.onopen(ws, param.wsroom);
+      wsOn.onopen(ws, room_id);
       setIsWsconn(true);
     };
     ws.onclose = () => {

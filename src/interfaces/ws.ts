@@ -51,7 +51,7 @@ export interface c2sGetRoomSubtitles {
     cmd: "getRoomSubtitles";
   };
   body: {
-    wsroom: string;
+    room_id: number;
   };
 }
 

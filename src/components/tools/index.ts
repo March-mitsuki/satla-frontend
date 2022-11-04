@@ -56,7 +56,16 @@ export const isErrJsonRes = (obj: unknown): obj is ErrJsonRes => {
 export const STORAGE_STYLE = "send_style";
 export const STORAGE_MEMO = "check_memo";
 
-export const defaultSubtitleStyle =
-  "font-size:24px; line-height:32px; font-weight:700; text-align:center; color: white;";
-export const defaultOriginStyle =
-  "font-size:18px; line-height:24px; font-weight:700; text-align:center; color: white;";
+export const defaultSubtitleStyle = `font-size:24px;
+line-height:32px;
+font-weight:700;
+text-align:center;
+color: white;
+text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);`;
+
+export const defaultOriginStyle = `font-size:24px;
+line-height:32px;
+font-weight:700;
+text-align:center;
+color: white;
+text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);`;

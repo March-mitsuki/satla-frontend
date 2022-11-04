@@ -249,8 +249,8 @@ export const reorderSubBackOther = ({ drag_id, drop_id }: { drag_id: number; dro
   setSubtitles(dc_subtitles);
 };
 
-export const onopen = (ws: WebSocket, roomid: string) => {
+export const onopen = (ws: WebSocket, room_id: number) => {
   console.log("ws connected");
   wsSend.addUser(ws);
-  wsSend.getRoomSubtitles(ws, roomid);
+  wsSend.getRoomSubtitles(ws, room_id);
 };

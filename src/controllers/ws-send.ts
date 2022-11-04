@@ -39,13 +39,13 @@ export const addUser = (ws: WebSocket) => {
   ws.send(addUser);
 };
 
-export const getRoomSubtitles = (ws: WebSocket, wsroom: string) => {
+export const getRoomSubtitles = (ws: WebSocket, room_id: number) => {
   const _getRoomSubtitles: c2sGetRoomSubtitles = {
     head: {
       cmd: "getRoomSubtitles",
     },
     body: {
-      wsroom: wsroom,
+      room_id: room_id,
     },
   };
   const getRoomSubtitles = new TextEncoder().encode(JSON.stringify(_getRoomSubtitles));

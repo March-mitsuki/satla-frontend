@@ -388,7 +388,7 @@ const SendPane: Component<{
       <form
         id="send-style-form"
         onSubmit={(e) => onStyleChangeSubmitHandler(e)}
-        class="flex flex-col gap-1 px-1 pb-1 overflow-hidden h-[calc(100%-120px)]"
+        class="flex flex-col gap-2 px-5 pb-1 overflow-auto h-[calc(100%-120px)]"
       >
         <label class="flex gap-2">
           <div class="text-sm">翻译:</div>
