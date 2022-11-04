@@ -23,14 +23,14 @@ const StreamPage = () => {
       },
     ],
   };
-  const param = useParams<{ roomid: string }>();
+  const param = useParams<{ wsroom: string }>();
 
   return (
     <>
       <Title>直播页面</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg text-xl py-3 px-5">
-          <Navi currentProject={param.roomid}></Navi>
+          <Navi currentProject={param.wsroom}></Navi>
         </div>
         <div class="w-full flex-initial">
           <VideoJS {...videoJSOption}></VideoJS>
