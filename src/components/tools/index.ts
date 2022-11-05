@@ -29,6 +29,67 @@ export const logoutUser = async (): Promise<string> => {
   }
 };
 
+// 当前未被使用
+export const cancelable_sleep = (msec: number) => {
+  let timeoutId: NodeJS.Timeout | null;
+  let resolve: (value: unknown) => void; // eslint-disable-line
+  let reject: (reason: string) => void;
+  const exec = () =>
+    new Promise((_resolve, _reject) => {
+      resolve = _resolve;
+      reject = _reject;
+      timeoutId = setTimeout(() => {
+        timeoutId = null;
+        _resolve(`sleep ${msec}`);
+      }, msec);
+    });
+  return {
+    exec,
+    cancel: () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+        reject("sleep canceled");
+      }
+    },
+  };
+};
+
+export const popFileSelector = () => {
+  return new Promise<string[]>((resolve, reject) => {
+    const inputElem = document.createElement("input");
+    inputElem.type = "file";
+    try {
+      inputElem.addEventListener("change", (e) => {
+        const inputTarget = e.currentTarget as HTMLInputElement;
+        if (!inputTarget.files) {
+          reject("files is null");
+          return;
+        }
+        const file = inputTarget.files[0];
+        let data: string | ArrayBuffer | null;
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
+          data = reader.result;
+          if (typeof data === "string") {
+            resolve([data, file.name]);
+            inputElem.remove();
+          } else {
+            reject("data is not in type string");
+            inputElem.remove();
+          }
+        };
+      });
+      inputElem.click();
+    } catch (err) {
+      reject(err);
+      inputElem.remove();
+    }
+    return;
+  });
+};
+
 type UnknownObject<T extends object> = {
   [P in keyof T]: unknown;
 };
@@ -55,6 +116,7 @@ export const isErrJsonRes = (obj: unknown): obj is ErrJsonRes => {
 
 export const STORAGE_STYLE = "send_style";
 export const STORAGE_MEMO = "check_memo";
+export const STORAGE_ASS = "ass_string";
 
 export const defaultSubtitleStyle = `font-size:24px;
 line-height:32px;

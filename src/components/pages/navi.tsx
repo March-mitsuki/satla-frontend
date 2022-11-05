@@ -107,7 +107,7 @@ const Navi: Component<{
         <button
           onClick={() => {
             localStorage.clear();
-            location.reload();
+            // location.reload();
           }}
           class="flex items-center gap-1 px-2 py-1 cursor-pointer rounded-md hover:bg-neutral-600 active:bg-neutral-500"
         >

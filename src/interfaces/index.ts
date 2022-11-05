@@ -14,11 +14,11 @@ export class Subtitle {
     id,
     room_id,
     translated_by,
-    checked_by,
-    subtitle,
-    origin,
-    input_time,
-    send_by,
+    checked_by = "",
+    subtitle = "",
+    origin = "",
+    input_time = "00:00:00",
+    send_by = "",
   }: {
     id: number;
     room_id: number;
@@ -29,36 +29,14 @@ export class Subtitle {
     input_time?: string;
     send_by?: string;
   }) {
-    if (checked_by) {
-      this.checked_by = checked_by;
-    } else {
-      this.checked_by = "";
-    }
-    if (subtitle) {
-      this.subtitle = subtitle;
-    } else {
-      this.subtitle = "";
-    }
-    if (origin) {
-      this.origin = origin;
-    } else {
-      this.origin = "";
-    }
-    if (input_time) {
-      this.input_time = input_time;
-    } else {
-      this.input_time = "00:00:00";
-    }
-    if (send_by) {
-      this.send_by = send_by;
-    } else {
-      this.send_by = "";
-    }
-
     this.id = id;
     this.room_id = room_id;
     this.translated_by = translated_by;
-
+    this.checked_by = checked_by;
+    this.subtitle = subtitle;
+    this.origin = origin;
+    this.input_time = input_time;
+    this.send_by = send_by;
     this.send_time = null;
   }
 }

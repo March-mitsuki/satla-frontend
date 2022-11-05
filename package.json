@@ -36,6 +36,7 @@
   "dependencies": {
     "@solidjs/meta": "^0.28.0",
     "@solidjs/router": "^0.4.3",
+    "ass-compiler": "^0.1.4",
     "luxon": "^3.0.4",
     "solid-js": "^1.5.4"
   }
