@@ -1,13 +1,21 @@
 // dependencies lib
 import { useParams } from "@solidjs/router";
-import { createEffect, onCleanup } from "solid-js";
+import { createEffect, onCleanup, createSignal } from "solid-js";
 import { Title } from "@solidjs/meta";
 
 // local dependencies
-import { wsSend } from "@/controllers";
-import { AutoNavi, AutoPreview, AssUploader } from "@/components/pages/auto";
+import { wsAutoSend, wsSend } from "@/controllers";
+import { Modal } from "@/components";
+import {
+  AutoNavi,
+  AutoPreview,
+  AssUploader,
+  Operation,
+  OperationCommon,
+} from "@/components/pages/auto";
 
 const AutoPlay = () => {
+  const [isWsconn, setIsWsconn] = createSignal<boolean>(false);
   const ws_base_url = import.meta.env.VITE_WS_BASE_URL;
 
   // 每个page连接不一样的ws room
@@ -24,9 +32,15 @@ const AutoPlay = () => {
   createEffect(() => {
     ws.onopen = () => {
       console.log("ws connect");
+      setIsWsconn(true);
+      wsAutoSend.getRoomAutoList({
+        ws: ws,
+        room_id: room_id,
+      });
     };
     ws.onclose = () => {
       console.log("ws close");
+      setIsWsconn(false);
     };
     ws.onerror = (evt) => {
       console.log("ws err", evt);
@@ -55,9 +69,21 @@ const AutoPlay = () => {
           <AutoPreview></AutoPreview>
         </div>
         <div class="py-3 px-5 flex gap-5 items-center justify-center">
-          <AssUploader room_id={room_id}></AssUploader>
+          <AssUploader ws={ws} room_id={room_id}></AssUploader>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
+          <OperationCommon></OperationCommon>
         </div>
+        <div class="py-3 px-5 flex gap-5 items-center justify-center w-full">
+          <Operation ws={ws}></Operation>
+        </div>
+        {isWsconn() === false && (
+          <Modal>
+            <div class="flex gap-3 justify-center items-center">
+              <div>正在连接服务器, 若一直无法连接请刷新重试</div>
+              <div class="animate-spin h-8 w-8 bg-neutral-400 rounded-xl"></div>
+            </div>
+          </Modal>
+        )}
       </div>
     </>
   );

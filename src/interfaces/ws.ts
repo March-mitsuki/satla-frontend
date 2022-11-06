@@ -1,4 +1,5 @@
 import { Subtitle } from ".";
+import { AutoList, AutoSub } from "./autoplay";
 
 // c2s -> client to server msg
 
@@ -164,6 +165,25 @@ export interface c2sChangeReversed {
   };
 }
 
+export interface c2sAddAutoSub {
+  head: {
+    cmd: "addAutoSub";
+  };
+  body: {
+    auto_subs: AutoSub[];
+    memo: string;
+  };
+}
+
+export interface c2sGetRoomAutoLists {
+  head: {
+    cmd: "getRoomAutoLists";
+  };
+  body: {
+    room_id: number;
+  };
+}
+
 export interface c2sHeartBeat {
   // 目前的心跳是复读client发过去的东西, 然后发给心跳方
   head: {
@@ -196,6 +216,8 @@ export interface s2cEventMap {
       | "sChangeStyle"
       | "sChangeBilingual"
       | "sChangeReversed"
+      | "sAddAutoSub"
+      | "sGetRoomAutoLists"
       | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
   body: any; // eslint-disable-line
@@ -266,6 +288,16 @@ export interface s2cChangeBilingualBody {
 
 export interface s2cChangeReversedBody {
   reversed: boolean;
+}
+
+export interface s2cAddAutoSubBody {
+  status: boolean;
+  new_list: AutoList;
+}
+
+export interface s2cGetRoomAutoListsBody {
+  status: boolean;
+  auto_lists: AutoList[];
 }
 
 export interface s2cHeartBeatBody {

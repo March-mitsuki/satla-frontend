@@ -67,6 +67,10 @@ export const popFileSelector = () => {
           return;
         }
         const file = inputTarget.files[0];
+        if (file.size >= 5 * 1000 * 1000) {
+          reject("file is large than 5mb");
+          return;
+        }
         let data: string | ArrayBuffer | null;
         const reader = new FileReader();
         reader.readAsText(file);

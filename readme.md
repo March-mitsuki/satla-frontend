@@ -90,7 +90,8 @@ https://github.com/March-mitsuki/satla-backend
   - [x] user control
     - [x] 修改密码
 - [ ] 进阶功能
-  - [ ] 分房间改为一项目多房间
+  - [ ] 把所有的 ws 回复都加上一项 status 来判断是否成功
+  - [x] 分房间改为一项目多房间
   - [ ] 支持自动发送
 - [ ] 性能修复
   - [ ] 改为 root 统一管理 ctx (使用自制 redux)
