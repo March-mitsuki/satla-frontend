@@ -97,7 +97,8 @@ const Operation: Component<{
               <div class="flex items-center justify-center gap-5">
                 <Switch
                   fallback={
-                    <div class="flex items-center justify-center p-[2px] rounded-md bg-neutral-500">
+                    <div class="flex items-center justify-center p-[2px] rounded-md bg-neutral-500 cursor-not-allowed ">
+                      {/* 禁止操作 */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
