@@ -19,6 +19,15 @@ export interface c2sGetRoomAutoLists {
   };
 }
 
+export interface c2sPlayStart {
+  head: {
+    cmd: "playStart";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
 // 以下 s2c
 
 export interface s2cAddAutoSubBody {
@@ -29,4 +38,8 @@ export interface s2cAddAutoSubBody {
 export interface s2cGetRoomAutoListsBody {
   status: boolean;
   auto_lists: AutoList[];
+}
+
+export interface s2cAutoChangeSub {
+  subtitle: AutoSub;
 }

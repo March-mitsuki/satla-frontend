@@ -5,9 +5,11 @@ import { createEffect, createSignal, For, Match, Switch } from "solid-js";
 import rootCtx from "@/components/contexts";
 
 // type
-import { s2cAddAutoSubBody, s2cEventMap, s2cGetRoomAutoListsBody } from "@/interfaces/ws";
+import { s2cEventMap } from "@/interfaces/ws";
+import { s2cAddAutoSubBody, s2cAutoChangeSub, s2cGetRoomAutoListsBody } from "@/interfaces/ws-auto";
 import { Component } from "solid-js";
-import { wsAutoOn } from "@/controllers";
+import { wsAutoOn, wsAutoSend } from "@/controllers";
+import { AutoList } from "@/interfaces/autoplay";
 
 type PlayingStat = {
   isPlaying: boolean;
@@ -27,6 +29,15 @@ const Operation: Component<{
     playingID: -1,
   });
 
+  const handlePlayStart = (
+    e: MouseEvent & { currentTarget: HTMLButtonElement },
+    currentList: AutoList,
+  ) => {
+    e.preventDefault();
+    setPlayingStat({ isPlaying: true, playingID: currentList.id });
+    wsAutoSend.autoPlayStart(props.ws, currentList.id);
+  };
+
   createEffect(() => {
     props.ws.onmessage = (evt) => {
       const data = JSON.parse(evt.data as string) as s2cEventMap;
@@ -39,6 +50,11 @@ const Operation: Component<{
         case "sAddAutoSub": {
           const body = data.body as s2cAddAutoSubBody;
           wsAutoOn.addAutoSub(body);
+          break;
+        }
+        case "autoChangeSub": {
+          const body = data.body as s2cAutoChangeSub;
+          console.log("[change]", body.subtitle.subtitle + " | " + body.subtitle.origin);
           break;
         }
         case "heartBeat":
@@ -209,10 +225,7 @@ const Operation: Component<{
                     </button>
                   </Match>
                   <Match when={playingStat().isPlaying === false}>
-                    <button
-                      class={opeBtnStyle("sky")}
-                      onClick={() => setPlayingStat({ isPlaying: true, playingID: elem.id })}
-                    >
+                    <button class={opeBtnStyle("sky")} onClick={(e) => handlePlayStart(e, elem)}>
                       {/* 开始 */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
