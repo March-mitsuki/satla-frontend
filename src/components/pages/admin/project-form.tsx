@@ -81,12 +81,12 @@ const NewProjectForm = () => {
     poster(newProject)
       .then(async (res) => {
         if (res.status === 200) {
-          const body: NewProjectResponseBody = (await res.json()) as NewProjectResponseBody;
+          const body = (await res.json()) as NewProjectResponseBody;
           if (body.code === -1) {
             if (body.status === 5303) {
               setPostStatus({
                 status: 1,
-                msg: "创建失败, 可能是项目名称重复, 请更改后重试, 若一直失败请联系管理员",
+                msg: `[ code:${body.status} ]创建失败, ${body.msg}`,
               });
             }
           } else if (body.code === 0) {
@@ -101,12 +101,15 @@ const NewProjectForm = () => {
               });
             }
           }
+        } else {
+          window.alert("未曾设想的response, 请查看log");
+          console.log("[err] unexpected response: ", res);
         }
       })
-      .catch((err: string) => {
+      .catch((err) => {
         setPostStatus({
           status: 1,
-          msg: `网络错误: ${err}`,
+          msg: `网络错误: ${JSON.stringify(err)}`,
         });
       });
 
@@ -122,8 +125,11 @@ const NewProjectForm = () => {
   const textareaKeyDownHandler = (e: KeyboardEvent & { currentTarget: HTMLTextAreaElement }) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      const formElem = document.getElementById("project-form");
-      _submitHandler(formElem as HTMLFormElement);
+    }
+  };
+  const preventEnterSubmit = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
     }
   };
 
@@ -151,6 +157,7 @@ const NewProjectForm = () => {
               name="projectName"
               pattern="^[a-z0-9_]{1,30}$"
               placeholder="小写英数字加下划线,30字以内"
+              onKeyDown={preventEnterSubmit}
               class="
                 flex-1 rounded-lg bg-neutral-700 p-3 border-2 border-gray-500
                 focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600
@@ -175,6 +182,7 @@ const NewProjectForm = () => {
               name="pointMan"
               placeholder="*以后会改成下拉框选择"
               class={inputStyle}
+              onKeyDown={preventEnterSubmit}
             />
           </label>
           <div class="text-end">*只能由管理员新建项目</div>

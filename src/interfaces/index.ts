@@ -133,6 +133,12 @@ export interface NewProjectResponseBody {
   msg: string;
 }
 
+export interface NewRoomResponseBody {
+  code: -1 | 0;
+  status: number;
+  msg: string;
+}
+
 export interface ChangePassword {
   id: number;
   user_name: string;

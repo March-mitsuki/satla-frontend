@@ -2,16 +2,16 @@
 import { createSignal, onMount } from "solid-js";
 
 // type
-import type { ParentComponent, JSXElement } from "solid-js";
+import type { Component, JSXElement } from "solid-js";
 
-const PaneX: ParentComponent<{
+const PaneX: Component<{
   leftElem: JSXElement;
   rightElem: JSXElement;
   minLeftElem: string;
   minRightElem: string;
   leftElemWrapperClass?: string;
   rightElemWrapperClass?: string;
-  dragLineClass: string | "";
+  dragLineClass: string;
 }> = (props) => {
   const [width, setWidth] = createSignal(0);
   let paneContainerRef: HTMLDivElement | undefined;

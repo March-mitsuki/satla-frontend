@@ -60,7 +60,7 @@ const Home: Component = () => {
                     <div>刷新项目列表</div>
                   </button>
                 </div>
-                <ProjectOverview projects={projects()}></ProjectOverview>
+                <ProjectOverview type="nomal" projects={projects()}></ProjectOverview>
               </div>
             }
             rightElem={<ProjectDetail></ProjectDetail>}

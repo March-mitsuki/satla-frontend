@@ -2,16 +2,17 @@
 import { createSignal, onMount } from "solid-js";
 
 // type
-import type { ParentComponent, JSXElement } from "solid-js";
+import type { Component, JSXElement } from "solid-js";
 
-const PaneY: ParentComponent<{
+const PaneY: Component<{
   topElem: JSXElement;
   bottomElem: JSXElement;
   minTopELem: string;
   minBottomElem: string;
   topElemWrapperClass?: string;
   bottomElemWrapperClass?: string;
-  dragLineClass?: string;
+  dragLineClass: string;
+  headHeight?: number;
 }> = (props) => {
   const [height, setHeight] = createSignal(0);
   let paneContainerRef: HTMLDivElement | undefined;
@@ -19,7 +20,11 @@ const PaneY: ParentComponent<{
   const onMouseDownHandler = () => {
     onmousemove = (e: MouseEvent) => {
       e.preventDefault();
-      setHeight(e.clientY);
+      if (props.headHeight) {
+        setHeight(e.clientY - props.headHeight);
+      } else {
+        setHeight(e.clientY);
+      }
     };
     onmouseup = () => {
       onmousemove = () => null;
@@ -54,12 +59,11 @@ const PaneY: ParentComponent<{
         </div>
         <div
           onMouseDown={onMouseDownHandler}
-          style="
-            min-width: 5px;
-            min-height: 5px;
-            background-color: #c0c0c0;
-            cursor: row-resize;
-          "
+          style={
+            props.dragLineClass === ""
+              ? "min-width:5px; min-height:5px; background-color:#c0c0c0; cursor:row-resize;"
+              : "min-width:5px; min-height:5px; cursor:row-resize;"
+          }
           class={props.dragLineClass}
         ></div>
         <div

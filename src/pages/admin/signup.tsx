@@ -85,6 +85,9 @@ const SignUpPage = () => {
                 break;
             }
           }
+        } else {
+          window.alert("未曾设想的response, 请查看log");
+          console.log("[err] unexpected response: ", res);
         }
       })
       .catch((err) => {
@@ -120,6 +123,12 @@ const SignUpPage = () => {
     }
   };
 
+  const preventEnterSubmit = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
   let signupFormRef: HTMLFormElement | undefined;
 
   return (
@@ -143,6 +152,7 @@ const SignUpPage = () => {
               <input
                 type="text"
                 name="username"
+                onKeyDown={preventEnterSubmit}
                 pattern=".{1,20}"
                 placeholder="1~20文字, 可使用中文"
                 autocomplete="off"
@@ -158,6 +168,7 @@ const SignUpPage = () => {
               <input
                 type="email"
                 name="email"
+                onKeyDown={preventEnterSubmit}
                 placeholder="example@mail.com"
                 autoCapitalize="off"
                 autocomplete="email"
@@ -176,6 +187,7 @@ const SignUpPage = () => {
               <input
                 type="password"
                 name="password"
+                onKeyDown={preventEnterSubmit}
                 placeholder="8~24文字, 可使用英数字与特殊文字"
                 autoCapitalize="off"
                 autocomplete="new-password"
@@ -192,6 +204,7 @@ const SignUpPage = () => {
               <input
                 type="password"
                 name="repeat"
+                onKeyDown={preventEnterSubmit}
                 placeholder="请再次输入密码"
                 onInput={(e) => repeatInputHandler(e)}
                 classList={{
