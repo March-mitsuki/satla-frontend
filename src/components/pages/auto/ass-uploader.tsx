@@ -5,8 +5,9 @@ import { popFileSelector } from "@/components/tools";
 import { wsAutoSend } from "@/controllers";
 
 // type
-import { Component, createSignal } from "solid-js";
+import { Component, createEffect, createSignal } from "solid-js";
 import { AutoSub } from "@/interfaces/autoplay";
+import { s2cAddAutoSubBody, s2cEventMap } from "@/interfaces/ws";
 
 const AssUploader: Component<{
   room_id: number;
@@ -81,6 +82,19 @@ const AssUploader: Component<{
     localStorage.removeItem(STORAGE_ASS);
     setNowAss("未选择");
   };
+
+  createEffect(() => {
+    props.ws.addEventListener("message", (evt) => {
+      const data = JSON.parse(evt.data as string) as s2cEventMap;
+      if (data.head.cmd === "sAddAutoSub") {
+        const body = data.body as s2cAddAutoSubBody;
+        if (body.status) {
+          assTypeSelectorRef!.value = "0"; // eslint-disable-line @typescript-eslint/no-non-null-assertion
+          memoInputRef!.value = ""; // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        }
+      }
+    });
+  });
 
   let assTypeSelectorRef: HTMLSelectElement | undefined;
   let memoInputRef: HTMLInputElement | undefined;

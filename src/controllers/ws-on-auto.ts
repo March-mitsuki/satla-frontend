@@ -18,7 +18,7 @@ export const addAutoSub = (body: s2cAddAutoSubBody) => {
     setAutoList((pre) => {
       if (pre) {
         pre.push(body.new_list);
-        return pre;
+        return pre.map((x) => x);
       } else {
         const newList: AutoList[] = [body.new_list];
         return newList;
