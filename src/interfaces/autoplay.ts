@@ -67,3 +67,8 @@ export class AutoList {
     this.memo = memo;
   }
 }
+
+export interface PlayingStat {
+  isPlaying: boolean;
+  playingID: number;
+}

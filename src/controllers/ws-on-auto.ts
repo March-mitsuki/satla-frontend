@@ -1,4 +1,4 @@
-import { s2cAddAutoSubBody, s2cGetRoomAutoListsBody } from "@/interfaces/ws";
+import { s2cAddAutoSubBody, s2cGetRoomAutoListsBody } from "@/interfaces/ws-auto";
 import rootCtx from "@/components/contexts";
 import { AutoList } from "@/interfaces/autoplay";
 

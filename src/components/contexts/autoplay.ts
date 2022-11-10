@@ -1,8 +1,12 @@
 import { createSignal } from "solid-js";
 
-import { AutoList } from "@/interfaces/autoplay";
+import { AutoList, PlayingStat } from "@/interfaces/autoplay";
 
 export const handleAutoplay = () => {
   const [autoList, setAutoList] = createSignal<AutoList[]>();
-  return { autoList, setAutoList };
+  const [playingStat, setPlayingStat] = createSignal<PlayingStat>({
+    isPlaying: false,
+    playingID: -1,
+  });
+  return { autoList, setAutoList, playingStat, setPlayingStat };
 };

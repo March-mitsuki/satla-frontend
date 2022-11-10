@@ -28,6 +28,15 @@ export interface c2sPlayStart {
   };
 }
 
+export interface c2sPlayEnd {
+  head: {
+    cmd: "playEnd";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
 // 以下 s2c
 
 export interface s2cAddAutoSubBody {
@@ -41,5 +50,5 @@ export interface s2cGetRoomAutoListsBody {
 }
 
 export interface s2cAutoChangeSub {
-  subtitle: AutoSub;
+  auto_sub: AutoSub;
 }

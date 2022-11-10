@@ -11,7 +11,8 @@ import {
   AutoPreview,
   AssUploader,
   Operation,
-  OperationCommon,
+  OperationSpace,
+  StylePreviewPane,
 } from "@/components/pages/auto";
 
 const AutoPlay = () => {
@@ -71,7 +72,16 @@ const AutoPlay = () => {
         <div class="py-3 px-5 flex gap-5 items-center justify-center">
           <AssUploader ws={ws} room_id={room_id}></AssUploader>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
-          <OperationCommon></OperationCommon>
+          <button
+            class="h-full items-center gap-1 px-2 py-1 rounded-md bg-green-500/70 hover:bg-green-700/70 "
+            onClick={() => window.open(`/auto/display/${param.wsroom}`, "_blank")}
+          >
+            打开视窗
+          </button>
+          <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
+          <StylePreviewPane ws={ws}></StylePreviewPane>
+          <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
+          <OperationSpace></OperationSpace>
         </div>
         <div class="py-3 px-5 flex gap-5 items-center justify-center w-full">
           <Operation ws={ws}></Operation>

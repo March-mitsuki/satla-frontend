@@ -1,20 +1,15 @@
 // dependencies lib
-import { createEffect, createSignal, For, Match, Switch } from "solid-js";
+import { createEffect, For, Match, Switch } from "solid-js";
 
 // local dependencies
 import rootCtx from "@/components/contexts";
+import { wsAutoOn, wsAutoSend } from "@/controllers";
 
 // type
 import { s2cEventMap } from "@/interfaces/ws";
 import { s2cAddAutoSubBody, s2cAutoChangeSub, s2cGetRoomAutoListsBody } from "@/interfaces/ws-auto";
 import { Component } from "solid-js";
-import { wsAutoOn, wsAutoSend } from "@/controllers";
 import { AutoList } from "@/interfaces/autoplay";
-
-type PlayingStat = {
-  isPlaying: boolean;
-  playingID: number;
-};
 
 const opeBtnStyle = (color: string) => {
   return `flex items-center justify-center p-[2px] rounded-md bg-${color}-500/70 hover:bg-${color}-700/70 active:bg-${color}-500/70`;
@@ -23,19 +18,24 @@ const opeBtnStyle = (color: string) => {
 const Operation: Component<{
   ws: WebSocket;
 }> = (props) => {
-  const { autoList } = rootCtx.autoplayCtx;
-  const [playingStat, setPlayingStat] = createSignal<PlayingStat>({
-    isPlaying: false,
-    playingID: -1,
-  });
+  const { autoList, playingStat, setPlayingStat } = rootCtx.autoplayCtx;
 
   const handlePlayStart = (
     e: MouseEvent & { currentTarget: HTMLButtonElement },
     currentList: AutoList,
   ) => {
     e.preventDefault();
-    setPlayingStat({ isPlaying: true, playingID: currentList.id });
     wsAutoSend.autoPlayStart(props.ws, currentList.id);
+    setPlayingStat({ isPlaying: true, playingID: currentList.id });
+  };
+
+  const handlerPlayEnd = (
+    e: MouseEvent & { currentTarget: HTMLButtonElement },
+    currentList: AutoList,
+  ) => {
+    e.preventDefault();
+    wsAutoSend.autoPlayEnd(props.ws, currentList.id);
+    setPlayingStat({ isPlaying: false, playingID: -1 });
   };
 
   createEffect(() => {
@@ -54,7 +54,7 @@ const Operation: Component<{
         }
         case "autoChangeSub": {
           const body = data.body as s2cAutoChangeSub;
-          console.log("[change]", body.subtitle.subtitle + " | " + body.subtitle.origin);
+          console.log("[change]", body.auto_sub.subtitle + " | " + body.auto_sub.origin);
           break;
         }
         case "heartBeat":
@@ -169,10 +169,7 @@ const Operation: Component<{
                         />
                       </svg>
                     </button>
-                    <button
-                      class={opeBtnStyle("red")}
-                      onClick={() => setPlayingStat({ isPlaying: false, playingID: -1 })}
-                    >
+                    <button class={opeBtnStyle("red")} onClick={(e) => handlerPlayEnd(e, elem)}>
                       {/* 暂停 */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

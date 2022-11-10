@@ -6,7 +6,7 @@ import { createEffect, createSignal, onCleanup } from "solid-js";
 import { useParams } from "@solidjs/router";
 
 // local dependencies
-import { FloatingWindowX, FloatingWindow } from "@/components";
+import { FloatingWindowX, FloatingWindowXY } from "@/components";
 import { CheckArea, Navi, TranslatePane } from "@/components/pages";
 import rootCtx from "@/components/contexts";
 import { wsOn, wsSend } from "@/controllers";
@@ -137,7 +137,7 @@ const TranslatePage = () => {
             >
               <VideoJS {...videoJSOption}></VideoJS>
             </FloatingWindowX>
-            <FloatingWindow
+            <FloatingWindowXY
               defaultWindowSize={{
                 width: 500,
                 height: 300,
@@ -183,7 +183,7 @@ const TranslatePage = () => {
               risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
               <TranslatePane room_id={room_id} ws={_ws()} wsroom={param.wsroom}></TranslatePane>
-            </FloatingWindow>
+            </FloatingWindowXY>
           </div>
           <div class="flex-auto h-[calc(100vh-70px)]">
             <CheckArea ws={_ws()}></CheckArea>

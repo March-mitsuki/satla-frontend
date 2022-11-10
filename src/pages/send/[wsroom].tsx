@@ -5,7 +5,7 @@ import { useParams } from "@solidjs/router";
 import { Modal } from "@/components";
 
 // local dependencies
-import { FloatingWindow } from "@/components";
+import { FloatingWindowXY } from "@/components";
 import { DisplayReview, Navi, SendArea, SendPane } from "@/components/pages";
 import rootCtx from "@/components/contexts";
 import { wsOn, wsSend } from "@/controllers";
@@ -76,7 +76,7 @@ const SendPage = () => {
         </div>
         <div class="flex flex-auto pl-2">
           <div class="flex flex-col">
-            <FloatingWindow
+            <FloatingWindowXY
               defaultWindowSize={{
                 width: 500,
                 height: 200,
@@ -120,10 +120,10 @@ const SendPage = () => {
               risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
               <div class="w-[calc(100%-10px)] truncate">
-                <DisplayReview ws={_ws()}></DisplayReview>
+                <DisplayReview type="nomal" ws={_ws()}></DisplayReview>
               </div>
-            </FloatingWindow>
-            <FloatingWindow
+            </FloatingWindowXY>
+            <FloatingWindowXY
               defaultWindowSize={{
                 width: 500,
                 height: "",
@@ -167,7 +167,7 @@ const SendPage = () => {
               risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
             >
               <SendPane room_id={room_id} wsroom={param.wsroom} ws={_ws()}></SendPane>
-            </FloatingWindow>
+            </FloatingWindowXY>
           </div>
           <div class="flex-auto h-[calc(100vh-70px)]">
             <SendArea room_id={room_id} ws={_ws()} wsroom={param.wsroom}></SendArea>

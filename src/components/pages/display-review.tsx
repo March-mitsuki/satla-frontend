@@ -13,11 +13,16 @@ import type {
 } from "@/interfaces/ws";
 import type { Component } from "solid-js";
 import { Subtitle } from "@/interfaces";
+import { s2cAutoChangeSub } from "@/interfaces/ws-auto";
+import { AutoSub } from "@/interfaces/autoplay";
 
 const DisplayReview: Component<{
   ws: WebSocket | undefined;
+  type: "auto" | "nomal";
 }> = (props) => {
   const [subtitle, setSubtitle] = createSignal<Subtitle>();
+  const [autoSub, setAutoSub] = createSignal<AutoSub>();
+
   const [style, setStyle] = createSignal<StyleData>({
     subtitle: defaultSubtitleStyle,
     origin: defaultOriginStyle,
@@ -47,6 +52,9 @@ const DisplayReview: Component<{
       } else if (data.head.cmd === "sChangeReversed") {
         const body = data.body as s2cChangeReversedBody;
         setReversed(body.reversed);
+      } else if (data.head.cmd === "autoChangeSub") {
+        const body = data.body as s2cAutoChangeSub;
+        setAutoSub(body.auto_sub);
       }
     });
   });
@@ -55,20 +63,50 @@ const DisplayReview: Component<{
       <Switch>
         <Match when={reversed() && bilingual()}>
           {/* reversed === true */}
-          <div style={style().origin}>{subtitle()?.origin}</div>
-          <div style={style().subtitle}>{subtitle()?.subtitle}</div>
+          <div style={style().origin}>
+            <Switch>
+              <Match when={props.type === "nomal"}>{subtitle()?.origin}</Match>
+              <Match when={props.type === "auto"}>{autoSub()?.origin}</Match>
+            </Switch>
+          </div>
+          <div style={style().subtitle}>
+            <Switch>
+              <Match when={props.type === "nomal"}>{subtitle()?.subtitle}</Match>
+              <Match when={props.type === "auto"}>{autoSub()?.subtitle}</Match>
+            </Switch>
+          </div>
         </Match>
         <Match when={reversed() && !bilingual()}>
-          <div style={style().origin}>{subtitle()?.origin}</div>
+          <div style={style().origin}>
+            <Switch>
+              <Match when={props.type === "nomal"}>{subtitle()?.origin}</Match>
+              <Match when={props.type === "auto"}>{autoSub()?.origin}</Match>
+            </Switch>
+          </div>
         </Match>
 
         <Match when={!reversed() && bilingual()}>
           {/* reversed === false */}
-          <div style={style().subtitle}>{subtitle()?.subtitle}</div>
-          <div style={style().origin}>{subtitle()?.origin}</div>
+          <div style={style().subtitle}>
+            <Switch>
+              <Match when={props.type === "nomal"}>{subtitle()?.subtitle}</Match>
+              <Match when={props.type === "auto"}>{autoSub()?.subtitle}</Match>
+            </Switch>
+          </div>
+          <div style={style().origin}>
+            <Switch>
+              <Match when={props.type === "nomal"}>{subtitle()?.origin}</Match>
+              <Match when={props.type === "auto"}>{autoSub()?.origin}</Match>
+            </Switch>
+          </div>
         </Match>
         <Match when={!reversed() && !bilingual()}>
-          <div style={style().subtitle}>{subtitle()?.subtitle}</div>
+          <div style={style().subtitle}>
+            <Switch>
+              <Match when={props.type === "nomal"}>{subtitle()?.subtitle}</Match>
+              <Match when={props.type === "auto"}>{autoSub()?.subtitle}</Match>
+            </Switch>
+          </div>
         </Match>
       </Switch>
     </>

@@ -9,7 +9,7 @@ import { wsSend } from "@/controllers";
 // type
 import { DisplayReview } from "@/components/pages";
 
-const DisplayPage: Component = () => {
+const AutoDisplayPage: Component = () => {
   const ws_base_url = import.meta.env.VITE_WS_BASE_URL;
 
   const param = useParams<{ wsroom: string }>();
@@ -41,10 +41,10 @@ const DisplayPage: Component = () => {
 
   return (
     <>
-      <Title>Display Page</Title>
-      <DisplayReview type="nomal" ws={ws}></DisplayReview>
+      <Title>Auto Display</Title>
+      <DisplayReview type="auto" ws={ws}></DisplayReview>
     </>
   );
 };
 
-export default DisplayPage;
+export default AutoDisplayPage;

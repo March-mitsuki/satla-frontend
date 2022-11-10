@@ -22,6 +22,9 @@ const FloatingWindow: ParentComponent<{
     width: number | "";
     height: number | "";
   };
+  customCancel?: () => void;
+  defaultPosition?: "static" | "relative" | "absolute" | "sticky" | "fixed";
+  defaultCoord?: { x: number; y: number };
 }> = (props) => {
   const [floatingElem, setFloatingElem] = createSignal<{
     zIndex: number | "auto" | "";
@@ -31,10 +34,10 @@ const FloatingWindow: ParentComponent<{
     y: number;
   }>({
     zIndex: "auto",
-    position: "static",
+    position: props.defaultPosition ? props.defaultPosition : "static",
     isFloating: false,
-    x: 0,
-    y: 0,
+    x: props.defaultCoord ? props.defaultCoord.x : 0,
+    y: props.defaultCoord ? props.defaultCoord.y : 0,
   });
   const [windowSize, setWindowSize] = createSignal({
     width: props.defaultWindowSize.width,
@@ -150,7 +153,7 @@ const FloatingWindow: ParentComponent<{
           style={{
             cursor: "pointer",
           }}
-          onClick={cancelFloating}
+          onClick={props.customCancel ? props.customCancel : cancelFloating}
           class={props.cancelControlClass}
         >
           {props.cancelControlContent}

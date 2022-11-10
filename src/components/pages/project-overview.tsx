@@ -47,7 +47,7 @@ const ProjectOverview: Component<{
                   console.log("set project");
                 }}
                 classList={{
-                  "bg-neutral-500/60 rounded-md text-center text-sm truncate px-1 hover:bg-neutral-600/60":
+                  "bg-green-500/60 rounded-md text-center text-sm truncate px-1 hover:bg-green-600/60":
                     props.type === "nomal",
                   "bg-orange-500/60 rounded-md text-center text-sm truncate px-1 hover:bg-orange-600/60":
                     props.type === "admin",
