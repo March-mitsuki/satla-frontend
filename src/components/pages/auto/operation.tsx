@@ -7,7 +7,7 @@ import { wsAutoOn, wsAutoSend } from "@/controllers";
 
 // type
 import { s2cEventMap } from "@/interfaces/ws";
-import { s2cAddAutoSubBody, s2cAutoChangeSub, s2cGetRoomAutoListsBody } from "@/interfaces/ws-auto";
+import { s2cAddAutoSubBody, s2cGetRoomAutoListsBody } from "@/interfaces/ws-auto";
 import { Component } from "solid-js";
 import { AutoList } from "@/interfaces/autoplay";
 
@@ -68,18 +68,8 @@ const Operation: Component<{
           wsAutoOn.addAutoSub(body);
           break;
         }
-        case "autoChangeSub": {
-          const body = data.body as s2cAutoChangeSub;
-          console.log("[change]", body.auto_sub.subtitle + " | " + body.auto_sub.origin);
-          break;
-        }
         case "heartBeat":
           console.log("---heartBeat---");
-          break;
-        default:
-          console.log("---unhandler cmd---");
-          console.log(data);
-          console.log("---unhandler cmd---");
           break;
       }
     };

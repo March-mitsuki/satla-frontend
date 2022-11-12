@@ -17,7 +17,6 @@ const StylePreviewPane: Component<{
       return { x: 0, y: 0 };
     }
     const rect = el.getBoundingClientRect();
-    console.log("rect is:", rect);
     return { x: rect.x, y: rect.y };
   };
 
