@@ -106,3 +106,11 @@ export interface s2cGetRoomAutoListsBody {
 export interface s2cAutoChangeSub {
   auto_sub: AutoSub;
 }
+
+export interface s2cAutoPreviewChangeBody {
+  behind_two: AutoSub;
+  behind: AutoSub;
+  main: AutoSub;
+  next: AutoSub;
+  next_two: AutoSub;
+}

@@ -82,7 +82,7 @@ const StylePreviewPane: Component<{
             </svg>
           }
           customCancel={customCancel}
-          contentsWrapperClass="border-2 border-gray-500 rounded-b-lg flex-auto bg-neutral-700"
+          contentsWrapperClass="border-2 border-gray-500 rounded-b-lg flex-auto bg-neutral-700 overflow-hidden"
           risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
         >
           <DisplayReview type="auto" ws={props.ws}></DisplayReview>

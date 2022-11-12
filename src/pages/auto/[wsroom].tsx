@@ -68,7 +68,7 @@ const AutoPlay = () => {
           <AutoNavi></AutoNavi>
         </div>
         <div class="sticky border-t-2 shadow-lg flex items-center">
-          <AutoPreview></AutoPreview>
+          <AutoPreview ws={ws}></AutoPreview>
         </div>
         <div class="py-3 px-5 flex gap-5 items-center justify-center">
           <AssUploader ws={ws} room_id={room_id}></AssUploader>

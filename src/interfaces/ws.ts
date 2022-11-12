@@ -1,5 +1,10 @@
 import { Subtitle } from ".";
-import { s2cAddAutoSubBody, s2cAutoChangeSub, s2cGetRoomAutoListsBody } from "./ws-auto";
+import {
+  s2cAddAutoSubBody,
+  s2cAutoChangeSub,
+  s2cAutoPreviewChangeBody,
+  s2cGetRoomAutoListsBody,
+} from "./ws-auto";
 
 // c2s -> client to server msg
 
@@ -200,6 +205,7 @@ export interface s2cEventMap {
       | "sAddAutoSub"
       | "sGetRoomAutoLists"
       | "autoChangeSub"
+      | "autoPreviewChange"
       | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
   body:
@@ -218,6 +224,7 @@ export interface s2cEventMap {
     | s2cAddAutoSubBody
     | s2cGetRoomAutoListsBody
     | s2cAutoChangeSub
+    | s2cAutoPreviewChangeBody
     | s2cHeartBeatBody;
 }
 
