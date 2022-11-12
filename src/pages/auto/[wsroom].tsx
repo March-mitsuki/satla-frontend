@@ -14,6 +14,7 @@ import {
   OperationSpace,
   StylePreviewPane,
 } from "@/components/pages/auto";
+import AutoStyleChanger from "@/components/pages/auto/operation-style-changer";
 
 const AutoPlay = () => {
   const [isWsconn, setIsWsconn] = createSignal<boolean>(false);
@@ -78,6 +79,8 @@ const AutoPlay = () => {
           >
             打开视窗
           </button>
+          <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
+          <AutoStyleChanger ws={ws} wsroom={param.wsroom}></AutoStyleChanger>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
           <StylePreviewPane ws={ws}></StylePreviewPane>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
