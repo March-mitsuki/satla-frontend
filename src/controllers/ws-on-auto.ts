@@ -1,6 +1,10 @@
-import { s2cAddAutoSubBody, s2cGetRoomAutoListsBody } from "@/interfaces/ws-auto";
+// local dependencies
 import rootCtx from "@/components/contexts";
+
+// type
+import { s2cAddAutoSubBody, s2cGetRoomAutoListsBody } from "@/interfaces/ws-auto";
 import { AutoList } from "@/interfaces/autoplay";
+import { s2cDeleteAutoSubBody } from "@/interfaces/ws-auto";
 
 const { setAutoList } = rootCtx.autoplayCtx;
 
@@ -26,6 +30,23 @@ export const addAutoSub = (body: s2cAddAutoSubBody) => {
     });
   } else {
     window.alert("添加ASS失败, 请重试");
+  }
+  return;
+};
+
+export const deleteAutoSub = (body: s2cDeleteAutoSubBody) => {
+  if (body.status) {
+    setAutoList((pre) => {
+      if (pre) {
+        const result = pre.filter((x) => x.id !== body.list_id);
+        return result;
+      } else {
+        window.alert("不存在该list");
+        return;
+      }
+    });
+  } else {
+    window.alert("删除失败, 请重试");
   }
   return;
 };

@@ -2,12 +2,14 @@
 import { Link } from "@solidjs/router";
 
 // local dependencies
-import { LogoutBtn, CurrentUserInfo } from "..";
+import { LogoutBtn, CurrentUserInfo, WsUsers } from "..";
 
 // type
 import { Component } from "solid-js";
 
-const AutoNavi: Component = () => {
+const AutoNavi: Component<{
+  userList?: string[];
+}> = (props) => {
   return (
     <div class="flex justify-between">
       <div class="flex gap-5 items-center">
@@ -30,6 +32,12 @@ const AutoNavi: Component = () => {
         </Link>
       </div>
       <div class="flex justify-center items-center gap-5">
+        {props.userList && (
+          <>
+            <WsUsers userList={props.userList}></WsUsers>
+            <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+          </>
+        )}
         <CurrentUserInfo></CurrentUserInfo>
         <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
         <LogoutBtn></LogoutBtn>

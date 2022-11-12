@@ -97,7 +97,7 @@ https://github.com/March-mitsuki/satla-backend
   - [x] 快进, 快退
   - [x] 暂停, 再次开始
   - [x] 发送空行
-  - [ ] 删除
+  - [x] 删除
   - [x] 行数预览
   - [ ] 本地拖动排序
   - [ ] 同步服务端状态, 支持中途加入

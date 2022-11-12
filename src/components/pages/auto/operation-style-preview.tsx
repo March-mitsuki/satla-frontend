@@ -3,7 +3,7 @@ import { Component, createSignal } from "solid-js";
 import DisplayReview from "../display-review";
 
 const StylePreviewPane: Component<{
-  ws: WebSocket;
+  ws: WebSocket | undefined;
 }> = (props) => {
   const [isPaneOpen, setIsPaneOpen] = createSignal(false);
 

@@ -28,7 +28,7 @@ const CheckArea: ParentComponent<{
   const { currentUserCtx, subtitlesCtx, pageTypeCtx } = rootCtx;
   const { pagetype, isBilingual, canOrder } = pageTypeCtx;
   const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = subtitlesCtx;
-  const { currentUser, setUserList } = currentUserCtx;
+  const { currentUser } = currentUserCtx;
 
   const [isComposition, setIsComposition] = createSignal(false);
 
@@ -357,7 +357,7 @@ const CheckArea: ParentComponent<{
       const data: s2cEventMap = JSON.parse(evt.data as string) as s2cEventMap;
       switch (data.head.cmd) {
         case "sChangeUser":
-          wsOn.addUser(data, setUserList);
+          wsOn.addUser(data);
           break;
         case "sGetRoomSubtitles":
           wsOn.getRoomSubtitles(data);

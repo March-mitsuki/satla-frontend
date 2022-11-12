@@ -3,6 +3,7 @@ import {
   s2cAddAutoSubBody,
   s2cAutoChangeSub,
   s2cAutoPreviewChangeBody,
+  s2cDeleteAutoSubBody,
   s2cGetRoomAutoListsBody,
 } from "./ws-auto";
 
@@ -208,6 +209,7 @@ export interface s2cEventMap {
       | "autoPreviewChange"
       | "autoPlayEnd"
       | "autoPlayErr"
+      | "sDeleteAutoSub"
       | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
   body:
@@ -229,6 +231,7 @@ export interface s2cEventMap {
     | s2cAutoPreviewChangeBody
     | s2cAutoPlayEndBody
     | s2cAutoPlayErrBody
+    | s2cDeleteAutoSubBody
     | s2cHeartBeatBody;
 }
 

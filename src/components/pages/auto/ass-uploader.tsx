@@ -7,11 +7,12 @@ import { wsAutoSend } from "@/controllers";
 // type
 import { Component, createEffect, createSignal } from "solid-js";
 import { AutoSub } from "@/interfaces/autoplay";
-import { s2cAddAutoSubBody, s2cEventMap } from "@/interfaces/ws";
+import { s2cEventMap } from "@/interfaces/ws";
+import { s2cAddAutoSubBody } from "@/interfaces/ws-auto";
 
 const AssUploader: Component<{
   room_id: number;
-  ws: WebSocket;
+  ws: WebSocket | undefined;
 }> = (props) => {
   const [nowAss, setNowAss] = createSignal<string>("未选择");
 
@@ -84,6 +85,10 @@ const AssUploader: Component<{
   };
 
   createEffect(() => {
+    if (!props.ws) {
+      console.log("ws is undefined");
+      return;
+    }
     props.ws.addEventListener("message", (evt) => {
       const data = JSON.parse(evt.data as string) as s2cEventMap;
       if (data.head.cmd === "sAddAutoSub") {

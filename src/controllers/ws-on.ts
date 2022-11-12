@@ -14,12 +14,11 @@ import type {
   s2cAddSubtitleBody,
   s2cChangeSubtitleBody,
 } from "@/interfaces/ws";
-import type { Setter } from "solid-js";
 
 const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = rootCtx.subtitlesCtx;
-const { currentUser } = rootCtx.currentUserCtx;
+const { currentUser, setUserList } = rootCtx.currentUserCtx;
 
-export const addUser = (data: s2cEventMap, setUserList: Setter<string[]>) => {
+export const addUser = (data: s2cEventMap) => {
   const body = data.body as s2cChangeUserBody;
   setUserList(body.users);
   console.log("add user msg: ", body);

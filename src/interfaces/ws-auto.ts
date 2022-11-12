@@ -100,6 +100,15 @@ export interface c2sPlaySendBlank {
   };
 }
 
+export interface c2sDeleteAutoSub {
+  head: {
+    cmd: "deleteAutoSub";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
 // 以下 s2c
 
 export interface s2cAddAutoSubBody {
@@ -122,4 +131,9 @@ export interface s2cAutoPreviewChangeBody {
   main: AutoSub;
   next: AutoSub;
   next_two: AutoSub;
+}
+
+export interface s2cDeleteAutoSubBody {
+  status: boolean;
+  list_id: number;
 }

@@ -3,11 +3,15 @@ import { createEffect, For, Match, Switch } from "solid-js";
 
 // local dependencies
 import rootCtx from "@/components/contexts";
-import { wsAutoOn, wsAutoSend } from "@/controllers";
+import { wsAutoOn, wsAutoSend, wsOn } from "@/controllers";
 
 // type
 import { s2cEventMap } from "@/interfaces/ws";
-import { s2cAddAutoSubBody, s2cGetRoomAutoListsBody } from "@/interfaces/ws-auto";
+import {
+  s2cAddAutoSubBody,
+  s2cGetRoomAutoListsBody,
+  s2cDeleteAutoSubBody,
+} from "@/interfaces/ws-auto";
 import { Component } from "solid-js";
 import { AutoList } from "@/interfaces/autoplay";
 
@@ -16,7 +20,7 @@ const opeBtnStyle = (color: string) => {
 };
 
 const Operation: Component<{
-  ws: WebSocket;
+  ws: WebSocket | undefined;
 }> = (props) => {
   const { autoList, playingStat, setPlayingStat } = rootCtx.autoplayCtx;
 
@@ -55,9 +59,16 @@ const Operation: Component<{
   };
 
   createEffect(() => {
+    if (!props.ws) {
+      console.log("ws is undefined");
+      return;
+    }
     props.ws.onmessage = (evt) => {
       const data = JSON.parse(evt.data as string) as s2cEventMap;
       switch (data.head.cmd) {
+        case "sChangeUser":
+          wsOn.addUser(data);
+          break;
         case "sGetRoomAutoLists": {
           const body = data.body as s2cGetRoomAutoListsBody;
           wsAutoOn.getRoomAutoLists(body);
@@ -71,6 +82,12 @@ const Operation: Component<{
         case "autoPlayEnd":
           setPlayingStat({ stat: 0, playingID: -1 });
           break;
+        case "sDeleteAutoSub": {
+          console.log("[info] sDeleteAutoSub recive");
+          const body = data.body as s2cDeleteAutoSubBody;
+          wsAutoOn.deleteAutoSub(body);
+          break;
+        }
         case "heartBeat":
           console.log("---heartBeat---");
           break;
@@ -97,7 +114,11 @@ const Operation: Component<{
             <div class="grid grid-cols-10 border-2 border-neutral-500 rounded-full py-1">
               <div class="grid grid-cols-2">
                 <div class="flex justify-center items-center">
-                  <button class={opeBtnStyle("red")}>
+                  <button
+                    onClick={() => wsAutoSend.deleteAutoList(props.ws, elem.id)}
+                    class={opeBtnStyle("red")}
+                  >
+                    {/* 删除 */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

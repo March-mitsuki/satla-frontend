@@ -3,7 +3,7 @@ import { wsAutoSend } from "@/controllers";
 import type { Component } from "solid-js";
 
 const OperationBlank: Component<{
-  ws: WebSocket;
+  ws: WebSocket | undefined;
 }> = (props) => {
   const handleClick = () => {
     wsAutoSend.autoPlaySendBlank(props.ws);

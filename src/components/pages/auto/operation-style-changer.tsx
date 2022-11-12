@@ -6,7 +6,7 @@ import type { Component } from "solid-js";
 import { FloatingWindowXY } from "@/components";
 
 const AutoStyleChanger: Component<{
-  ws: WebSocket;
+  ws: WebSocket | undefined;
   wsroom: string;
 }> = (props) => {
   const [isPaneOpen, setIsPaneOpen] = createSignal(false);

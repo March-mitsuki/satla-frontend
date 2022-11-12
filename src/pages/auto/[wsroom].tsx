@@ -14,11 +14,14 @@ import {
   OperationBlank,
   StylePreviewPane,
 } from "@/components/pages/auto";
+import rootCtx from "@/components/contexts";
 import AutoStyleChanger from "@/components/pages/auto/operation-style-changer";
 
 const AutoPlay = () => {
-  const [isWsconn, setIsWsconn] = createSignal<boolean>(false);
   const ws_base_url = import.meta.env.VITE_WS_BASE_URL;
+  const { currentUser, userList, setUserList } = rootCtx.currentUserCtx;
+  const [_ws, setWs] = createSignal<WebSocket>();
+  const [isWsconn, setIsWsconn] = createSignal<boolean>(false);
 
   // 每个page连接不一样的ws room
   const param = useParams<{ wsroom: string }>();
@@ -29,9 +32,18 @@ const AutoPlay = () => {
     console.log("wrong params: ", param.wsroom.split("_"));
     return;
   }
-  const ws = new WebSocket(url);
 
   createEffect(() => {
+    if (currentUser().id === -1) {
+      return;
+    }
+    console.log("now data fetched", currentUser());
+    setWs(new WebSocket(url));
+    const ws = _ws();
+    if (!ws) {
+      console.log("send page ws is undefined");
+      return;
+    }
     ws.onopen = () => {
       console.log("ws connect");
       setIsWsconn(true);
@@ -39,6 +51,7 @@ const AutoPlay = () => {
         ws: ws,
         room_id: room_id,
       });
+      wsSend.addUser(ws);
     };
     ws.onclose = () => {
       console.log("ws close");
@@ -57,6 +70,7 @@ const AutoPlay = () => {
         ws.close();
       }
       clearInterval(heartBeatTimer);
+      setUserList(undefined);
     });
   });
 
@@ -65,13 +79,13 @@ const AutoPlay = () => {
       <Title>Auto Player</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="mb-2 text-xl py-3 px-5">
-          <AutoNavi></AutoNavi>
+          <AutoNavi userList={userList()}></AutoNavi>
         </div>
         <div class="sticky border-t-2 shadow-lg flex items-center">
-          <AutoPreview ws={ws}></AutoPreview>
+          <AutoPreview ws={_ws()}></AutoPreview>
         </div>
         <div class="py-3 px-5 flex gap-5 items-center justify-center">
-          <AssUploader ws={ws} room_id={room_id}></AssUploader>
+          <AssUploader ws={_ws()} room_id={room_id}></AssUploader>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
           <button
             class="h-full items-center gap-1 px-2 py-1 rounded-md bg-green-500/70 hover:bg-green-700/70 "
@@ -80,14 +94,14 @@ const AutoPlay = () => {
             打开视窗
           </button>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
-          <AutoStyleChanger ws={ws} wsroom={param.wsroom}></AutoStyleChanger>
+          <AutoStyleChanger ws={_ws()} wsroom={param.wsroom}></AutoStyleChanger>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
-          <StylePreviewPane ws={ws}></StylePreviewPane>
+          <StylePreviewPane ws={_ws()}></StylePreviewPane>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
-          <OperationBlank ws={ws}></OperationBlank>
+          <OperationBlank ws={_ws()}></OperationBlank>
         </div>
         <div class="py-3 px-5 flex gap-5 items-center justify-center w-full">
-          <Operation ws={ws}></Operation>
+          <Operation ws={_ws()}></Operation>
         </div>
         {isWsconn() === false && (
           <Modal>

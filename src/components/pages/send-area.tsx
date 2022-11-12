@@ -28,7 +28,7 @@ const SendArea: ParentComponent<{
   wsroom: string;
 }> = (props) => {
   const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = rootCtx.subtitlesCtx;
-  const { currentUser, setUserList } = rootCtx.currentUserCtx;
+  const { currentUser } = rootCtx.currentUserCtx;
 
   // 各种初始化操作
   if (typeof subtitles() === "undefined") {
@@ -185,7 +185,7 @@ const SendArea: ParentComponent<{
       const data = JSON.parse(evt.data as string) as s2cEventMap;
       switch (data.head.cmd) {
         case "sChangeUser":
-          wsOn.addUser(data, setUserList);
+          wsOn.addUser(data);
           break;
         case "sGetRoomSubtitles":
           wsOn.getRoomSubtitles(data); // eslint-disable-line @typescript-eslint/no-floating-promises

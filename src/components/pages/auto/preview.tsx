@@ -10,7 +10,7 @@ const afterSubPreviewStyle = "text-center text-sm truncate w-full px-2";
 const subPreviewStyle = "text-center truncate w-full px-3";
 
 const AutoPreview: Component<{
-  ws: WebSocket;
+  ws: WebSocket | undefined;
 }> = (props) => {
   const [preview, setPreview] = createSignal<s2cAutoPreviewChangeBody>({
     behind_two: new AutoSub({ id: -1, list_id: -1, room_id: -1, start: -1, end: -1 }),
@@ -29,6 +29,10 @@ const AutoPreview: Component<{
   });
 
   createEffect(() => {
+    if (!props.ws) {
+      console.log("ws is undefined");
+      return;
+    }
     props.ws.addEventListener("message", (evt) => {
       const data = JSON.parse(evt.data as string) as s2cEventMap;
       if (data.head.cmd === "autoPreviewChange") {
