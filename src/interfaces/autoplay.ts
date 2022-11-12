@@ -69,6 +69,6 @@ export class AutoList {
 }
 
 export interface PlayingStat {
-  isPlaying: boolean;
+  stat: 0 | 1 | 2;
   playingID: number;
 }

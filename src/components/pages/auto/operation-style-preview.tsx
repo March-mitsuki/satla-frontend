@@ -42,8 +42,8 @@ const StylePreviewPane: Component<{
       {isPaneOpen() && (
         <FloatingWindowXY
           defaultWindowSize={{
-            width: 500,
-            height: 200,
+            width: 300,
+            height: 100,
           }}
           defaultPosition="absolute"
           defaultCoord={getElemCoord(btnRef)}
@@ -51,7 +51,7 @@ const StylePreviewPane: Component<{
             width: 150,
             height: 80,
           }}
-          wrapperClass="w-[500px] h-[226px] flex flex-col"
+          wrapperClass="w-[300px] h-[126px] flex flex-col"
           controllerWrapperClass="flex justify-between items-center border-x-2 border-t-2 border-gray-500 rounded-t-lg bg-neutral-800"
           floatingControlContent={
             <svg

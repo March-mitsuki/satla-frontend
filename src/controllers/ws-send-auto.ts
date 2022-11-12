@@ -1,6 +1,17 @@
 // type
 import { AutoSub } from "@/interfaces/autoplay";
-import { c2sAddAutoSub, c2sGetRoomAutoLists, c2sPlayEnd, c2sPlayStart } from "@/interfaces/ws-auto";
+import {
+  c2sAddAutoSub,
+  c2sGetRoomAutoLists,
+  c2sPlayEnd,
+  c2sPlayForward,
+  c2sPlayForwardTwice,
+  c2sPlayPause,
+  c2sPlayRestart,
+  c2sPlayRewind,
+  c2sPlayRewindTwice,
+  c2sPlayStart,
+} from "@/interfaces/ws-auto";
 
 export const getRoomAutoList = ({ ws, room_id }: { ws: WebSocket; room_id: number }) => {
   const _postData: c2sGetRoomAutoLists = {
@@ -48,7 +59,6 @@ export const autoPlayStart = (ws: WebSocket, listId: number) => {
       list_id: listId,
     },
   };
-  console.log("start auto play: ", _postData);
   const postData = new TextEncoder().encode(JSON.stringify(_postData));
   ws.send(postData);
   return;
@@ -63,7 +73,90 @@ export const autoPlayEnd = (ws: WebSocket, listId: number) => {
       list_id: listId,
     },
   };
-  console.log("start auto play: ", _postData);
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+  return;
+};
+
+export const autoPlayForward = (ws: WebSocket, listId: number) => {
+  const _postData: c2sPlayForward = {
+    head: {
+      cmd: "playForward",
+    },
+    body: {
+      list_id: listId,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+  return;
+};
+
+export const autoPlayForwardTwice = (ws: WebSocket, listId: number) => {
+  const _postData: c2sPlayForwardTwice = {
+    head: {
+      cmd: "playForwardTwice",
+    },
+    body: {
+      list_id: listId,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+  return;
+};
+
+export const autoPlayRewind = (ws: WebSocket, listId: number) => {
+  const _postData: c2sPlayRewind = {
+    head: {
+      cmd: "playRewind",
+    },
+    body: {
+      list_id: listId,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+  return;
+};
+
+export const autoPlayRewindTwice = (ws: WebSocket, listId: number) => {
+  const _postData: c2sPlayRewindTwice = {
+    head: {
+      cmd: "playRewindTwice",
+    },
+    body: {
+      list_id: listId,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+  return;
+};
+
+export const autoPlayPause = (ws: WebSocket, listId: number) => {
+  const _postData: c2sPlayPause = {
+    head: {
+      cmd: "playPause",
+    },
+    body: {
+      list_id: listId,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+  return;
+};
+
+export const autoPlayRestart = (ws: WebSocket, listId: number) => {
+  const _postData: c2sPlayRestart = {
+    head: {
+      cmd: "playRestart",
+    },
+    body: {
+      list_id: listId,
+    },
+  };
   const postData = new TextEncoder().encode(JSON.stringify(_postData));
   ws.send(postData);
   return;

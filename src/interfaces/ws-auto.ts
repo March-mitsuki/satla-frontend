@@ -37,6 +37,60 @@ export interface c2sPlayEnd {
   };
 }
 
+export interface c2sPlayForward {
+  head: {
+    cmd: "playForward";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
+export interface c2sPlayForwardTwice {
+  head: {
+    cmd: "playForwardTwice";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
+export interface c2sPlayRewind {
+  head: {
+    cmd: "playRewind";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
+export interface c2sPlayRewindTwice {
+  head: {
+    cmd: "playRewindTwice";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
+export interface c2sPlayPause {
+  head: {
+    cmd: "playPause";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
+export interface c2sPlayRestart {
+  head: {
+    cmd: "playRestart";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
 // 以下 s2c
 
 export interface s2cAddAutoSubBody {

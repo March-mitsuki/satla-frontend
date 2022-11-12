@@ -26,16 +26,32 @@ const Operation: Component<{
   ) => {
     e.preventDefault();
     wsAutoSend.autoPlayStart(props.ws, currentList.id);
-    setPlayingStat({ isPlaying: true, playingID: currentList.id });
+    setPlayingStat({ stat: 1, playingID: currentList.id });
   };
 
-  const handlerPlayEnd = (
+  const handlePlayEnd = (
     e: MouseEvent & { currentTarget: HTMLButtonElement },
     currentList: AutoList,
   ) => {
     e.preventDefault();
     wsAutoSend.autoPlayEnd(props.ws, currentList.id);
-    setPlayingStat({ isPlaying: false, playingID: -1 });
+    setPlayingStat({ stat: 0, playingID: -1 });
+  };
+  const handlePlayPause = (
+    e: MouseEvent & { currentTarget: HTMLButtonElement },
+    currentList: AutoList,
+  ) => {
+    e.preventDefault();
+    wsAutoSend.autoPlayPause(props.ws, currentList.id);
+    setPlayingStat({ stat: 2, playingID: currentList.id });
+  };
+  const handlePlayRestart = (
+    e: MouseEvent & { currentTarget: HTMLButtonElement },
+    currentList: AutoList,
+  ) => {
+    e.preventDefault();
+    wsAutoSend.autoPlayRestart(props.ws, currentList.id);
+    setPlayingStat({ stat: 1, playingID: currentList.id });
   };
 
   createEffect(() => {
@@ -71,21 +87,21 @@ const Operation: Component<{
 
   return (
     <div class="flex flex-col gap-2 p-2 w-full">
-      <div class="grid grid-cols-7 pb-2">
+      <div class="grid grid-cols-10 pb-2">
         <div class="grid grid-cols-2">
           <div class="text-center truncate font-bold text-xl">删除</div>
           <div class="text-center truncate font-bold text-xl">List ID</div>
         </div>
-        <div class="text-center truncate font-bold text-xl col-span-2">首句原文</div>
-        <div class="text-center truncate font-bold text-xl col-span-2">首句翻译</div>
+        <div class="text-center truncate font-bold text-xl col-span-3">首句原文</div>
+        <div class="text-center truncate font-bold text-xl col-span-3">首句翻译</div>
         <div class="text-center truncate font-bold text-xl">备注</div>
-        <div class="text-center truncate font-bold text-xl">操作</div>
+        <div class="text-center truncate font-bold text-xl col-span-2">操作</div>
       </div>
       <For each={autoList()}>
         {(elem) => {
           console.log("auto opreration render once");
           return (
-            <div class="grid grid-cols-7 border-2 border-neutral-500 rounded-full py-1">
+            <div class="grid grid-cols-10 border-2 border-neutral-500 rounded-full py-1">
               <div class="grid grid-cols-2">
                 <div class="flex justify-center items-center">
                   <button class={opeBtnStyle("red")}>
@@ -107,10 +123,10 @@ const Operation: Component<{
                 </div>
                 <div class="text-center truncate">{elem.id}</div>
               </div>
-              <div class="text-center truncate col-span-2">{elem.first_origin}</div>
-              <div class="text-center truncate col-span-2">{elem.first_subtitle}</div>
+              <div class="text-center truncate col-span-3">{elem.first_origin}</div>
+              <div class="text-center truncate col-span-3">{elem.first_subtitle}</div>
               <div class="text-center truncate">{elem.memo}</div>
-              <div class="flex items-center justify-center gap-5">
+              <div class="col-span-2 flex items-center justify-center gap-5">
                 <Switch
                   fallback={
                     <div class="flex items-center justify-center p-[2px] rounded-md bg-neutral-500 cursor-not-allowed ">
@@ -132,10 +148,11 @@ const Operation: Component<{
                     </div>
                   }
                 >
-                  <Match
-                    when={playingStat().isPlaying === true && playingStat().playingID === elem.id}
-                  >
-                    <button class={opeBtnStyle("sky")}>
+                  <Match when={playingStat().stat === 1 && playingStat().playingID === elem.id}>
+                    <button
+                      onClick={() => wsAutoSend.autoPlayRewindTwice(props.ws, elem.id)}
+                      class={opeBtnStyle("sky")}
+                    >
                       {/* 后退退 */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +169,10 @@ const Operation: Component<{
                         />
                       </svg>
                     </button>
-                    <button class={opeBtnStyle("sky")}>
+                    <button
+                      onClick={() => wsAutoSend.autoPlayRewind(props.ws, elem.id)}
+                      class={opeBtnStyle("sky")}
+                    >
                       {/* 后退 */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -169,8 +189,25 @@ const Operation: Component<{
                         />
                       </svg>
                     </button>
-                    <button class={opeBtnStyle("red")} onClick={(e) => handlerPlayEnd(e, elem)}>
+                    <button onClick={(e) => handlePlayPause(e, elem)} class={opeBtnStyle("orange")}>
                       {/* 暂停 */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M15.75 5.25v13.5m-7.5-13.5v13.5"
+                        />
+                      </svg>
+                    </button>
+                    <button onClick={(e) => handlePlayEnd(e, elem)} class={opeBtnStyle("red")}>
+                      {/* 停止播放 */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -186,7 +223,10 @@ const Operation: Component<{
                         />
                       </svg>
                     </button>
-                    <button class={opeBtnStyle("sky")}>
+                    <button
+                      onClick={() => wsAutoSend.autoPlayForward(props.ws, elem.id)}
+                      class={opeBtnStyle("sky")}
+                    >
                       {/* 前进 */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -203,7 +243,10 @@ const Operation: Component<{
                         />
                       </svg>
                     </button>
-                    <button class={opeBtnStyle("sky")}>
+                    <button
+                      onClick={() => wsAutoSend.autoPlayForwardTwice(props.ws, elem.id)}
+                      class={opeBtnStyle("sky")}
+                    >
                       {/* 前前进 */}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -221,7 +264,29 @@ const Operation: Component<{
                       </svg>
                     </button>
                   </Match>
-                  <Match when={playingStat().isPlaying === false}>
+                  <Match when={playingStat().stat === 2 && playingStat().playingID === elem.id}>
+                    <button
+                      onClick={(e) => handlePlayRestart(e, elem)}
+                      class={opeBtnStyle("green")}
+                    >
+                      {/* 重新开始 */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M21 7.5V18M15 7.5V18M3 16.811V8.69c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 010 1.954l-7.108 4.061A1.125 1.125 0 013 16.811z"
+                        />
+                      </svg>
+                    </button>
+                  </Match>
+                  <Match when={playingStat().stat === 0}>
                     <button class={opeBtnStyle("sky")} onClick={(e) => handlePlayStart(e, elem)}>
                       {/* 开始 */}
                       <svg
