@@ -10,6 +10,7 @@ import {
   c2sPlayRestart,
   c2sPlayRewind,
   c2sPlayRewindTwice,
+  c2sPlaySendBlank,
   c2sPlayStart,
 } from "@/interfaces/ws-auto";
 
@@ -155,6 +156,20 @@ export const autoPlayRestart = (ws: WebSocket, listId: number) => {
     },
     body: {
       list_id: listId,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+  return;
+};
+
+export const autoPlaySendBlank = (ws: WebSocket) => {
+  const _postData: c2sPlaySendBlank = {
+    head: {
+      cmd: "playSendBlank",
+    },
+    body: {
+      data: {},
     },
   };
   const postData = new TextEncoder().encode(JSON.stringify(_postData));

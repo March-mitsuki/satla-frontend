@@ -206,6 +206,8 @@ export interface s2cEventMap {
       | "sGetRoomAutoLists"
       | "autoChangeSub"
       | "autoPreviewChange"
+      | "autoPlayEnd"
+      | "autoPlayErr"
       | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
   body:
@@ -225,6 +227,8 @@ export interface s2cEventMap {
     | s2cGetRoomAutoListsBody
     | s2cAutoChangeSub
     | s2cAutoPreviewChangeBody
+    | s2cAutoPlayEndBody
+    | s2cAutoPlayErrBody
     | s2cHeartBeatBody;
 }
 
@@ -293,6 +297,14 @@ export interface s2cChangeBilingualBody {
 
 export interface s2cChangeReversedBody {
   reversed: boolean;
+}
+
+export interface s2cAutoPlayEndBody {
+  data: any; // eslint-disable-line
+}
+
+export interface s2cAutoPlayErrBody {
+  msg: string;
 }
 
 export interface s2cHeartBeatBody {

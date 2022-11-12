@@ -11,7 +11,7 @@ import {
   AutoPreview,
   AssUploader,
   Operation,
-  OperationSpace,
+  OperationBlank,
   StylePreviewPane,
 } from "@/components/pages/auto";
 import AutoStyleChanger from "@/components/pages/auto/operation-style-changer";
@@ -84,7 +84,7 @@ const AutoPlay = () => {
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
           <StylePreviewPane ws={ws}></StylePreviewPane>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
-          <OperationSpace></OperationSpace>
+          <OperationBlank ws={ws}></OperationBlank>
         </div>
         <div class="py-3 px-5 flex gap-5 items-center justify-center w-full">
           <Operation ws={ws}></Operation>

@@ -68,6 +68,9 @@ const Operation: Component<{
           wsAutoOn.addAutoSub(body);
           break;
         }
+        case "autoPlayEnd":
+          setPlayingStat({ stat: 0, playingID: -1 });
+          break;
         case "heartBeat":
           console.log("---heartBeat---");
           break;

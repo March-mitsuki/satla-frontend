@@ -91,6 +91,15 @@ export interface c2sPlayRestart {
   };
 }
 
+export interface c2sPlaySendBlank {
+  head: {
+    cmd: "playSendBlank";
+  };
+  body: {
+    data: any; // eslint-disable-line
+  };
+}
+
 // 以下 s2c
 
 export interface s2cAddAutoSubBody {
