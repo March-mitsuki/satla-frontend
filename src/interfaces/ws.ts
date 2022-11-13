@@ -210,11 +210,13 @@ export interface s2cEventMap {
       | "sGetRoomAutoLists"
       | "autoChangeSub"
       | "autoPreviewChange"
+      | "autoPlayStart"
       | "autoPlayEnd"
       | "autoPlayErr"
       | "sDeleteAutoSub"
       | "sGetAutoPlayStat"
       | "sRecoverAutoPlayStat"
+      | "sChangeAutoMemo"
       | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
   body:
