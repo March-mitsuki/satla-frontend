@@ -11,6 +11,9 @@ import {
   s2cAddAutoSubBody,
   s2cGetRoomAutoListsBody,
   s2cDeleteAutoSubBody,
+  s2cGetAutoPlayStatBody,
+  s2cAutoPlayErrBody,
+  s2cRecoverPlayStatBody,
 } from "@/interfaces/ws-auto";
 import { Component } from "solid-js";
 import { AutoList } from "@/interfaces/autoplay";
@@ -86,6 +89,34 @@ const Operation: Component<{
           console.log("[info] sDeleteAutoSub recive");
           const body = data.body as s2cDeleteAutoSubBody;
           wsAutoOn.deleteAutoSub(body);
+          break;
+        }
+        case "sGetAutoPlayStat": {
+          const body = data.body as s2cGetAutoPlayStatBody;
+          // state: 0 -> stopped, 1 -> playing, 2 -> paused
+          if (body.state === 0) {
+            setPlayingStat({ stat: 0, playingID: -1 });
+          } else if (body.state === 1) {
+            setPlayingStat({ stat: 1, playingID: body.list_id });
+          } else {
+            setPlayingStat({ stat: 2, playingID: body.list_id });
+          }
+          break;
+        }
+        case "autoPlayErr": {
+          const body = data.body as s2cAutoPlayErrBody;
+          const msg = "[auto play err] " + JSON.stringify(body.msg);
+          window.alert(msg);
+          break;
+        }
+        case "sRecoverAutoPlayStat": {
+          const body = data.body as s2cRecoverPlayStatBody;
+          if (body.status) {
+            window.alert("当前房间状态已被重置, 请按确认并刷新页面");
+            location.reload();
+          } else {
+            window.alert("初始化房间失败, 请联系网站管理员");
+          }
           break;
         }
         case "heartBeat":

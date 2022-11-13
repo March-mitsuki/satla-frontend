@@ -13,7 +13,7 @@ import type {
 } from "@/interfaces/ws";
 import type { Component } from "solid-js";
 import { Subtitle } from "@/interfaces";
-import { s2cAutoChangeSub } from "@/interfaces/ws-auto";
+import { s2cAutoChangeSub, s2cGetAutoPlayStatBody } from "@/interfaces/ws-auto";
 import { AutoSub } from "@/interfaces/autoplay";
 
 const DisplayReview: Component<{
@@ -52,9 +52,18 @@ const DisplayReview: Component<{
       } else if (data.head.cmd === "sChangeReversed") {
         const body = data.body as s2cChangeReversedBody;
         setReversed(body.reversed);
-      } else if (data.head.cmd === "autoChangeSub") {
-        const body = data.body as s2cAutoChangeSub;
-        setAutoSub(body.auto_sub);
+      }
+
+      if (props.type === "auto") {
+        if (data.head.cmd === "sGetAutoPlayStat") {
+          const body = data.body as s2cGetAutoPlayStatBody;
+          if (body.state === 1 || body.state === 2) {
+            setAutoSub(body.now_sub);
+          }
+        } else if (data.head.cmd === "autoChangeSub") {
+          const body = data.body as s2cAutoChangeSub;
+          setAutoSub(body.auto_sub);
+        }
       }
     });
   });

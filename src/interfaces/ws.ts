@@ -2,8 +2,11 @@ import { Subtitle } from ".";
 import {
   s2cAddAutoSubBody,
   s2cAutoChangeSub,
+  s2cAutoPlayEndBody,
+  s2cAutoPlayErrBody,
   s2cAutoPreviewChangeBody,
   s2cDeleteAutoSubBody,
+  s2cGetAutoPlayStatBody,
   s2cGetRoomAutoListsBody,
 } from "./ws-auto";
 
@@ -210,6 +213,8 @@ export interface s2cEventMap {
       | "autoPlayEnd"
       | "autoPlayErr"
       | "sDeleteAutoSub"
+      | "sGetAutoPlayStat"
+      | "sRecoverAutoPlayStat"
       | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
   body:
@@ -232,6 +237,7 @@ export interface s2cEventMap {
     | s2cAutoPlayEndBody
     | s2cAutoPlayErrBody
     | s2cDeleteAutoSubBody
+    | s2cGetAutoPlayStatBody
     | s2cHeartBeatBody;
 }
 
@@ -300,14 +306,6 @@ export interface s2cChangeBilingualBody {
 
 export interface s2cChangeReversedBody {
   reversed: boolean;
-}
-
-export interface s2cAutoPlayEndBody {
-  data: any; // eslint-disable-line
-}
-
-export interface s2cAutoPlayErrBody {
-  msg: string;
 }
 
 export interface s2cHeartBeatBody {

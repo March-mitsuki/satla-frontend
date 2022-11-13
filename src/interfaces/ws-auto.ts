@@ -109,7 +109,27 @@ export interface c2sDeleteAutoSub {
   };
 }
 
-// 以下 s2c
+export interface c2sGetAutoPlayStat {
+  head: {
+    cmd: "getAutoPlayStat";
+  };
+  body: {
+    data: any; // eslint-disable-line
+  };
+}
+
+export interface c2sRecoverAutoPlayStat {
+  head: {
+    cmd: "recoverAutoPlayStat";
+  };
+  body: {
+    data: any; // eslint-disable-line
+  };
+}
+
+/**
+ * 以下s2c
+ */
 
 export interface s2cAddAutoSubBody {
   status: boolean;
@@ -125,6 +145,14 @@ export interface s2cAutoChangeSub {
   auto_sub: AutoSub;
 }
 
+export interface s2cAutoPlayEndBody {
+  data: any; // eslint-disable-line
+}
+
+export interface s2cAutoPlayErrBody {
+  msg: string;
+}
+
 export interface s2cAutoPreviewChangeBody {
   behind_two: AutoSub;
   behind: AutoSub;
@@ -136,4 +164,16 @@ export interface s2cAutoPreviewChangeBody {
 export interface s2cDeleteAutoSubBody {
   status: boolean;
   list_id: number;
+}
+
+export interface s2cGetAutoPlayStatBody {
+  wsroom: string;
+  state: 0 | 1 | 2; // 0 -> stopped, 1 -> playing, 2 -> paused
+  list_id: number;
+  now_sub: AutoSub;
+  preview: s2cAutoPreviewChangeBody;
+}
+
+export interface s2cRecoverPlayStatBody {
+  status: boolean;
 }

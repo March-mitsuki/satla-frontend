@@ -13,6 +13,7 @@ import {
   Operation,
   OperationBlank,
   StylePreviewPane,
+  OperationRecover,
 } from "@/components/pages/auto";
 import rootCtx from "@/components/contexts";
 import AutoStyleChanger from "@/components/pages/auto/operation-style-changer";
@@ -52,6 +53,7 @@ const AutoPlay = () => {
         room_id: room_id,
       });
       wsSend.addUser(ws);
+      wsAutoSend.getAutoPlayStat(ws);
     };
     ws.onclose = () => {
       console.log("ws close");
@@ -86,6 +88,8 @@ const AutoPlay = () => {
         </div>
         <div class="py-3 px-5 flex gap-5 items-center justify-center">
           <AssUploader ws={_ws()} room_id={room_id}></AssUploader>
+          <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
+          <OperationRecover ws={_ws()}></OperationRecover>
           <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
           <button
             class="h-full items-center gap-1 px-2 py-1 rounded-md bg-green-500/70 hover:bg-green-700/70 "

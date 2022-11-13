@@ -3,7 +3,7 @@ import { createEffect, createSignal } from "solid-js";
 // type
 import type { Component } from "solid-js";
 import { s2cEventMap } from "@/interfaces/ws";
-import { s2cAutoPreviewChangeBody } from "@/interfaces/ws-auto";
+import { s2cAutoPreviewChangeBody, s2cGetAutoPlayStatBody } from "@/interfaces/ws-auto";
 import { AutoSub } from "@/interfaces/autoplay";
 
 const afterSubPreviewStyle = "text-center text-sm truncate w-full px-2";
@@ -38,6 +38,11 @@ const AutoPreview: Component<{
       if (data.head.cmd === "autoPreviewChange") {
         const body = data.body as s2cAutoPreviewChangeBody;
         setPreview(body);
+      } else if (data.head.cmd === "sGetAutoPlayStat") {
+        const body = data.body as s2cGetAutoPlayStatBody;
+        if (body.state === 1 || body.state === 2) {
+          setPreview(body.preview);
+        }
       }
     });
   });
