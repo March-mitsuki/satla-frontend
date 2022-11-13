@@ -1,5 +1,5 @@
 // dependencies lib
-import { createEffect, For, Match, Switch } from "solid-js";
+import { createEffect, createSignal, For, Match, Switch } from "solid-js";
 
 // local dependencies
 import rootCtx from "@/components/contexts";
@@ -14,6 +14,8 @@ import {
   s2cGetAutoPlayStatBody,
   s2cAutoPlayErrBody,
   s2cRecoverPlayStatBody,
+  s2cAutoPlayStartBody,
+  s2cChangeAutoMemoBody,
 } from "@/interfaces/ws-auto";
 import { Component } from "solid-js";
 import { AutoList } from "@/interfaces/autoplay";
@@ -26,6 +28,7 @@ const Operation: Component<{
   ws: WebSocket | undefined;
 }> = (props) => {
   const { autoList, playingStat, setPlayingStat } = rootCtx.autoplayCtx;
+  const [editMemo, setEditMemo] = createSignal(false);
 
   const handlePlayStart = (
     e: MouseEvent & { currentTarget: HTMLButtonElement },
@@ -58,7 +61,21 @@ const Operation: Component<{
   ) => {
     e.preventDefault();
     wsAutoSend.autoPlayRestart(props.ws, currentList.id);
-    setPlayingStat({ stat: 1, playingID: currentList.id });
+  };
+
+  const handleMemoChange = () => {
+    setEditMemo(true);
+    document.getElementById("memoChanger")?.focus();
+  };
+  const sendMemoChange = (
+    e: KeyboardEvent & { currentTarget: HTMLInputElement },
+    currentList: AutoList,
+  ) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
+      e.preventDefault();
+      wsAutoSend.changeAutoMemo(props.ws, currentList.id, e.currentTarget.value);
+      setEditMemo(false);
+    }
   };
 
   createEffect(() => {
@@ -80,6 +97,11 @@ const Operation: Component<{
         case "sAddAutoSub": {
           const body = data.body as s2cAddAutoSubBody;
           wsAutoOn.addAutoSub(body);
+          break;
+        }
+        case "autoPlayStart": {
+          const body = data.body as s2cAutoPlayStartBody;
+          setPlayingStat({ stat: 1, playingID: body.list_id });
           break;
         }
         case "autoPlayEnd":
@@ -117,6 +139,11 @@ const Operation: Component<{
           } else {
             window.alert("初始化房间失败, 请联系网站管理员");
           }
+          break;
+        }
+        case "sChangeAutoMemo": {
+          const body = data.body as s2cChangeAutoMemoBody;
+          wsAutoOn.changeAutoMemo(body);
           break;
         }
         case "heartBeat":
@@ -170,7 +197,29 @@ const Operation: Component<{
               </div>
               <div class="text-center truncate col-span-3">{elem.first_origin}</div>
               <div class="text-center truncate col-span-3">{elem.first_subtitle}</div>
-              <div class="text-center truncate">{elem.memo}</div>
+              <Switch>
+                <Match when={editMemo() === false}>
+                  <div
+                    id="autoMemoDiv"
+                    class="text-center truncate select-none"
+                    onDblClick={handleMemoChange}
+                  >
+                    {elem.memo}
+                  </div>
+                </Match>
+                <Match when={editMemo() === true}>
+                  <input
+                    type="text"
+                    id="memoChanger"
+                    onBlur={() => setEditMemo(false)}
+                    value={elem.memo}
+                    autocomplete="off"
+                    placeholder="请输入"
+                    onKeyDown={(e) => sendMemoChange(e, elem)}
+                    class="rounded-lg bg-neutral-700 px-2 border-2 border-gray-500 focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600 text-center"
+                  />
+                </Match>
+              </Switch>
               <div class="col-span-2 flex items-center justify-center gap-5">
                 <Switch
                   fallback={

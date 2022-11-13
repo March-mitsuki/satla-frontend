@@ -127,6 +127,16 @@ export interface c2sRecoverAutoPlayStat {
   };
 }
 
+export interface c2sChangeAutoMemo {
+  head: {
+    cmd: "changeAutoMemo";
+  };
+  body: {
+    list_id: number;
+    memo: string;
+  };
+}
+
 /**
  * 以下s2c
  */
@@ -143,6 +153,10 @@ export interface s2cGetRoomAutoListsBody {
 
 export interface s2cAutoChangeSub {
   auto_sub: AutoSub;
+}
+
+export interface s2cAutoPlayStartBody {
+  list_id: number;
 }
 
 export interface s2cAutoPlayEndBody {
@@ -176,4 +190,10 @@ export interface s2cGetAutoPlayStatBody {
 
 export interface s2cRecoverPlayStatBody {
   status: boolean;
+}
+
+export interface s2cChangeAutoMemoBody {
+  status: boolean;
+  list_id: number;
+  memo: string;
 }
