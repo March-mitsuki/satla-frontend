@@ -4,9 +4,10 @@ import type { Component } from "solid-js";
 
 const OperationRecover: Component<{
   ws: WebSocket | undefined;
+  room_id: number;
 }> = (props) => {
   const handleClick = () => {
-    wsAutoSend.recoverAutoPlayStat(props.ws);
+    wsAutoSend.recoverAutoPlayStat(props.ws, props.room_id);
   };
   return (
     <div class="flex h-full">

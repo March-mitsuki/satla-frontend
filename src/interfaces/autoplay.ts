@@ -46,6 +46,7 @@ export class AutoList {
   first_subtitle: string; // 第一句翻译
   first_origin: string; // 第一句原文
   memo: string;
+  is_sent: boolean;
 
   constructor({
     id,
@@ -53,18 +54,21 @@ export class AutoList {
     first_origin,
     first_subtitle,
     memo = "",
+    is_sent = false,
   }: {
     id: number;
     room_id: number;
     first_subtitle: string;
     first_origin: string;
     memo?: string;
+    is_sent?: boolean;
   }) {
     this.id = id;
     this.room_id = room_id;
     this.first_origin = first_origin;
     this.first_subtitle = first_subtitle;
     this.memo = memo;
+    this.is_sent = is_sent;
   }
 }
 

@@ -280,7 +280,7 @@ export const getAutoPlayStat = (ws: WebSocket | undefined) => {
   return;
 };
 
-export const recoverAutoPlayStat = (ws: WebSocket | undefined) => {
+export const recoverAutoPlayStat = (ws: WebSocket | undefined, roomId: number) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
     console.log("ws is closed or not connected, please wait");
@@ -291,7 +291,7 @@ export const recoverAutoPlayStat = (ws: WebSocket | undefined) => {
       cmd: "recoverAutoPlayStat",
     },
     body: {
-      data: {},
+      room_id: roomId,
     },
   };
   const postData = new TextEncoder().encode(JSON.stringify(_postData));

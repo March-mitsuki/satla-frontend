@@ -123,7 +123,7 @@ export interface c2sRecoverAutoPlayStat {
     cmd: "recoverAutoPlayStat";
   };
   body: {
-    data: any; // eslint-disable-line
+    room_id: number;
   };
 }
 

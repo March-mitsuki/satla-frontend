@@ -95,9 +95,10 @@ https://github.com/March-mitsuki/satla-backend
   - [ ] 本地拖动排序
   - [x] 同步服务端状态, 支持中途加入
   - [x] 修改备注
-  - [ ] 已播放更改颜色
+  - [x] 已播放更改颜色
 - [ ] 性能修复
   - [ ] 改为 root 统一管理 ctx (使用自制 redux)
+  - [ ] 目前 deep copy 使用的是 map, 但 map 好像不是 deep copy, 所以目前有的地方使用的是手动修改 html dom, 之后可以找时间统一
   - [ ] 储存当前发送, 刷新不消失(前端存或者后端存都行)
     - [ ] 当前同传页面是前端存, 自动发送是后端存, 找时间统一一下
   - [ ] 把 signal 改成 store 应该能增加性能

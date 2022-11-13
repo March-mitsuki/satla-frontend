@@ -10,7 +10,7 @@ import {
 import { AutoList } from "@/interfaces/autoplay";
 import { s2cDeleteAutoSubBody } from "@/interfaces/ws-auto";
 
-const { autoList, setAutoList } = rootCtx.autoplayCtx;
+const { setAutoList } = rootCtx.autoplayCtx;
 
 export const getRoomAutoLists = (body: s2cGetRoomAutoListsBody) => {
   if (body.status) {
@@ -35,7 +35,7 @@ export const addAutoSub = (body: s2cAddAutoSubBody) => {
   } else {
     window.alert("添加ASS失败, 请重试");
   }
-  return undefined;
+  return;
 };
 
 export const deleteAutoSub = (body: s2cDeleteAutoSubBody) => {
@@ -52,7 +52,7 @@ export const deleteAutoSub = (body: s2cDeleteAutoSubBody) => {
   } else {
     window.alert("删除失败, 请重试");
   }
-  return undefined;
+  return;
 };
 
 export const changeAutoMemo = (body: s2cChangeAutoMemoBody) => {
@@ -60,14 +60,32 @@ export const changeAutoMemo = (body: s2cChangeAutoMemoBody) => {
     window.alert("更改备注失败, 请刷新后重试");
     return undefined;
   }
-  const dc = autoList();
-  if (!dc) {
-    window.alert("不存在播放列表");
-    return;
-  }
-  const idx = dc.findIndex((x) => x.id === body.list_id);
-  dc[idx].memo = body.memo;
-  setAutoList(dc);
-  const memoDiv = document.getElementById("autoMemoDiv") as HTMLDivElement;
+  setAutoList((pre) => {
+    if (!pre) {
+      window.alert("不存在播放列表");
+      return undefined;
+    }
+    const dc = pre;
+    const idx = dc.findIndex((x) => x.id === body.list_id);
+    dc[idx].memo = body.memo;
+    return dc;
+  });
+  const memoDiv = document.getElementById(`autoMemoDiv${body.list_id}`) as HTMLDivElement;
   memoDiv.innerText = body.memo;
+  return;
+};
+
+export const changeStartListBg = (listId: number) => {
+  setAutoList((pre) => {
+    if (!pre) {
+      window.alert("不存在播放列表");
+      return undefined;
+    }
+    const dc = JSON.parse(JSON.stringify(pre)) as AutoList[];
+    const idx = dc.findIndex((x) => x.id === listId);
+    dc[idx].is_sent = true;
+    console.log("[change bg]: ", dc);
+    return dc;
+  });
+  return;
 };

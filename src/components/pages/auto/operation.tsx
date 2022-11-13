@@ -28,7 +28,13 @@ const Operation: Component<{
   ws: WebSocket | undefined;
 }> = (props) => {
   const { autoList, playingStat, setPlayingStat } = rootCtx.autoplayCtx;
-  const [editMemo, setEditMemo] = createSignal(false);
+  const [editMemo, setEditMemo] = createSignal<{
+    list_id: number;
+    isEdit: boolean;
+  }>({
+    list_id: -1,
+    isEdit: false,
+  });
 
   const handlePlayStart = (
     e: MouseEvent & { currentTarget: HTMLButtonElement },
@@ -63,9 +69,15 @@ const Operation: Component<{
     wsAutoSend.autoPlayRestart(props.ws, currentList.id);
   };
 
-  const handleMemoChange = () => {
-    setEditMemo(true);
-    document.getElementById("memoChanger")?.focus();
+  const handleMemoChange = (
+    e: MouseEvent & {
+      currentTarget: HTMLDivElement;
+    },
+    currentList: AutoList,
+  ) => {
+    e.preventDefault();
+    setEditMemo({ list_id: currentList.id, isEdit: true });
+    document.getElementById(`memoChanger${currentList.id}`)?.focus();
   };
   const sendMemoChange = (
     e: KeyboardEvent & { currentTarget: HTMLInputElement },
@@ -74,7 +86,7 @@ const Operation: Component<{
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault();
       wsAutoSend.changeAutoMemo(props.ws, currentList.id, e.currentTarget.value);
-      setEditMemo(false);
+      setEditMemo({ list_id: -1, isEdit: false });
     }
   };
 
@@ -102,6 +114,7 @@ const Operation: Component<{
         case "autoPlayStart": {
           const body = data.body as s2cAutoPlayStartBody;
           setPlayingStat({ stat: 1, playingID: body.list_id });
+          wsAutoOn.changeStartListBg(body.list_id);
           break;
         }
         case "autoPlayEnd":
@@ -169,7 +182,14 @@ const Operation: Component<{
         {(elem) => {
           console.log("auto opreration render once");
           return (
-            <div class="grid grid-cols-10 border-2 border-neutral-500 rounded-full py-1">
+            <div
+              classList={{
+                "grid grid-cols-10 border-2 border-neutral-500 rounded-full py-1":
+                  elem.is_sent === false,
+                "grid grid-cols-10 border-2 border-neutral-500 rounded-full py-1 bg-neutral-500":
+                  elem.is_sent === true,
+              }}
+            >
               <div class="grid grid-cols-2">
                 <div class="flex justify-center items-center">
                   <button
@@ -197,21 +217,22 @@ const Operation: Component<{
               </div>
               <div class="text-center truncate col-span-3">{elem.first_origin}</div>
               <div class="text-center truncate col-span-3">{elem.first_subtitle}</div>
-              <Switch>
-                <Match when={editMemo() === false}>
+              <Switch
+                fallback={
                   <div
-                    id="autoMemoDiv"
+                    id={`autoMemoDiv${elem.id}`}
                     class="text-center truncate select-none"
-                    onDblClick={handleMemoChange}
+                    onDblClick={(e) => handleMemoChange(e, elem)}
                   >
                     {elem.memo}
                   </div>
-                </Match>
-                <Match when={editMemo() === true}>
+                }
+              >
+                <Match when={editMemo().isEdit === true && editMemo().list_id === elem.id}>
                   <input
                     type="text"
-                    id="memoChanger"
-                    onBlur={() => setEditMemo(false)}
+                    id={`memoChanger${elem.id}`}
+                    onBlur={() => setEditMemo({ list_id: -1, isEdit: false })}
                     value={elem.memo}
                     autocomplete="off"
                     placeholder="请输入"
