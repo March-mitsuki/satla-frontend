@@ -7,18 +7,27 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "fmt": "prettier --write --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx,json}'",
+    "fmt-check": "prettier --check --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx,json}'",
+    "lint": "npx eslint ./src"
   },
   "author": "mitsuki",
   "license": "ISC",
   "devDependencies": {
     "@types/luxon": "^3.0.1",
     "@types/video.js": "^7.3.47",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
     "autoprefixer": "^10.4.9",
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
     "postcss": "^8.4.16",
+    "prettier": "2.7.1",
+    "solid-devtools": "^0.20.1",
     "tailwindcss": "^3.1.8",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.3",
+    "typescript": "^4.8.4",
     "video.js": "^7.20.2",
     "vite": "^3.1.0",
     "vite-plugin-pages": "^0.26.0",
@@ -27,6 +36,7 @@
   "dependencies": {
     "@solidjs/meta": "^0.28.0",
     "@solidjs/router": "^0.4.3",
+    "ass-compiler": "^0.1.4",
     "luxon": "^3.0.4",
     "solid-js": "^1.5.4"
   }

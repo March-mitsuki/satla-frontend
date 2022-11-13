@@ -1,0 +1,208 @@
+// dependencies lib
+import { createSignal } from "solid-js";
+
+// type
+import type { ParentComponent, JSXElement } from "solid-js";
+
+const FloatingWindow: ParentComponent<{
+  controllerWrapperClass?: string;
+  floatingControlClass?: string;
+  floatingControlContent: JSXElement;
+  floatingContent?: JSXElement;
+  cancelControlContent: JSXElement;
+  cancelControlClass?: string;
+  contentsWrapperClass?: string;
+  wrapperClass: string; // 当不需要初始值的时候需要给个空字符串
+  risizerClass?: string;
+  defaultWindowSize: {
+    width: number | "";
+    height: number | "";
+  };
+  minWindowSize: {
+    width: number | "";
+    height: number | "";
+  };
+  customCancel?: () => void;
+  defaultPosition?: "static" | "relative" | "absolute" | "sticky" | "fixed";
+  defaultCoord?: { x: number; y: number };
+}> = (props) => {
+  const [floatingElem, setFloatingElem] = createSignal<{
+    zIndex: number | "auto" | "";
+    position: "static" | "relative" | "absolute" | "sticky" | "fixed";
+    isFloating: boolean;
+    x: number;
+    y: number;
+  }>({
+    zIndex: "auto",
+    position: props.defaultPosition ? props.defaultPosition : "static",
+    isFloating: false,
+    x: props.defaultCoord ? props.defaultCoord.x : 0,
+    y: props.defaultCoord ? props.defaultCoord.y : 0,
+  });
+  const [windowSize, setWindowSize] = createSignal({
+    width: props.defaultWindowSize.width,
+    height: props.defaultWindowSize.height,
+  });
+
+  let floatingElemRef: HTMLDivElement | undefined;
+  let wrapperElemRef: HTMLDivElement | undefined;
+  let contentsWrapperElemRef: HTMLDivElement | undefined;
+  let resizeElemRef: HTMLDivElement | undefined;
+
+  const startDragHandler = (e: MouseEvent) => {
+    let shiftX: number;
+    let shiftY: number;
+    if (floatingElemRef) {
+      shiftX = e.clientX - floatingElemRef.getBoundingClientRect().left;
+      shiftY = e.clientY - floatingElemRef.getBoundingClientRect().top;
+    }
+    const docHeight = document.documentElement.clientHeight;
+    const docWidth = document.documentElement.clientWidth;
+    onmousemove = (e: MouseEvent) => {
+      e.preventDefault();
+
+      if (wrapperElemRef) {
+        const moveX = e.pageX - shiftX;
+        const moveY = e.pageY - shiftY;
+        if (
+          moveX + wrapperElemRef.offsetWidth <= docWidth &&
+          moveY + wrapperElemRef.offsetHeight <= docHeight &&
+          moveX >= 0 &&
+          moveY >= 0
+        ) {
+          setFloatingElem({
+            zIndex: 1000,
+            position: "fixed",
+            isFloating: true,
+            x: moveX,
+            y: moveY,
+          });
+        }
+      }
+    };
+
+    onmouseup = () => {
+      setFloatingElem({
+        zIndex: 1000,
+        position: "absolute",
+        isFloating: true,
+        x: floatingElem().x,
+        y: floatingElem().y,
+      });
+      onmousemove = () => null;
+      onmouseup = () => null;
+    };
+  };
+
+  const startResize = () => {
+    onmousemove = (e: MouseEvent) => {
+      e.preventDefault();
+      if (wrapperElemRef && contentsWrapperElemRef && floatingElemRef && resizeElemRef) {
+        setWindowSize({
+          width: e.pageX - (wrapperElemRef.offsetLeft - resizeElemRef.offsetWidth),
+          height: e.pageY - (wrapperElemRef.offsetTop + floatingElemRef.offsetHeight),
+        });
+      }
+    };
+    onmouseup = () => {
+      onmousemove = () => null;
+      onmouseup = () => null;
+    };
+  };
+
+  const cancelFloating = () => {
+    setFloatingElem({
+      zIndex: "auto",
+      position: "static",
+      isFloating: false,
+      x: 0,
+      y: 0,
+    });
+  };
+
+  return (
+    <div
+      ref={wrapperElemRef}
+      style={{
+        "z-index": floatingElem().zIndex,
+        position: `${floatingElem().position}`,
+        left: `${floatingElem().x}px`,
+        top: `${floatingElem().y}px`,
+      }}
+      classList={{ [props.wrapperClass]: floatingElem().isFloating === false }}
+    >
+      <div
+        style={{
+          "min-width": `${props.minWindowSize.width}px`,
+          width: floatingElem().isFloating ? `${windowSize().width}px` : "",
+        }}
+        class={props.controllerWrapperClass}
+      >
+        <div
+          ref={floatingElemRef}
+          style={{
+            cursor: "move",
+          }}
+          onMouseDown={startDragHandler}
+          class={props.floatingControlClass}
+        >
+          {props.floatingControlContent}
+        </div>
+        {props.floatingContent}
+        <div
+          style={{
+            cursor: "pointer",
+          }}
+          onClick={props.customCancel ? props.customCancel : cancelFloating}
+          class={props.cancelControlClass}
+        >
+          {props.cancelControlContent}
+        </div>
+      </div>
+      <div
+        ref={contentsWrapperElemRef}
+        style={{
+          position: "relative",
+          "min-width": `${props.minWindowSize.width}px`,
+          "min-height": `${props.minWindowSize.height}px`,
+          width: floatingElem().isFloating ? `${windowSize().width}px` : "",
+          height: floatingElem().isFloating ? `${windowSize().height}px` : "",
+        }}
+        class={props.contentsWrapperClass}
+      >
+        {props.children}
+        {floatingElem().isFloating && (
+          <div
+            ref={resizeElemRef}
+            style={{
+              position: "absolute",
+              right: "0",
+              bottom: "0",
+              "z-index": floatingElem().zIndex,
+              cursor: "nwse-resize",
+            }}
+            onMouseDown={startResize}
+            class={props.risizerClass}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-4 h-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4.5 4.5l15 15m0 0V8.25m0 11.25H8.25"
+              />
+            </svg>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FloatingWindow;

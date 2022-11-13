@@ -1,14 +1,14 @@
 // dependencies lib
-import { VideoJS } from "@/components"
-import videojs from "video.js"
+import { VideoJS } from "@/components";
+import videojs from "video.js";
 import { useParams } from "@solidjs/router";
-import { Title } from "@solidjs/meta"
+import { Title } from "@solidjs/meta";
 
 // local dependencies
-import { Navi } from "@/components/pages"
+import { Navi } from "@/components/pages";
 
 const StreamPage = () => {
-  const api_base_url = import.meta.env.VITE_API_BASE_URL
+  const api_base_url = import.meta.env.VITE_API_BASE_URL;
 
   const videoJSOption: videojs.PlayerOptions = {
     controls: true,
@@ -19,27 +19,25 @@ const StreamPage = () => {
     sources: [
       {
         src: api_base_url + "live/test.m3u8",
-        type: "application/x-mpegURL"
+        type: "application/x-mpegURL",
       },
     ],
-  }
-  const param = useParams<{ roomid: string }>()
+  };
+  const param = useParams<{ wsroom: string }>();
 
   return (
     <>
       <Title>直播页面</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg text-xl py-3 px-5">
-          <Navi
-            currentProject={param.roomid}
-          ></Navi>
+          <Navi currentProject={param.wsroom}></Navi>
         </div>
-        <div class='w-full flex-initial'>
+        <div class="w-full flex-initial">
           <VideoJS {...videoJSOption}></VideoJS>
         </div>
       </div>
     </>
   );
-}
+};
 
-export default StreamPage
+export default StreamPage;

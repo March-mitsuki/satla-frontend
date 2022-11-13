@@ -1,4 +1,4 @@
-import type { Subtitle } from "@/interfaces"
+import type { Subtitle } from "@/interfaces";
 
 const dummySubtitles: Subtitle[] = [
   {
@@ -9,7 +9,8 @@ const dummySubtitles: Subtitle[] = [
     translated_by: "用户A",
     checked_by: "",
     subtitle: "测试字幕, 若一直显示此行则为连接服务器失败。",
-    origin: "テストです。もしこの行がずっと表示されるままだとサーバーとの接続に失敗したことを示している。",
+    origin:
+      "テストです。もしこの行がずっと表示されるままだとサーバーとの接続に失敗したことを示している。",
   },
   {
     id: 2,
@@ -21,6 +22,6 @@ const dummySubtitles: Subtitle[] = [
     subtitle: "If this line always display, the connection to server has failed.",
     origin: "test line",
   },
-]
+];
 
-export default dummySubtitles
+export default dummySubtitles;

@@ -32,17 +32,10 @@ https://github.com/March-mitsuki/satla-backend
 }
 ```
 
-- 在数据上 roomid === project_name
-  - 通过 subtitles 的 project_id 进行连接(但不设置外键)
-
 ## 注意事项
 
 - 现在输入只监听回车和按钮, 当 blur 的时候不更新
   - 强制大家按回车, 因为监听 blur 会导致按回车发送一次, blur 时再发送一次, 而这个发送会直接导致服务器对 db 进行操作, 所以找到解决办法之前都先用这个吧
-- DBname: vvvorld
-  - projects table
-  - subtitles table
-  - orders table
 - 关于 login/signup/logout
   1. 现在使用的是 fetch api 进行 post
   1. 但是 fetch api 不会让浏览器 redirect
@@ -78,9 +71,9 @@ https://github.com/March-mitsuki/satla-backend
     - [x] 调换双语位置
     - [x] css 控制
       - [x] 储存到 local-storage
-  - [ ] ws 连接
+  - [x] ws 连接
     - [x] 当前房间人数
-    - [ ] 连接显示灯
+    - [x] 连接显示灯
   - [ ] 切换项目功能
     - [x] 字幕分房间储存
     - [ ] 项目显示分页
@@ -90,7 +83,21 @@ https://github.com/March-mitsuki/satla-backend
   - [x] user control
     - [x] 修改密码
 - [ ] 进阶功能
+  - [ ] 把所有的 ws 回复都加上一项 status 来判断是否成功
+  - [x] 分房间改为一项目多房间
+- [ ] 自动发送
+  - [x] 开始, 结束
+  - [x] 快进, 快退
+  - [x] 暂停, 再次开始
+  - [x] 发送空行
+  - [x] 删除
+  - [x] 行数预览
+  - [ ] 本地拖动排序
+  - [x] 同步服务端状态, 支持中途加入
+- [ ] 性能修复
+  - [ ] 改为 root 统一管理 ctx (使用自制 redux)
   - [ ] 储存当前发送, 刷新不消失(前端存或者后端存都行)
+    - [ ] 当前同传页面是前端存, 自动发送是后端存, 找时间统一一下
   - [ ] 把 signal 改成 store 应该能增加性能
   - [ ] 现在 getElement 和 ref 混在, 之后需要找时间统一
   - [x] floating-window 的两个 signal 应该可以整合到一个, 因为都是一起变化的

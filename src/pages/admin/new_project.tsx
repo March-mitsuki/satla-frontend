@@ -1,8 +1,8 @@
 // dependencies lib
-import { Title } from "@solidjs/meta"
+import { Title } from "@solidjs/meta";
 
 // local dependencies
-import { AdminNavi, NewProjectForm } from "@/components/pages/admin"
+import { AdminNavi, NewProjectForm } from "@/components/pages/admin";
 
 const AdminNewProject = () => {
   return (
@@ -15,7 +15,7 @@ const AdminNewProject = () => {
         <NewProjectForm></NewProjectForm>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default AdminNewProject
+export default AdminNewProject;
