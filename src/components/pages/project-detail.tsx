@@ -45,7 +45,7 @@ const ProjectDetail: Component = () => {
       <div class="flex flex-col gap-2 border-2 p-2">
         {detail.loading && (
           <div class="flex">
-            <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+            <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent" />
             Loading...
           </div>
         )}

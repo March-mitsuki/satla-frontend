@@ -81,6 +81,7 @@ const FloatingWindow: ParentComponent<{
       }
     };
 
+    // eslint-disable-next-line solid/reactivity
     onmouseup = () => {
       setFloatingElem({
         zIndex: 1000,
@@ -153,6 +154,7 @@ const FloatingWindow: ParentComponent<{
           style={{
             cursor: "pointer",
           }}
+          // eslint-disable-next-line solid/reactivity
           onClick={props.customCancel ? props.customCancel : cancelFloating}
           class={props.cancelControlClass}
         >

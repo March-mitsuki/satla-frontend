@@ -75,6 +75,7 @@ const FloatingWindow: ParentComponent<{
       }
     };
 
+    // eslint-disable-next-line solid/reactivity
     onmouseup = () => {
       setFloatingElem({
         zIndex: 1000,

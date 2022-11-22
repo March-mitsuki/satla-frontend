@@ -10,9 +10,9 @@ const AdminNewProject = () => {
       <Title>New Project</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
-          <AdminNavi></AdminNavi>
+          <AdminNavi />
         </div>
-        <NewProjectForm></NewProjectForm>
+        <NewProjectForm />
       </div>
     </>
   );

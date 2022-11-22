@@ -1,5 +1,6 @@
 // local dependencies
 import rootCtx from "@/components/contexts";
+import { logger } from "@/components/tools";
 
 // type
 import { Subtitle } from "@/interfaces";
@@ -20,6 +21,8 @@ import type {
   c2sChangeStyle,
   c2sHeartBeat,
   ChangeStyleBody,
+  c2sGetNowRoomStyle,
+  c2sGetNowRoomSub,
 } from "@/interfaces/ws";
 
 const { currentUser } = rootCtx.currentUserCtx;
@@ -59,7 +62,7 @@ export const changeSubtitle = ({
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sChangeSubtitle = {
@@ -87,7 +90,7 @@ export const addSubtitleUp = ({
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sAddSubtitleUp = {
@@ -118,7 +121,7 @@ export const addSubtitleDown = ({
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sAddSubtitleDown = {
@@ -139,7 +142,7 @@ export const addSubtitleDown = ({
 export const editStart = (ws: WebSocket | undefined, subtitle_id: number) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sEditStart = {
@@ -158,7 +161,7 @@ export const editStart = (ws: WebSocket | undefined, subtitle_id: number) => {
 export const editEnd = (ws: WebSocket | undefined, subtitle_id: number) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sEditEnd = {
@@ -183,7 +186,7 @@ export const addTranslatedSubtitle = ({
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sAddTranslatedSubtitle = {
@@ -201,7 +204,7 @@ export const addTranslatedSubtitle = ({
 export const deleteSubtitle = (ws: WebSocket | undefined, subtitle: Subtitle) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sDeleteSubtitle = {
@@ -229,7 +232,7 @@ export const reorderSubFront = ({
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sReordrSubFront = {
@@ -260,7 +263,7 @@ export const reorderSubBack = ({
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sReordrSubBack = {
@@ -287,7 +290,7 @@ export const sendSubtitle = ({
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sSendSubtitle = {
@@ -311,7 +314,7 @@ export const sendSubtitleDirect = ({
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sSendSubDirect = {
@@ -335,7 +338,7 @@ export const changeStyle = ({
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sChangeStyle = {
@@ -348,10 +351,46 @@ export const changeStyle = ({
   ws.send(postData);
 };
 
+export const getNowRoomStyle = ({ ws, wsroom }: { ws: WebSocket | undefined; wsroom: string }) => {
+  if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    logger.err("ws is closed or not connected, please wait");
+    return;
+  }
+  const _postData: c2sGetNowRoomStyle = {
+    head: {
+      cmd: "getNowRoomStyle",
+    },
+    body: {
+      wsroom: wsroom,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+};
+
+export const getNowRoomSub = ({ ws, wsroom }: { ws: WebSocket | undefined; wsroom: string }) => {
+  if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    logger.err("ws is closed or not connected, please wait");
+    return;
+  }
+  const _postData: c2sGetNowRoomSub = {
+    head: {
+      cmd: "getNowRoomSub",
+    },
+    body: {
+      wsroom: wsroom,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+};
+
 export const heartBeat = (ws: WebSocket | undefined) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
+    logger.err("ws is closed or not connected, please wait");
     return;
   }
   const _postData: c2sHeartBeat = {

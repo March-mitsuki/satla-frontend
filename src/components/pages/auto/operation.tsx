@@ -222,7 +222,7 @@ const Operation: Component<{
                   <div
                     id={`autoMemoDiv${elem.id}`}
                     class="text-center truncate select-none"
-                    onDblClick={(e) => handleMemoChange(e, elem)}
+                    onDblClick={(e) => handleMemoChange(e, elem)} // eslint-disable-line
                   >
                     {elem.memo}
                   </div>

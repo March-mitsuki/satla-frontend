@@ -93,7 +93,7 @@ const AutoStyleChanger: Component<{
             ws={props.ws}
             wsroom={props.wsroom}
             wrapperFromClass="flex flex-col gap-2 px-5 pb-1 pt-5 overflow-auto h-[calc(100%)]"
-          ></StyleChanger>
+           />
         </FloatingWindowXY>
       )}
     </>

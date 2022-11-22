@@ -43,7 +43,7 @@ const AutoDisplayPage: Component = () => {
   return (
     <>
       <Title>Auto Display</Title>
-      <DisplayReview type="auto" ws={ws}></DisplayReview>
+      <DisplayReview type="auto" ws={ws} wsroom={param.wsroom} />
     </>
   );
 };

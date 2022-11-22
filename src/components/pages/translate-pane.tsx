@@ -36,6 +36,7 @@ const TranslatePane: Component<{
   let storageMemo: StorageMemoData | undefined;
   if (storageMemoStr) {
     storageMemo = JSON.parse(storageMemoStr) as StorageMemoData;
+    // eslint-disable-next-line solid/reactivity
     const roomMemo: string[] | null = storageMemo[props.wsroom];
     setCheckMemo(roomMemo);
   }
@@ -120,18 +121,18 @@ const TranslatePane: Component<{
               onChange={() => switchBilingual()}
               class="peer sr-only"
             />
-            <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
+            <div class="w-8 h-3 bg-gray-400 rounded-full" />
             <div
               class="
                 absolute w-4 h-4 bg-white/70 rounded-full shadow
                 peer-checked:translate-x-4 peer-checked:bg-blue-400
                 transition drop-shadow
               "
-            ></div>
+            />
           </div>
           显示双语
         </label>
-        <div class="border-l-2"></div>
+        <div class="border-l-2" />
         <label class="flex items-center gap-1 cursor-pointer select-none">
           <div class="relative flex items-center">
             <input
@@ -140,18 +141,18 @@ const TranslatePane: Component<{
               onChange={() => switchCanOrder()}
               class="peer sr-only"
             />
-            <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
+            <div class="w-8 h-3 bg-gray-400 rounded-full" />
             <div
               class="
                 absolute w-4 h-4 bg-white/70 rounded-full shadow
                 peer-checked:translate-x-4 peer-checked:bg-blue-400
                 transition drop-shadow
               "
-            ></div>
+            />
           </div>
           拖动排序
         </label>
-        <div class="border-l-2"></div>
+        <div class="border-l-2" />
         <label class="flex items-center gap-2 cursor-pointer select-none">
           翻译
           <div class="relative flex items-center">
@@ -161,7 +162,7 @@ const TranslatePane: Component<{
               onChange={() => switchPagetype()}
               class="peer sr-only"
             />
-            <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
+            <div class="w-8 h-3 bg-gray-400 rounded-full" />
             <div class="absolute -left-1 peer-checked:translate-x-6 transition">
               <Switch>
                 {/* 切换toggle的左右箭头 */}

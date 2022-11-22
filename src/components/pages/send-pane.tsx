@@ -83,7 +83,7 @@ const SendPane: Component<{
               onChange={(e) => inputTypeToggleHandler(e)}
               class="peer sr-only"
             />
-            <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
+            <div class="w-8 h-3 bg-gray-400 rounded-full" />
             <div class="absolute -left-1 peer-checked:translate-x-6 transition">
               <Switch>
                 {/* 切换toggle的左右箭头 */}
@@ -120,7 +120,7 @@ const SendPane: Component<{
           </div>
           输入
         </label>
-        <div class="border-l-2 border-neutral-400"></div>
+        <div class="border-l-2 border-neutral-400" />
         <div class="flex items-center">
           <button
             onClick={openDisplayPage}
@@ -172,14 +172,14 @@ const SendPane: Component<{
         </button>
       </form>
       <div class="flex flex-col items-center justify-center pt-4 pb-2">
-        <div class="w-[calc(100%-70%)] h-1 bg-neutral-400 rounded-lg"></div>
+        <div class="w-[calc(100%-70%)] h-1 bg-neutral-400 rounded-lg" />
         <div class="pt-1 text-sm">*构建样式时请遵循css的规则</div>
       </div>
       <StyleChanger
         ws={props.ws}
         wsroom={props.wsroom}
         wrapperFromClass="flex flex-col gap-2 px-5 pb-1 overflow-auto h-[calc(100%-120px)]"
-      ></StyleChanger>
+       />
     </div>
   );
 };

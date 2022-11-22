@@ -42,7 +42,7 @@ const DisplayPage: Component = () => {
   return (
     <>
       <Title>Display Page</Title>
-      <DisplayReview type="nomal" ws={ws}></DisplayReview>
+      <DisplayReview type="nomal" ws={ws} wsroom={param.wsroom} />
     </>
   );
 };

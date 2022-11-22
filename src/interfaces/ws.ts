@@ -166,6 +166,24 @@ export interface c2sChangeStyle {
   body: ChangeStyleBody;
 }
 
+export interface c2sGetNowRoomStyle {
+  head: {
+    cmd: "getNowRoomStyle";
+  };
+  body: {
+    wsroom: string;
+  };
+}
+
+export interface c2sGetNowRoomSub {
+  head: {
+    cmd: "getNowRoomSub";
+  };
+  body: {
+    wsroom: string;
+  };
+}
+
 export interface c2sHeartBeat {
   // 目前的心跳是复读client发过去的东西, 然后发给心跳方
   head: {
@@ -289,6 +307,12 @@ export interface s2cSendSubtitleBody {
 }
 
 export type s2cChangeStyleBody = ChangeStyleBody;
+
+export type s2cGetNowRoomStyleBody = ChangeStyleBody;
+
+export interface s2cGetNowRoomSubBody {
+  subtitle: Subtitle;
+}
 
 export interface s2cHeartBeatBody {
   data: any; // eslint-disable-line

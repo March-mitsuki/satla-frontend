@@ -61,7 +61,7 @@ const PaneX: Component<{
               : "min-width:5px; min-height:5px; cursor:col-resize;"
           }
           class={props.dragLineClass}
-        ></div>
+         />
         <div
           style={{
             width: `${

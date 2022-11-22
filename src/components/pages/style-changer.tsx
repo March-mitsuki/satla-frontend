@@ -4,7 +4,6 @@ import { createStore } from "solid-js/store";
 // local dependencies
 import { wsSend } from "@/controllers";
 import { defaultChangeStyleBodyData } from "@/interfaces/ws";
-import { logger } from "@/components/tools";
 
 // type
 import type { s2cChangeStyleBody, s2cEventMap, ChangeStyleBody } from "@/interfaces/ws";
@@ -30,9 +29,7 @@ const StyleChanger: Component<{
   };
 
   const styleReversedToggleHandler = () => {
-    // wsSend.changeReversed(props.ws, !reversed());
     setStyle("reversed", !style.reversed);
-    logger.info("toggle reversed", style);
     wsSend.changeStyle({ ws: props.ws, styleObj: style });
   };
 
@@ -57,7 +54,6 @@ const StyleChanger: Component<{
   const bilingualSendToggleHandler = (e: Event) => {
     e.preventDefault();
     setStyle("bilingual", !style.bilingual);
-    logger.info("toggle bilingual", style);
     wsSend.changeStyle({ ws: props.ws, styleObj: style });
   };
 
@@ -103,7 +99,7 @@ const StyleChanger: Component<{
         </textarea>
       </label>
       <div class="flex gap-2 items-center justify-center">
-        <div class="h-4 w-[2px] bg-gray-400 rounded-full"></div>
+        <div class="h-4 w-[2px] bg-gray-400 rounded-full" />
         <label class="flex items-center gap-1 cursor-pointer select-none">
           <div class="relative flex items-center">
             <input
@@ -112,18 +108,18 @@ const StyleChanger: Component<{
               onChange={(e) => bilingualSendToggleHandler(e)}
               class="peer sr-only"
             />
-            <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
+            <div class="w-8 h-3 bg-gray-400 rounded-full" />
             <div
               class="
                   absolute w-4 h-4 bg-white/70 rounded-full shadow
                   peer-checked:translate-x-4 peer-checked:bg-blue-400
                   transition drop-shadow
                 "
-            ></div>
+            />
           </div>
           双语显示
         </label>
-        <div class="h-4 w-[2px] bg-gray-400 rounded-full"></div>
+        <div class="h-4 w-[2px] bg-gray-400 rounded-full" />
         <label class="flex items-center gap-1 cursor-pointer select-none">
           <div class="relative flex items-center">
             <input
@@ -132,18 +128,18 @@ const StyleChanger: Component<{
               onChange={() => styleReversedToggleHandler()}
               class="peer sr-only"
             />
-            <div class="w-8 h-3 bg-gray-400 rounded-full"></div>
+            <div class="w-8 h-3 bg-gray-400 rounded-full" />
             <div
               class="
                   absolute w-4 h-4 bg-white/70 rounded-full shadow
                   peer-checked:translate-x-4 peer-checked:bg-blue-400
                   transition drop-shadow
                 "
-            ></div>
+            />
           </div>
           调换位置
         </label>
-        <div class="h-4 w-[2px] bg-gray-400 rounded-full"></div>
+        <div class="h-4 w-[2px] bg-gray-400 rounded-full" />
         <button
           type="submit"
           class="bg-orange-500/70 hover:bg-orange-700/70 active:bg-orange-500/70 rounded-full px-3 text-white text-sm"

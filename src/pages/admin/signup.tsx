@@ -136,7 +136,7 @@ const SignUpPage = () => {
       <Title>Login</Title>
       <div class="h-full bg-neutral-700 text-white flex flex-col">
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
-          <AdminNavi></AdminNavi>
+          <AdminNavi />
         </div>
         <div class="flex-auto flex flex-col justify-center items-center">
           <div class="w-[30%] text-center text-2xl pb-10">新建vvvorld账号</div>

@@ -10,7 +10,8 @@
     "serve": "vite preview",
     "fmt": "prettier --write --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx,json}'",
     "fmt-check": "prettier --check --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx,json}'",
-    "lint": "npx eslint ./src"
+    "lint": "npx eslint ./src",
+    "lint:fix": "npx eslint --fix ./src"
   },
   "author": "mitsuki",
   "license": "ISC",
@@ -22,6 +23,7 @@
     "autoprefixer": "^10.4.9",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-solid": "^0.8.0",
     "postcss": "^8.4.16",
     "prettier": "2.7.1",
     "solid-devtools": "^0.20.1",

@@ -4,6 +4,7 @@ import DisplayReview from "../display-review";
 
 const StylePreviewPane: Component<{
   ws: WebSocket | undefined;
+  wsroom: string;
 }> = (props) => {
   const [isPaneOpen, setIsPaneOpen] = createSignal(false);
 
@@ -85,7 +86,7 @@ const StylePreviewPane: Component<{
           contentsWrapperClass="border-2 border-gray-500 rounded-b-lg flex-auto bg-neutral-700 overflow-hidden"
           risizerClass="bg-neutral-800 border-l-2 border-t-2 border-gray-500"
         >
-          <DisplayReview type="auto" ws={props.ws}></DisplayReview>
+          <DisplayReview type="auto" ws={props.ws} wsroom={props.wsroom} />
         </FloatingWindowXY>
       )}
     </>

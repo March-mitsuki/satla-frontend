@@ -1,5 +1,7 @@
 // dependices lib
 import { createEffect, createSignal, Match, Switch } from "solid-js";
+
+// local dependencies
 import { defaultChangeStyleBodyData } from "@/interfaces/ws";
 
 // type
@@ -13,9 +15,12 @@ import type { Component } from "solid-js";
 import { Subtitle } from "@/interfaces";
 import { s2cAutoChangeSub, s2cGetAutoPlayStatBody } from "@/interfaces/ws-auto";
 import { AutoSub } from "@/interfaces/autoplay";
+import { wsSend } from "@/controllers";
+import { logger } from "../tools";
 
 const DisplayReview: Component<{
   ws: WebSocket | undefined;
+  wsroom: string;
   type: "auto" | "nomal";
 }> = (props) => {
   const [subtitle, setSubtitle] = createSignal<Subtitle>();
@@ -24,9 +29,14 @@ const DisplayReview: Component<{
   const [style, setStyle] = createSignal<ChangeStyleBody>(defaultChangeStyleBodyData);
 
   createEffect(() => {
+    logger.nomal("display-review", "effect run once");
     if (!props.ws) {
       return;
     }
+    props.ws.addEventListener("open", () => {
+      wsSend.getNowRoomStyle({ ws: props.ws, wsroom: props.wsroom });
+      wsSend.getNowRoomSub({ ws: props.ws, wsroom: props.wsroom });
+    });
     props.ws.addEventListener("message", (evt) => {
       const data = JSON.parse(evt.data as string) as s2cEventMap;
       if (data.head.cmd === "sSendSubtitle" || data.head.cmd === "sSendSubtitleDirect") {
@@ -35,6 +45,7 @@ const DisplayReview: Component<{
           return;
         }
         setSubtitle(body.subtitle);
+        logger.info("display-review", "subtitle change once");
       } else if (data.head.cmd === "sChangeStyle") {
         console.log("change style msg:", data);
         const body = data.body as s2cChangeStyleBody;
