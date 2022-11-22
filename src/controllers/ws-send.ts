@@ -18,10 +18,8 @@ import type {
   c2sSendSubtitle,
   c2sSendSubDirect,
   c2sChangeStyle,
-  c2sChangeBilingual,
-  StyleData,
-  c2sChangeReversed,
   c2sHeartBeat,
+  ChangeStyleBody,
 } from "@/interfaces/ws";
 
 const { currentUser } = rootCtx.currentUserCtx;
@@ -333,7 +331,7 @@ export const changeStyle = ({
   styleObj,
 }: {
   ws: WebSocket | undefined;
-  styleObj: StyleData;
+  styleObj: ChangeStyleBody;
 }) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
@@ -345,42 +343,6 @@ export const changeStyle = ({
       cmd: "changeStyle",
     },
     body: styleObj,
-  };
-  const postData = new TextEncoder().encode(JSON.stringify(_postData));
-  ws.send(postData);
-};
-
-export const changeBilingual = (ws: WebSocket | undefined, bilingual: boolean) => {
-  if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
-    // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
-    return;
-  }
-  const _postData: c2sChangeBilingual = {
-    head: {
-      cmd: "changeBilingual",
-    },
-    body: {
-      bilingual: bilingual,
-    },
-  };
-  const postData = new TextEncoder().encode(JSON.stringify(_postData));
-  ws.send(postData);
-};
-
-export const changeReversed = (ws: WebSocket | undefined, reversed: boolean) => {
-  if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
-    // window.alert("正在连接到服务器, 请稍等")
-    console.log("ws is closed or not connected, please wait");
-    return;
-  }
-  const _postData: c2sChangeReversed = {
-    head: {
-      cmd: "changeReversed",
-    },
-    body: {
-      reversed: reversed,
-    },
   };
   const postData = new TextEncoder().encode(JSON.stringify(_postData));
   ws.send(postData);

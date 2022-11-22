@@ -1,3 +1,5 @@
+export * as logger from "./logger";
+
 import { ErrJsonRes } from "@/interfaces";
 
 export const sleep = (msec: number) => {

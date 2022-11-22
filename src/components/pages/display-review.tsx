@@ -1,15 +1,13 @@
 // dependices lib
 import { createEffect, createSignal, Match, Switch } from "solid-js";
-import { defaultOriginStyle, defaultSubtitleStyle } from "../tools";
+import { defaultChangeStyleBodyData } from "@/interfaces/ws";
 
 // type
 import type {
-  s2cChangeBilingualBody,
-  s2cChangeReversedBody,
   s2cChangeStyleBody,
   s2cEventMap,
   s2cSendSubtitleBody,
-  StyleData,
+  ChangeStyleBody,
 } from "@/interfaces/ws";
 import type { Component } from "solid-js";
 import { Subtitle } from "@/interfaces";
@@ -23,12 +21,7 @@ const DisplayReview: Component<{
   const [subtitle, setSubtitle] = createSignal<Subtitle>();
   const [autoSub, setAutoSub] = createSignal<AutoSub>();
 
-  const [style, setStyle] = createSignal<StyleData>({
-    subtitle: defaultSubtitleStyle,
-    origin: defaultOriginStyle,
-  });
-  const [bilingual, setBilingual] = createSignal<boolean>(true);
-  const [reversed, setReversed] = createSignal<boolean>(false);
+  const [style, setStyle] = createSignal<ChangeStyleBody>(defaultChangeStyleBodyData);
 
   createEffect(() => {
     if (!props.ws) {
@@ -46,12 +39,6 @@ const DisplayReview: Component<{
         console.log("change style msg:", data);
         const body = data.body as s2cChangeStyleBody;
         setStyle(body);
-      } else if (data.head.cmd === "sChangeBilingual") {
-        const body = data.body as s2cChangeBilingualBody;
-        setBilingual(body.bilingual);
-      } else if (data.head.cmd === "sChangeReversed") {
-        const body = data.body as s2cChangeReversedBody;
-        setReversed(body.reversed);
       }
 
       if (props.type === "auto") {
@@ -70,8 +57,8 @@ const DisplayReview: Component<{
   return (
     <>
       <Switch>
-        <Match when={reversed() && bilingual()}>
-          {/* reversed === true */}
+        {/* reversed === true */}
+        <Match when={style().reversed && style().bilingual}>
           <div style={style().origin}>
             <Switch>
               <Match when={props.type === "nomal"}>{subtitle()?.origin}</Match>
@@ -85,7 +72,7 @@ const DisplayReview: Component<{
             </Switch>
           </div>
         </Match>
-        <Match when={reversed() && !bilingual()}>
+        <Match when={style().reversed && !style().bilingual}>
           <div style={style().origin}>
             <Switch>
               <Match when={props.type === "nomal"}>{subtitle()?.origin}</Match>
@@ -94,8 +81,8 @@ const DisplayReview: Component<{
           </div>
         </Match>
 
-        <Match when={!reversed() && bilingual()}>
-          {/* reversed === false */}
+        {/* reversed === false */}
+        <Match when={!style().reversed && style().bilingual}>
           <div style={style().subtitle}>
             <Switch>
               <Match when={props.type === "nomal"}>{subtitle()?.subtitle}</Match>
@@ -109,7 +96,7 @@ const DisplayReview: Component<{
             </Switch>
           </div>
         </Match>
-        <Match when={!reversed() && !bilingual()}>
+        <Match when={!style().reversed && !style().bilingual}>
           <div style={style().subtitle}>
             <Switch>
               <Match when={props.type === "nomal"}>{subtitle()?.subtitle}</Match>

@@ -9,6 +9,7 @@ import {
   s2cGetAutoPlayStatBody,
   s2cGetRoomAutoListsBody,
 } from "./ws-auto";
+import { defaultOriginStyle, defaultSubtitleStyle } from "@/components/tools";
 
 // c2s -> client to server msg
 
@@ -145,33 +146,24 @@ export interface c2sSendSubDirect {
   };
 }
 
-export interface StyleData {
+// 统一 change style, bilingual, reversed 为同一个函数
+export type ChangeStyleBody = {
   subtitle: string;
   origin: string;
-}
+  bilingual: boolean;
+  reversed: boolean;
+};
+export const defaultChangeStyleBodyData: ChangeStyleBody = {
+  reversed: false,
+  bilingual: true,
+  subtitle: defaultSubtitleStyle,
+  origin: defaultOriginStyle,
+};
 export interface c2sChangeStyle {
   head: {
     cmd: "changeStyle";
   };
-  body: StyleData;
-}
-
-export interface c2sChangeBilingual {
-  head: {
-    cmd: "changeBilingual";
-  };
-  body: {
-    bilingual: boolean;
-  };
-}
-
-export interface c2sChangeReversed {
-  head: {
-    cmd: "changeReversed";
-  };
-  body: {
-    reversed: boolean;
-  };
+  body: ChangeStyleBody;
 }
 
 export interface c2sHeartBeat {
@@ -204,9 +196,7 @@ export interface s2cEventMap {
       | "sSendSubtitle"
       | "sSendSubtitleDirect"
       | "sChangeStyle"
-      | "sChangeBilingual"
-      | "sChangeReversed"
-      | "sAddAutoSub"
+      | "sAddAutoSub" // 从这里开始下面是auto
       | "sGetRoomAutoLists"
       | "autoChangeSub"
       | "autoPreviewChange"
@@ -230,9 +220,7 @@ export interface s2cEventMap {
     | s2cReorderSubBody
     | s2cSendSubtitleBody
     | s2cChangeStyleBody
-    | s2cChangeBilingualBody
-    | s2cChangeReversedBody
-    | s2cAddAutoSubBody
+    | s2cAddAutoSubBody // 从这里往下是auto
     | s2cGetRoomAutoListsBody
     | s2cAutoChangeSub
     | s2cAutoPreviewChangeBody
@@ -300,15 +288,7 @@ export interface s2cSendSubtitleBody {
   subtitle: Subtitle;
 }
 
-export type s2cChangeStyleBody = StyleData;
-
-export interface s2cChangeBilingualBody {
-  bilingual: boolean;
-}
-
-export interface s2cChangeReversedBody {
-  reversed: boolean;
-}
+export type s2cChangeStyleBody = ChangeStyleBody;
 
 export interface s2cHeartBeatBody {
   data: any; // eslint-disable-line
