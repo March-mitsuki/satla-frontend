@@ -99,7 +99,6 @@ const StyleChanger: Component<{
         </textarea>
       </label>
       <div class="flex gap-2 items-center justify-center">
-        <div class="h-4 w-[2px] bg-gray-400 rounded-full" />
         <label class="flex items-center gap-1 cursor-pointer select-none">
           <div class="relative flex items-center">
             <input

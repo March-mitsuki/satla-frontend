@@ -23,11 +23,17 @@ import type {
   ChangeStyleBody,
   c2sGetNowRoomStyle,
   c2sGetNowRoomSub,
+  c2sBatchAddSubs,
 } from "@/interfaces/ws";
 
 const { currentUser } = rootCtx.currentUserCtx;
 
-export const addUser = (ws: WebSocket) => {
+export const addUser = (ws: WebSocket | undefined) => {
+  if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    logger.err("ws is closed or not connected, please wait");
+    return;
+  }
   const _addUser: c2sChangeUser = {
     head: {
       cmd: "changeUser",
@@ -40,7 +46,12 @@ export const addUser = (ws: WebSocket) => {
   ws.send(addUser);
 };
 
-export const getRoomSubtitles = (ws: WebSocket, room_id: number) => {
+export const getRoomSubtitles = (ws: WebSocket | undefined, room_id: number) => {
+  if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    logger.err("ws is closed or not connected, please wait");
+    return;
+  }
   const _getRoomSubtitles: c2sGetRoomSubtitles = {
     head: {
       cmd: "getRoomSubtitles",
@@ -381,6 +392,24 @@ export const getNowRoomSub = ({ ws, wsroom }: { ws: WebSocket | undefined; wsroo
     },
     body: {
       wsroom: wsroom,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+};
+
+export const batchAddSubs = ({ ws, subs }: { ws: WebSocket | undefined; subs: Subtitle[] }) => {
+  if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    logger.err("ws is closed or not connected, please wait");
+    return;
+  }
+  const _postData: c2sBatchAddSubs = {
+    head: {
+      cmd: "batchAddSubs",
+    },
+    body: {
+      subtitles: subs,
     },
   };
   const postData = new TextEncoder().encode(JSON.stringify(_postData));

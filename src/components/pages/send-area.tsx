@@ -14,6 +14,7 @@ import type {
   s2cReorderSubBody,
   s2cAddTranslatedSubtitleBody,
   s2cSendSubtitleBody,
+  s2cBatchAddSubsBody,
 } from "@/interfaces/ws";
 
 // for test
@@ -29,6 +30,7 @@ const SendArea: ParentComponent<{
 }> = (props) => {
   const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = rootCtx.subtitlesCtx;
   const { currentUser } = rootCtx.currentUserCtx;
+  const { setIsBatchAdding } = rootCtx.pageTypeCtx;
 
   // 各种初始化操作
   if (typeof subtitles() === "undefined") {
@@ -49,7 +51,7 @@ const SendArea: ParentComponent<{
     idx: number,
     subtitle: Subtitle,
   ) => {
-    // 点击发送发送字幕
+    // 点击发送字幕
     e.stopPropagation();
     e.preventDefault();
     const formElem = e.currentTarget;
@@ -284,6 +286,15 @@ const SendArea: ParentComponent<{
             (translateForm as HTMLFormElement).subtitle.value = "";
             (translateForm as HTMLFormElement).origin.value = "";
           }
+          break;
+        }
+        case "sBatchAddSubs": {
+          const body = data.body as s2cBatchAddSubsBody;
+          if (!body.status) {
+            window.alert("批量添加出错,请检查文件是否合规后刷新重试");
+          }
+          setIsBatchAdding(false);
+          wsSend.getRoomSubtitles(props.ws, props.room_id);
           break;
         }
         case "heartBeat":

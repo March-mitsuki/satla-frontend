@@ -1,14 +1,18 @@
 // dependencies lib
 import { createSignal, Match, Switch } from "solid-js";
+import { parse as csvWebParse } from "csv-parse/browser/esm";
 
 // local dependencies
 import rootCtx from "../contexts";
 import { Subtitle } from "@/interfaces";
 import { wsSend } from "@/controllers";
+import { logger, popFileSelector } from "../tools";
 
 // type
 import type { Component } from "solid-js";
 import StyleChanger from "./style-changer";
+import type { Options } from "csv-parse/browser/esm";
+import { SubDataFromCsv } from "@/interfaces/utils";
 
 const inputStyle =
   "flex-1 rounded-lg bg-neutral-700 px-2 mx-1 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600";
@@ -19,6 +23,7 @@ const SendPane: Component<{
   ws: WebSocket | undefined;
 }> = (props) => {
   const { currentUser } = rootCtx.currentUserCtx;
+  const { setIsBatchAdding } = rootCtx.pageTypeCtx;
 
   const [inputType, setInputType] = createSignal(false); // true = 输入, false = 发送
 
@@ -69,6 +74,68 @@ const SendPane: Component<{
 
   const openDisplayPage = () => {
     window.open(`/display/${props.wsroom}`, "_blank");
+  };
+
+  /**
+   *
+   * 批量添加在send-pane进行操作, 在send-area进行监听
+   * 最后在send-page-root展现modal的页面给用户
+   */
+  const batchAddHandler = (e: Event) => {
+    e.preventDefault();
+    popFileSelector()
+      .then(([data, filename]) => {
+        const csvParseOptioin: Options = {
+          columns: true,
+          bom: true,
+        };
+        csvWebParse(data, csvParseOptioin, (err, parsedData: SubDataFromCsv[]) => {
+          if (err) {
+            logger.err("send-pane", "csv parser err:", err);
+            window.alert("解析文件出错, 请确认格式是否正确");
+            return;
+          }
+          const [subs, ok] = makeSubtitlesFromCsv(parsedData);
+          if (!ok) {
+            logger.err("send-pane", "make subtitles not ok");
+          }
+          logger.info("send-pane", `will batch upload ${filename} to room_id: `, props.room_id);
+          // logger.nomal("send-pane", "will send batch add:", subs);
+          wsSend.batchAddSubs({
+            ws: props.ws,
+            subs: subs,
+          });
+          setIsBatchAdding(true);
+        });
+      })
+      .catch((err) => {
+        logger.err("send-pane", "batch add err:", err);
+        window.alert("文件大于5mb, 无法上传");
+      });
+  };
+
+  /**
+   *
+   * @param s subtitle array from csv
+   * @returns [results, ok], ok is a bool
+   */
+  const makeSubtitlesFromCsv = (s: SubDataFromCsv[]): [Subtitle[], boolean] => {
+    const batchAddSubs: Subtitle[] = [];
+    for (const e of s) {
+      const newSub = new Subtitle({
+        id: 0,
+        room_id: props.room_id,
+        translated_by: currentUser().user_name,
+        subtitle: e.zh,
+        origin: e.ja,
+      });
+      batchAddSubs.push(newSub);
+    }
+    if (batchAddSubs.length < 1) {
+      // 判定是否添加成功
+      return [batchAddSubs, false];
+    }
+    return [batchAddSubs, true];
   };
 
   return (
@@ -143,6 +210,29 @@ const SendPane: Component<{
             <div class="pl-[2px]">打开视窗</div>
           </button>
         </div>
+        <div class="border-l-2 border-neutral-400" />
+        <div class="flex items-center">
+          <button
+            onClick={batchAddHandler}
+            class="flex justify-center items-center bg-green-600/75 rounded-md px-2 hover:bg-green-700/75 text-sm"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-4 h-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+              />
+            </svg>
+            <div class="pl-[2px]">批量添加</div>
+          </button>
+        </div>
       </div>
       <form id="send-form" onSubmit={(e) => onSendSubmitHandler(e)} class="flex gap-1 px-1">
         <input
@@ -179,7 +269,7 @@ const SendPane: Component<{
         ws={props.ws}
         wsroom={props.wsroom}
         wrapperFromClass="flex flex-col gap-2 px-5 pb-1 overflow-auto h-[calc(100%-120px)]"
-       />
+      />
     </div>
   );
 };

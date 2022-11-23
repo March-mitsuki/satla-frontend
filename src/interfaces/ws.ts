@@ -184,6 +184,15 @@ export interface c2sGetNowRoomSub {
   };
 }
 
+export interface c2sBatchAddSubs {
+  head: {
+    cmd: "batchAddSubs";
+  };
+  body: {
+    subtitles: Subtitle[];
+  };
+}
+
 export interface c2sHeartBeat {
   // 目前的心跳是复读client发过去的东西, 然后发给心跳方
   head: {
@@ -225,6 +234,7 @@ export interface s2cEventMap {
       | "sGetAutoPlayStat"
       | "sRecoverAutoPlayStat"
       | "sChangeAutoMemo"
+      | "sBatchAddSubs"
       | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
   body:
@@ -246,6 +256,7 @@ export interface s2cEventMap {
     | s2cAutoPlayErrBody
     | s2cDeleteAutoSubBody
     | s2cGetAutoPlayStatBody
+    | s2cBatchAddSubsBody
     | s2cHeartBeatBody;
 }
 
@@ -312,6 +323,10 @@ export type s2cGetNowRoomStyleBody = ChangeStyleBody;
 
 export interface s2cGetNowRoomSubBody {
   subtitle: Subtitle;
+}
+
+export interface s2cBatchAddSubsBody {
+  status: boolean;
 }
 
 export interface s2cHeartBeatBody {

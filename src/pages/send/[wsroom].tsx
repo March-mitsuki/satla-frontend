@@ -15,6 +15,7 @@ const SendPage = () => {
 
   const { currentUser, userList, setUserList } = rootCtx.currentUserCtx;
   const { setAttachedInfo, setSubtitles } = rootCtx.subtitlesCtx;
+  const { isBatchAdding } = rootCtx.pageTypeCtx;
   const [_ws, setWs] = createSignal<WebSocket>();
   const [isWsconn, setIsWsconn] = createSignal<boolean>(false);
 
@@ -177,6 +178,14 @@ const SendPage = () => {
           <Modal>
             <div class="flex gap-3 justify-center items-center">
               <div>正在连接服务器, 若一直无法连接请刷新重试</div>
+              <div class="animate-spin h-8 w-8 bg-neutral-400 rounded-xl" />
+            </div>
+          </Modal>
+        )}
+        {isBatchAdding() && (
+          <Modal>
+            <div class="flex gap-3 justify-center items-center">
+              <div>正在处理批量添加, 若一直不成功请刷新重试...</div>
               <div class="animate-spin h-8 w-8 bg-neutral-400 rounded-xl" />
             </div>
           </Modal>

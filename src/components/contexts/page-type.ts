@@ -11,6 +11,8 @@ export const handlePageType = () => {
   const [canOrder, setCanOrder] = createSignal(true);
   const switchCanOrder = () => setCanOrder(!canOrder());
 
+  const [isBatchAdding, setIsBatchAdding] = createSignal(false); // 判断是否正在batadding
+
   return {
     pagetype,
     switchPagetype,
@@ -18,5 +20,7 @@ export const handlePageType = () => {
     switchBilingual,
     canOrder,
     switchCanOrder,
+    isBatchAdding,
+    setIsBatchAdding,
   };
 };

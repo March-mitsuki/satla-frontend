@@ -3,7 +3,7 @@ import { Component, createResource, For, Switch, Match } from "solid-js";
 import { Link } from "@solidjs/router";
 
 import type { RoomData, ErrJsonRes, Project } from "@/interfaces";
-import { isErrJsonRes } from "../tools";
+import { isErrJsonRes } from "@/interfaces/utils";
 import rootCtx from "../contexts";
 
 const ProjectDetail: Component = () => {

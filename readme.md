@@ -97,12 +97,16 @@ https://github.com/March-mitsuki/satla-backend
   - [ ] 把所有的 ws 回复都加上一项 status 来判断是否成功
   - [x] 分房间改为一项目多房间
   - [ ] 自动发送增加单行取消已发送的功能(to do list 类似)
+  - [ ] 增加删除 project 的功能
+  - [ ] 增加同传页面 csv 一键导入
 - [ ] 性能修复
-  - [ ] 改为 root 统一管理 ctx (使用自制 redux)
+  - [x] 改为 root 统一管理 ctx
   - [ ] 目前 deep copy 使用的是 map, 但 map 好像不是 deep copy, 所以目前有的地方使用的是手动修改 html dom, 之后可以找时间统一
-  - [ ] 储存当前发送, 刷新不消失(前端存或者后端存都行)
-    - [ ] 当前同传页面是前端存, 自动发送是后端存, 找时间统一一下
-  - [ ] 把 signal 改成 store 应该能增加性能
+  - [x] 储存当前发送, 刷新不消失(前端存或者后端存都行)
+    - [x] 当前同传页面是前端存, 自动发送是后端存, 找时间统一一下
+    - 校对的 memo 存在本地之外别的都已经改为了服务端储存
+  - [ ] ~~把 signal 改成 store 应该能增加性能~~
+  - 以 array 最外层作为的 signal 应该不用改
   - [ ] 现在 getElement 和 ref 混在, 之后需要找时间统一
   - [x] floating-window 的两个 signal 应该可以整合到一个, 因为都是一起变化的
     - [ ] 应该可以从 signal 升级到 store, 因为是以 object 作为最外围的值的
@@ -112,8 +116,9 @@ https://github.com/March-mitsuki/satla-backend
 - ~~加行时需要一起加 floatingElem~~ 已解决
   - ~~可以吧 floatingElem 的成分统一到 subtitle 里面,多 nest 一个 clientProp~~
   - ~~也可以吧 floatingElem 变成和 subtitle 同一级的全局 signal~~
-  - 当前解决方式是分成两个 array 解决, 需要统一两个 array 的 idx, 需要代码层面保证不会出现 idx 错位
+  - 已解决, 但当前解决方式是分成两个 array 解决, 需要统一两个 array 的 idx, 需要代码层面保证不会出现 idx 错位
 - ~~从 translate 等带有 ws 连接的页面迁移出来时 ws 不会自动断开连接~~ 已解决
   - ~~应该是用的是 routes 的 LINk 的关系所以会自动 cache 到本地, 所以导致现在 server 的 check login 也出了问题, 找时候修一修~~
 - ~~每次新人连接都会更新别人的 subtitles, 可以改成 onopen 的时候同时发两条 cmd~~ 已解决
 - 在 send-page 加行当前是 checked 属性, 是否要更改可以再讨论
+- 加入房间时要加一个判定 room_type, 现在可以用 translate 的前端加入自动发送的 room
