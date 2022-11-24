@@ -4,7 +4,7 @@ import { Title } from "@solidjs/meta";
 import { useParams } from "@solidjs/router";
 
 // local dependencies
-import { wsAutoSend, wsSend } from "@/controllers";
+import { wsSend } from "@/controllers";
 
 // type
 import { DisplayReview } from "@/components/pages";
@@ -19,7 +19,6 @@ const AutoDisplayPage: Component = () => {
   createEffect(() => {
     ws.onopen = () => {
       console.log("ws connected");
-      wsAutoSend.getAutoPlayStat(ws);
     };
     ws.onclose = () => {
       console.log("ws close");

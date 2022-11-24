@@ -16,6 +16,8 @@ import {
   s2cRecoverPlayStatBody,
   s2cAutoPlayStartBody,
   s2cChangeAutoMemoBody,
+  s2cAutoPlayPauseBody,
+  s2cAutoPlayRestartBody,
 } from "@/interfaces/ws-auto";
 import { Component } from "solid-js";
 import { AutoList } from "@/interfaces/autoplay";
@@ -42,7 +44,7 @@ const Operation: Component<{
   ) => {
     e.preventDefault();
     wsAutoSend.autoPlayStart(props.ws, currentList.id);
-    setPlayingStat({ stat: 1, playingID: currentList.id });
+    // setPlayingStat({ stat: 1, playingID: currentList.id });
   };
 
   const handlePlayEnd = (
@@ -51,7 +53,7 @@ const Operation: Component<{
   ) => {
     e.preventDefault();
     wsAutoSend.autoPlayEnd(props.ws, currentList.id);
-    setPlayingStat({ stat: 0, playingID: -1 });
+    // setPlayingStat({ stat: 0, playingID: -1 });
   };
   const handlePlayPause = (
     e: MouseEvent & { currentTarget: HTMLButtonElement },
@@ -59,7 +61,7 @@ const Operation: Component<{
   ) => {
     e.preventDefault();
     wsAutoSend.autoPlayPause(props.ws, currentList.id);
-    setPlayingStat({ stat: 2, playingID: currentList.id });
+    // setPlayingStat({ stat: 2, playingID: currentList.id });
   };
   const handlePlayRestart = (
     e: MouseEvent & { currentTarget: HTMLButtonElement },
@@ -67,6 +69,7 @@ const Operation: Component<{
   ) => {
     e.preventDefault();
     wsAutoSend.autoPlayRestart(props.ws, currentList.id);
+    // setPlayingStat({ stat: 1, playingID: currentList.id });
   };
 
   const handleMemoChange = (
@@ -111,13 +114,25 @@ const Operation: Component<{
           wsAutoOn.addAutoSub(body);
           break;
         }
-        case "autoPlayStart": {
+        case "sPlayStart": {
           const body = data.body as s2cAutoPlayStartBody;
           setPlayingStat({ stat: 1, playingID: body.list_id });
           wsAutoOn.changeStartListBg(body.list_id);
           break;
         }
-        case "autoPlayEnd":
+        case "sPlayPause": {
+          const body = data.body as s2cAutoPlayPauseBody;
+          setPlayingStat({ stat: 2, playingID: body.list_id });
+          wsAutoOn.changeStartListBg(body.list_id);
+          break;
+        }
+        case "sPlayRestart": {
+          const body = data.body as s2cAutoPlayRestartBody;
+          setPlayingStat({ stat: 1, playingID: body.list_id });
+          wsAutoOn.changeStartListBg(body.list_id);
+          break;
+        }
+        case "sPlayEnd":
           setPlayingStat({ stat: 0, playingID: -1 });
           break;
         case "sDeleteAutoSub": {

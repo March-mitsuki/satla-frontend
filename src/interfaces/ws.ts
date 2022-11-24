@@ -1,14 +1,5 @@
 import { Subtitle } from ".";
-import {
-  s2cAddAutoSubBody,
-  s2cAutoChangeSub,
-  s2cAutoPlayEndBody,
-  s2cAutoPlayErrBody,
-  s2cAutoPreviewChangeBody,
-  s2cDeleteAutoSubBody,
-  s2cGetAutoPlayStatBody,
-  s2cGetRoomAutoListsBody,
-} from "./ws-auto";
+import { AutoPlayCmds, s2cAutoPlayBodyTypes } from "./ws-auto";
 import { defaultOriginStyle, defaultSubtitleStyle } from "@/components/tools";
 
 // c2s -> client to server msg
@@ -205,59 +196,42 @@ export interface c2sHeartBeat {
 
 // s2c -> server to client msg
 
+type NomalCmds =
+  | "sChangeUser"
+  | "sGetRoomSubtitles"
+  | "sAddSubtitleUp"
+  | "sAddSubtitleDown"
+  | "sChangeSubtitle"
+  | "sEditStart"
+  | "sEditEnd"
+  | "sAddTransSub"
+  | "sDeleteSubtitle"
+  | "sReorderSubFront"
+  | "sReorderSubBack"
+  | "sSendSubtitle"
+  | "sSendSubtitleDirect"
+  | "sChangeStyle"
+  | "sBatchAddSubs";
+
+type s2cNomalBodyTypes =
+  | s2cChangeUserBody
+  | s2cGetRoomSubBody
+  | s2cAddSubtitleBody
+  | s2cChangeSubtitleBody
+  | s2cEditChangeBody
+  | s2cAddTranslatedSubtitleBody
+  | s2cDeleteSubtitleBody
+  | s2cReorderSubBody
+  | s2cSendSubtitleBody
+  | s2cChangeStyleBody
+  | s2cBatchAddSubsBody;
+
 export interface s2cEventMap {
   // 先用s2cEventMap判断cmd, 之后再解析body
   head: {
-    cmd:
-      | "sChangeUser"
-      | "sGetRoomSubtitles"
-      | "sAddSubtitleUp"
-      | "sAddSubtitleDown"
-      | "sChangeSubtitle"
-      | "sEditStart"
-      | "sEditEnd"
-      | "sAddTransSub"
-      | "sDeleteSubtitle"
-      | "sReorderSubFront"
-      | "sReorderSubBack"
-      | "sSendSubtitle"
-      | "sSendSubtitleDirect"
-      | "sChangeStyle"
-      | "sAddAutoSub" // 从这里开始下面是auto
-      | "sGetRoomAutoLists"
-      | "autoChangeSub"
-      | "autoPreviewChange"
-      | "autoPlayStart"
-      | "autoPlayEnd"
-      | "autoPlayErr"
-      | "sDeleteAutoSub"
-      | "sGetAutoPlayStat"
-      | "sRecoverAutoPlayStat"
-      | "sChangeAutoMemo"
-      | "sBatchAddSubs"
-      | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
+    cmd: NomalCmds | AutoPlayCmds | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
-  body:
-    | s2cChangeUserBody
-    | s2cGetRoomSubBody
-    | s2cAddSubtitleBody
-    | s2cChangeSubtitleBody
-    | s2cEditChangeBody
-    | s2cAddTranslatedSubtitleBody
-    | s2cDeleteSubtitleBody
-    | s2cReorderSubBody
-    | s2cSendSubtitleBody
-    | s2cChangeStyleBody
-    | s2cAddAutoSubBody // 从这里往下是auto
-    | s2cGetRoomAutoListsBody
-    | s2cAutoChangeSub
-    | s2cAutoPreviewChangeBody
-    | s2cAutoPlayEndBody
-    | s2cAutoPlayErrBody
-    | s2cDeleteAutoSubBody
-    | s2cGetAutoPlayStatBody
-    | s2cBatchAddSubsBody
-    | s2cHeartBeatBody;
+  body: s2cNomalBodyTypes | s2cAutoPlayBodyTypes | s2cHeartBeatBody;
 }
 
 export interface s2cChangeUserBody {

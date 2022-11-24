@@ -91,6 +91,8 @@ https://github.com/March-mitsuki/satla-backend
   - [x] 行数预览
   - [ ] 本地拖动排序
   - [x] 同步服务端状态, 支持中途加入
+    - 这里要注意自动发送页面使用的 subtitle 模型是 autoSub, 和同传页面不同
+    - 所以需要注意使用同一个 display 画面时候的分开处理
   - [x] 修改备注
   - [x] 已播放更改颜色
 - [ ] 进阶功能
@@ -113,12 +115,18 @@ https://github.com/March-mitsuki/satla-backend
 
 ## Bug
 
-- ~~加行时需要一起加 floatingElem~~ 已解决
-  - ~~可以吧 floatingElem 的成分统一到 subtitle 里面,多 nest 一个 clientProp~~
-  - ~~也可以吧 floatingElem 变成和 subtitle 同一级的全局 signal~~
+- [x] 加行时需要一起加 floatingElem
+  - [x] 可以吧 floatingElem 的成分统一到 subtitle 里面,多 nest 一个 clientProp
+  - [x] 也可以吧 floatingElem 变成和 subtitle 同一级的全局 signal
   - 已解决, 但当前解决方式是分成两个 array 解决, 需要统一两个 array 的 idx, 需要代码层面保证不会出现 idx 错位
-- ~~从 translate 等带有 ws 连接的页面迁移出来时 ws 不会自动断开连接~~ 已解决
-  - ~~应该是用的是 routes 的 LINk 的关系所以会自动 cache 到本地, 所以导致现在 server 的 check login 也出了问题, 找时候修一修~~
-- ~~每次新人连接都会更新别人的 subtitles, 可以改成 onopen 的时候同时发两条 cmd~~ 已解决
-- 在 send-page 加行当前是 checked 属性, 是否要更改可以再讨论
-- 加入房间时要加一个判定 room_type, 现在可以用 translate 的前端加入自动发送的 room
+- [x] 从 translate 等带有 ws 连接的页面迁移出来时 ws 不会自动断开连接
+  - [x] 应该是用的是 routes 的 LINK 的关系所以会自动 cache 到本地, 所以导致现在 server 的 check login 也出了问题, 找时候修一修
+- [x] 每次新人连接都会更新别人的 subtitles, 可以改成 onopen 的时候同时发两条 cmd
+  - 已解决, 分为两条 cmd, 一条 broadcast 的 addUser, 一条 castself 的 getSubtitles
+- [ ] 在 send-page 加行当前是 checked 属性, 是否要更改可以再讨论
+- [ ] 现在可以用 translate 的前端加入自动发送的 room
+  - [ ] 加入房间时要加一个判定 room_type?, ~~或者说就一个房间里可以同时存在两种字幕~~
+  - 必须加判定, 因为如果同时一个房间可以用两种前端加进去那么发送就会互相打架(因为 wsroom 是同一个)
+- [x] 自动播放暂停时好像没更改 rdb 的 playstat 为暂停
+- [x] 自动播放好像没更改 now subtitles
+  - 已解决, 自动播放的 subtitle 和同传的 subtitle 不是同一个模型, 分开处理之后就没事了

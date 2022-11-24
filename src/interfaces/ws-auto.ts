@@ -137,6 +137,33 @@ export interface c2sChangeAutoMemo {
   };
 }
 
+export type AutoPlayCmds =
+  | "sAddAutoSub"
+  | "sGetRoomAutoLists"
+  | "autoChangeSub"
+  | "autoPreviewChange"
+  | "sPlayStart"
+  | "sPlayPause"
+  | "sPlayRestart"
+  | "sPlayEnd"
+  | "autoPlayErr"
+  | "sDeleteAutoSub"
+  | "sGetAutoPlayStat"
+  | "sRecoverAutoPlayStat"
+  | "sChangeAutoMemo";
+
+export type s2cAutoPlayBodyTypes =
+  | s2cAddAutoSubBody
+  | s2cGetRoomAutoListsBody
+  | s2cAutoChangeSub
+  | s2cAutoPreviewChangeBody
+  | s2cAutoPlayEndBody
+  | s2cAutoPlayErrBody
+  | s2cDeleteAutoSubBody
+  | s2cGetAutoPlayStatBody
+  | s2cAutoPlayPauseBody
+  | s2cAutoPlayRestartBody;
+
 /**
  * 以下s2c
  */
@@ -156,6 +183,14 @@ export interface s2cAutoChangeSub {
 }
 
 export interface s2cAutoPlayStartBody {
+  list_id: number;
+}
+
+export interface s2cAutoPlayPauseBody {
+  list_id: number;
+}
+
+export interface s2cAutoPlayRestartBody {
   list_id: number;
 }
 
