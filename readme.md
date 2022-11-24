@@ -112,6 +112,7 @@ https://github.com/March-mitsuki/satla-backend
   - [ ] 现在 getElement 和 ref 混在, 之后需要找时间统一
   - [x] floating-window 的两个 signal 应该可以整合到一个, 因为都是一起变化的
     - [ ] 应该可以从 signal 升级到 store, 因为是以 object 作为最外围的值的
+    - [ ] **目前自动播放的模式转换都没有加检测, 如果有网络不好的人同时操控那么就会出现界面不一致的情况** 比如一个人已经切换到自动了, 但另外一个人还没有收到回复, 那就会出问题
 
 ## Bug
 

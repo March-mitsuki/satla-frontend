@@ -73,6 +73,6 @@ export class AutoList {
 }
 
 export interface PlayingStat {
-  stat: 0 | 1 | 2;
+  stat: 0 | 1 | 2 | 3; // 0 -> 停止, 1 -> 自动, 2 -> 暂停, 3 -> 手动
   playingID: number;
 }
