@@ -184,15 +184,18 @@ export interface c2sBatchAddSubs {
   };
 }
 
+// 心跳用于检测连接的房间状态与type, 于onopen发送, 并在收到心跳回复后再进行下一步操作
+// translate发送nomal, auto发送auto
 export interface c2sHeartBeat {
-  // 目前的心跳是复读client发过去的东西, 然后发给心跳方
   head: {
     cmd: "heartBeat";
   };
   body: {
-    obj: "[object]";
+    room_type: RoomType;
+    room_id: number;
   };
 }
+export type RoomType = "auto" | "nomal";
 
 // s2c -> server to client msg
 
@@ -303,6 +306,7 @@ export interface s2cBatchAddSubsBody {
   status: boolean;
 }
 
+// 目前服务端发回来的心跳不包含任何数据, 只做检查
 export interface s2cHeartBeatBody {
   data: any; // eslint-disable-line
 }

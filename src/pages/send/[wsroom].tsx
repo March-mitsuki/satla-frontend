@@ -42,6 +42,8 @@ const SendPage = () => {
       return;
     }
     ws.onopen = () => {
+      wsSend.heartBeat({ ws: ws, roomType: "nomal", roomId: room_id });
+
       wsOn.onopen(ws, room_id);
       setIsWsconn(true);
     };
@@ -54,7 +56,7 @@ const SendPage = () => {
     };
 
     const heartBeatTimer = setInterval(() => {
-      wsSend.heartBeat(ws);
+      wsSend.heartBeat({ ws: ws, roomType: "nomal", roomId: room_id });
     }, 1000 * 30);
 
     onCleanup(() => {
@@ -177,7 +179,7 @@ const SendPage = () => {
         {isWsconn() === false && (
           <Modal>
             <div class="flex gap-3 justify-center items-center">
-              <div>正在连接服务器, 若一直无法连接请刷新重试</div>
+              <div>正在连接服务器, 若一直无法连接请检查url是否正确</div>
               <div class="animate-spin h-8 w-8 bg-neutral-400 rounded-xl" />
             </div>
           </Modal>

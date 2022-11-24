@@ -46,7 +46,8 @@ const AutoPlay = () => {
       return;
     }
     ws.onopen = () => {
-      console.log("ws connect");
+      wsSend.heartBeat({ ws: ws, roomType: "auto", roomId: room_id });
+
       setIsWsconn(true);
       wsAutoSend.getRoomAutoList({
         ws: ws,
@@ -64,7 +65,7 @@ const AutoPlay = () => {
     };
 
     const heartBeatTimer = setInterval(() => {
-      wsSend.heartBeat(ws);
+      wsSend.heartBeat({ ws: ws, roomType: "auto", roomId: room_id });
     }, 1000 * 30);
 
     onCleanup(() => {
@@ -110,7 +111,7 @@ const AutoPlay = () => {
         {isWsconn() === false && (
           <Modal>
             <div class="flex gap-3 justify-center items-center">
-              <div>正在连接服务器, 若一直无法连接请刷新重试</div>
+              <div>正在连接服务器, 若一直无法连接请检查url是否正确</div>
               <div class="animate-spin h-8 w-8 bg-neutral-400 rounded-xl" />
             </div>
           </Modal>

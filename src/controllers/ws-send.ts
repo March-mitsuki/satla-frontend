@@ -24,6 +24,7 @@ import type {
   c2sGetNowRoomStyle,
   c2sGetNowRoomSub,
   c2sBatchAddSubs,
+  RoomType,
 } from "@/interfaces/ws";
 
 const { currentUser } = rootCtx.currentUserCtx;
@@ -416,7 +417,15 @@ export const batchAddSubs = ({ ws, subs }: { ws: WebSocket | undefined; subs: Su
   ws.send(postData);
 };
 
-export const heartBeat = (ws: WebSocket | undefined) => {
+export const heartBeat = ({
+  ws,
+  roomType,
+  roomId,
+}: {
+  ws: WebSocket | undefined;
+  roomType: RoomType;
+  roomId: number;
+}) => {
   if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
     // window.alert("正在连接到服务器, 请稍等")
     logger.err("ws is closed or not connected, please wait");
@@ -427,7 +436,8 @@ export const heartBeat = (ws: WebSocket | undefined) => {
       cmd: "heartBeat",
     },
     body: {
-      obj: "[object]",
+      room_type: roomType,
+      room_id: roomId,
     },
   };
   const postData = new TextEncoder().encode(JSON.stringify(_postData));
