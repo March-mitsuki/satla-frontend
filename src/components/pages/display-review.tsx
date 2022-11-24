@@ -83,6 +83,7 @@ const DisplayReview: Component<{
 
     if (props.ws.readyState === props.ws.OPEN) {
       logger.info("display-review", "manual send");
+      wsSend.getNowRoomStyle({ ws: props.ws, wsroom: props.wsroom });
       if (props.type === "auto") {
         wsAutoSend.getAutoPlayStat(props.ws);
       } else {

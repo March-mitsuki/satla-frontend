@@ -7,7 +7,8 @@ import { defaultChangeStyleBodyData } from "@/interfaces/ws";
 
 // type
 import type { s2cChangeStyleBody, s2cEventMap, ChangeStyleBody } from "@/interfaces/ws";
-import { Component, createEffect } from "solid-js";
+import { Component, createEffect, onCleanup } from "solid-js";
+import { logger } from "../tools";
 
 const inputStyle =
   "flex-1 rounded-lg bg-neutral-700 px-2 mx-1 border-2 border-gray-500 sm:text-sm focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600";
@@ -57,17 +58,31 @@ const StyleChanger: Component<{
     wsSend.changeStyle({ ws: props.ws, styleObj: style });
   };
 
+  const messageEventController = new AbortController();
   createEffect(() => {
     if (!props.ws) {
       return;
     }
-    props.ws.addEventListener("message", (evt) => {
-      const data = JSON.parse(evt.data as string) as s2cEventMap;
-      if (data.head.cmd === "sChangeStyle") {
-        const body = data.body as s2cChangeStyleBody;
-        setStyle(body);
-      }
-    });
+    props.ws.addEventListener(
+      "message",
+      (evt) => {
+        const data = JSON.parse(evt.data as string) as s2cEventMap;
+        if (data.head.cmd === "sChangeStyle") {
+          const body = data.body as s2cChangeStyleBody;
+          setStyle(body);
+        }
+      },
+      { signal: messageEventController.signal },
+    );
+    if (props.ws.readyState === props.ws.OPEN) {
+      logger.nomal("style-changer", "manual get now room style");
+      wsSend.getNowRoomStyle({ ws: props.ws, wsroom: props.wsroom });
+    }
+  });
+
+  onCleanup(() => {
+    setStyle(defaultChangeStyleBodyData);
+    messageEventController.abort();
   });
 
   return (
