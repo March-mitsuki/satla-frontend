@@ -6,7 +6,8 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "vite build",
+    "build": "rm -rf ./dist && vite build",
+    "build-to-backend": "rm -rf ./dist && vite build && rm -rf ../satla-backend/dist && cp -r ./dist ../satla-backend",
     "serve": "vite preview",
     "fmt": "prettier --write --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx,json}'",
     "fmt-check": "prettier --check --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx,json}'",

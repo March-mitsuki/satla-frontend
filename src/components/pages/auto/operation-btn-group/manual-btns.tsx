@@ -13,7 +13,7 @@ const ManualBtns: Component<{
     <>
       <button
         onClick={() => wsAutoSend.autoPlayRewindTwice(props.ws, props.elem.id)}
-        class={opeBtnStyle("pink")}
+        class="flex items-center justify-center p-[2px] rounded-md bg-pink-400/70 hover:bg-pink-400/70 active:bg-pink-400/70"
       >
         {/* 后退退 */}
         <svg
@@ -33,7 +33,7 @@ const ManualBtns: Component<{
       </button>
       <button
         onClick={() => wsAutoSend.autoPlayRewind(props.ws, props.elem.id)}
-        class={opeBtnStyle("pink")}
+        class="flex items-center justify-center p-[2px] rounded-md bg-pink-400/70 hover:bg-pink-400/70 active:bg-pink-400/70"
       >
         {/* 后退 */}
         <svg
@@ -56,7 +56,7 @@ const ManualBtns: Component<{
       </button>
       <button
         onClick={() => wsAutoSend.autoPlayForward(props.ws, props.elem.id)}
-        class={opeBtnStyle("pink")}
+        class="flex items-center justify-center p-[2px] rounded-md bg-pink-400/70 hover:bg-pink-400/70 active:bg-pink-400/70"
       >
         {/* 前进 */}
         <svg
@@ -72,7 +72,7 @@ const ManualBtns: Component<{
       </button>
       <button
         onClick={() => wsAutoSend.autoPlayForwardTwice(props.ws, props.elem.id)}
-        class={opeBtnStyle("pink")}
+        class="flex items-center justify-center p-[2px] rounded-md bg-pink-400/70 hover:bg-pink-400/70 active:bg-pink-400/70"
       >
         {/* 前前进 */}
         <svg

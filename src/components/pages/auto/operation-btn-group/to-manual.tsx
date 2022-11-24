@@ -1,4 +1,3 @@
-import { opeBtnStyle } from ".";
 import { wsAutoSend } from "@/controllers";
 
 // type
@@ -12,7 +11,7 @@ const ToManulBtn: Component<{
   return (
     <button
       onClick={() => wsAutoSend.autoToManual(props.ws, props.elem.id)}
-      class={opeBtnStyle("fuchsia")}
+      class="flex items-center justify-center p-[2px] rounded-md bg-pink-400/70 hover:bg-pink-400/70 active:bg-pink-400/70"
     >
       <div class=" px-[5px]">M</div>
     </button>
