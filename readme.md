@@ -130,3 +130,5 @@ https://github.com/March-mitsuki/satla-backend
 - [x] 自动播放暂停时好像没更改 rdb 的 playstat 为暂停
 - [x] 自动播放好像没更改 now subtitles
   - 已解决, 自动播放的 subtitle 和同传的 subtitle 不是同一个模型, 分开处理之后就没事了
+- [ ] **ws 连接安全性漏洞** 当前 ws 没做任何安全措施, 任何人只要知道发包方式都能操作房间和 db, 非常危险
+  - 修复方式: 每次 ws 进行连接前先访问一个 api, 这个 api 由当前 user session 进行验证, 验证成功后会由服务器生成一个一次性的 uuidv4 通过 https 返回给前端, 并以这个 id 为此次连接的密钥, 当连接断开时自动使这个密钥失效
