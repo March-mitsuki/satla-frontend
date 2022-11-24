@@ -91,6 +91,24 @@ export interface c2sPlayRestart {
   };
 }
 
+export interface c2sAutoToManual {
+  head: {
+    cmd: "autoToManual";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
+export interface c2sManualToAuto {
+  head: {
+    cmd: "manualToAuto";
+  };
+  body: {
+    list_id: number;
+  };
+}
+
 export interface c2sPlaySendBlank {
   head: {
     cmd: "playSendBlank";
@@ -137,6 +155,34 @@ export interface c2sChangeAutoMemo {
   };
 }
 
+export type AutoPlayCmds =
+  | "sAddAutoSub"
+  | "sGetRoomAutoLists"
+  | "autoChangeSub"
+  | "autoPreviewChange"
+  | "sPlayStart"
+  | "sPlayPause"
+  | "sPlayRestart"
+  | "sPlayEnd"
+  | "autoPlayErr"
+  | "sDeleteAutoSub"
+  | "sGetAutoPlayStat"
+  | "sRecoverAutoPlayStat"
+  | "sAutoToManual"
+  | "sManualToAuto"
+  | "sChangeAutoMemo";
+
+export type s2cAutoPlayBodyTypes =
+  | s2cAddAutoSubBody
+  | s2cGetRoomAutoListsBody
+  | s2cAutoChangeSub
+  | s2cAutoPreviewChangeBody
+  | s2cAutoPlayEndBody
+  | s2cAutoPlayErrBody
+  | s2cDeleteAutoSubBody
+  | s2cGetAutoPlayStatBody
+  | s2cAutoPlayOpeResBody;
+
 /**
  * 以下s2c
  */
@@ -155,10 +201,24 @@ export interface s2cAutoChangeSub {
   auto_sub: AutoSub;
 }
 
-export interface s2cAutoPlayStartBody {
+/**
+ * 以下cmd的回复均遵循这个格式
+ *
+ * play start
+ *
+ * play pause
+ *
+ * play restart
+ *
+ * auto to manual
+ *
+ * manual to auto
+ */
+export interface s2cAutoPlayOpeResBody {
   list_id: number;
 }
 
+// 因为end是整个房间的属性所以不需要list_id
 export interface s2cAutoPlayEndBody {
   data: any; // eslint-disable-line
 }

@@ -1,14 +1,6 @@
 import { Subtitle } from ".";
-import {
-  s2cAddAutoSubBody,
-  s2cAutoChangeSub,
-  s2cAutoPlayEndBody,
-  s2cAutoPlayErrBody,
-  s2cAutoPreviewChangeBody,
-  s2cDeleteAutoSubBody,
-  s2cGetAutoPlayStatBody,
-  s2cGetRoomAutoListsBody,
-} from "./ws-auto";
+import { AutoPlayCmds, s2cAutoPlayBodyTypes } from "./ws-auto";
+import { defaultOriginStyle, defaultSubtitleStyle } from "@/components/tools";
 
 // c2s -> client to server msg
 
@@ -145,102 +137,104 @@ export interface c2sSendSubDirect {
   };
 }
 
-export interface StyleData {
+// 统一 change style, bilingual, reversed 为同一个函数
+export type ChangeStyleBody = {
   subtitle: string;
   origin: string;
-}
+  bilingual: boolean;
+  reversed: boolean;
+};
+export const defaultChangeStyleBodyData: ChangeStyleBody = {
+  reversed: false,
+  bilingual: true,
+  subtitle: defaultSubtitleStyle,
+  origin: defaultOriginStyle,
+};
 export interface c2sChangeStyle {
   head: {
     cmd: "changeStyle";
   };
-  body: StyleData;
+  body: ChangeStyleBody;
 }
 
-export interface c2sChangeBilingual {
+export interface c2sGetNowRoomStyle {
   head: {
-    cmd: "changeBilingual";
+    cmd: "getNowRoomStyle";
   };
   body: {
-    bilingual: boolean;
+    wsroom: string;
   };
 }
 
-export interface c2sChangeReversed {
+export interface c2sGetNowRoomSub {
   head: {
-    cmd: "changeReversed";
+    cmd: "getNowRoomSub";
   };
   body: {
-    reversed: boolean;
+    wsroom: string;
   };
 }
 
+export interface c2sBatchAddSubs {
+  head: {
+    cmd: "batchAddSubs";
+  };
+  body: {
+    subtitles: Subtitle[];
+  };
+}
+
+// 心跳用于检测连接的房间状态与type, 于onopen发送, 并在收到心跳回复后再进行下一步操作
+// translate发送nomal, auto发送auto
 export interface c2sHeartBeat {
-  // 目前的心跳是复读client发过去的东西, 然后发给心跳方
   head: {
     cmd: "heartBeat";
   };
   body: {
-    obj: "[object]";
+    room_type: RoomType;
+    room_id: number;
   };
 }
+export type RoomType = "auto" | "nomal";
 
 // s2c -> server to client msg
+
+type NomalCmds =
+  | "sChangeUser"
+  | "sGetRoomSubtitles"
+  | "sAddSubtitleUp"
+  | "sAddSubtitleDown"
+  | "sChangeSubtitle"
+  | "sEditStart"
+  | "sEditEnd"
+  | "sAddTransSub"
+  | "sDeleteSubtitle"
+  | "sReorderSubFront"
+  | "sReorderSubBack"
+  | "sSendSubtitle"
+  | "sSendSubtitleDirect"
+  | "sChangeStyle"
+  | "sBatchAddSubs";
+
+type s2cNomalBodyTypes =
+  | s2cChangeUserBody
+  | s2cGetRoomSubBody
+  | s2cAddSubtitleBody
+  | s2cChangeSubtitleBody
+  | s2cEditChangeBody
+  | s2cAddTranslatedSubtitleBody
+  | s2cDeleteSubtitleBody
+  | s2cReorderSubBody
+  | s2cSendSubtitleBody
+  | s2cChangeStyleBody
+  | s2cBatchAddSubsBody;
 
 export interface s2cEventMap {
   // 先用s2cEventMap判断cmd, 之后再解析body
   head: {
-    cmd:
-      | "sChangeUser"
-      | "sGetRoomSubtitles"
-      | "sAddSubtitleUp"
-      | "sAddSubtitleDown"
-      | "sChangeSubtitle"
-      | "sEditStart"
-      | "sEditEnd"
-      | "sAddTransSub"
-      | "sDeleteSubtitle"
-      | "sReorderSubFront"
-      | "sReorderSubBack"
-      | "sSendSubtitle"
-      | "sSendSubtitleDirect"
-      | "sChangeStyle"
-      | "sChangeBilingual"
-      | "sChangeReversed"
-      | "sAddAutoSub"
-      | "sGetRoomAutoLists"
-      | "autoChangeSub"
-      | "autoPreviewChange"
-      | "autoPlayStart"
-      | "autoPlayEnd"
-      | "autoPlayErr"
-      | "sDeleteAutoSub"
-      | "sGetAutoPlayStat"
-      | "sRecoverAutoPlayStat"
-      | "sChangeAutoMemo"
-      | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
+    cmd: NomalCmds | AutoPlayCmds | "heartBeat"; // 因为目前心跳是复读所以这里是heartBeat,前面不带服务器的s
   };
-  body:
-    | s2cChangeUserBody
-    | s2cGetRoomSubBody
-    | s2cAddSubtitleBody
-    | s2cChangeSubtitleBody
-    | s2cEditChangeBody
-    | s2cAddTranslatedSubtitleBody
-    | s2cDeleteSubtitleBody
-    | s2cReorderSubBody
-    | s2cSendSubtitleBody
-    | s2cChangeStyleBody
-    | s2cChangeBilingualBody
-    | s2cChangeReversedBody
-    | s2cAddAutoSubBody
-    | s2cGetRoomAutoListsBody
-    | s2cAutoChangeSub
-    | s2cAutoPreviewChangeBody
-    | s2cAutoPlayEndBody
-    | s2cAutoPlayErrBody
-    | s2cDeleteAutoSubBody
-    | s2cGetAutoPlayStatBody
-    | s2cHeartBeatBody;
+  body: s2cNomalBodyTypes | s2cAutoPlayBodyTypes | s2cHeartBeatBody;
 }
 
 export interface s2cChangeUserBody {
@@ -300,16 +294,19 @@ export interface s2cSendSubtitleBody {
   subtitle: Subtitle;
 }
 
-export type s2cChangeStyleBody = StyleData;
+export type s2cChangeStyleBody = ChangeStyleBody;
 
-export interface s2cChangeBilingualBody {
-  bilingual: boolean;
+export type s2cGetNowRoomStyleBody = ChangeStyleBody;
+
+export interface s2cGetNowRoomSubBody {
+  subtitle: Subtitle;
 }
 
-export interface s2cChangeReversedBody {
-  reversed: boolean;
+export interface s2cBatchAddSubsBody {
+  status: boolean;
 }
 
+// 目前服务端发回来的心跳不包含任何数据, 只做检查
 export interface s2cHeartBeatBody {
   data: any; // eslint-disable-line
 }

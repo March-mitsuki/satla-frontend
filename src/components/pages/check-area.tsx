@@ -520,7 +520,7 @@ const CheckArea: ParentComponent<{
                         >
                           <div class="flex gap-1 justify-center items-center flex-1 truncate">
                             <div class="flex-1">
-                              <div class="shrink-0 animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                              <div class="shrink-0 animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent" />
                             </div>
                             <div class="flex-1">
                               {(attachedInfo() as AttachedInfo[])[idx()].editingUser}
@@ -549,7 +549,7 @@ const CheckArea: ParentComponent<{
                       name="subtitle"
                       autocomplete="off"
                       placeholder="请输入翻译"
-                      onfocus={() => wsSend.editStart(props.ws, elem.id)}
+                      onFocus={() => wsSend.editStart(props.ws, elem.id)}
                       onBlur={() => wsSend.editEnd(props.ws, elem.id)}
                       value={elem.subtitle}
                       class={inputStyle}
@@ -560,7 +560,7 @@ const CheckArea: ParentComponent<{
                       name="origin"
                       autocomplete="off"
                       placeholder="请输入原文"
-                      onfocus={() => wsSend.editStart(props.ws, elem.id)}
+                      onFocus={() => wsSend.editStart(props.ws, elem.id)}
                       onBlur={() => wsSend.editEnd(props.ws, elem.id)}
                       value={elem.origin}
                       classList={{

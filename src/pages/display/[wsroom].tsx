@@ -14,10 +14,19 @@ const DisplayPage: Component = () => {
 
   const param = useParams<{ wsroom: string }>();
   const url = ws_base_url + param.wsroom;
+  const room_id = Number(param.wsroom.split("_")[1]);
+  if (isNaN(room_id)) {
+    window.alert("错误的url: " + JSON.stringify(param.wsroom.split("_")));
+    console.log("wrong params: ", param.wsroom.split("_"));
+    return; // eslint-disable-line
+  }
+
   const ws = new WebSocket(url);
 
   createEffect(() => {
     ws.onopen = () => {
+      wsSend.heartBeat({ ws: ws, roomType: "nomal", roomId: room_id });
+
       console.log("ws connected");
     };
     ws.onclose = () => {
@@ -28,7 +37,7 @@ const DisplayPage: Component = () => {
     };
 
     const heartBeatTimer = setInterval(() => {
-      wsSend.heartBeat(ws);
+      wsSend.heartBeat({ ws: ws, roomType: "nomal", roomId: room_id });
     }, 1000 * 30);
 
     onCleanup(() => {
@@ -42,7 +51,7 @@ const DisplayPage: Component = () => {
   return (
     <>
       <Title>Display Page</Title>
-      <DisplayReview type="nomal" ws={ws}></DisplayReview>
+      <DisplayReview type="nomal" ws={ws} wsroom={param.wsroom} />
     </>
   );
 };

@@ -34,13 +34,13 @@ const AutoNavi: Component<{
       <div class="flex justify-center items-center gap-5">
         {props.userList && (
           <>
-            <WsUsers userList={props.userList}></WsUsers>
-            <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+            <WsUsers userList={props.userList} />
+            <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
           </>
         )}
-        <CurrentUserInfo></CurrentUserInfo>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
-        <LogoutBtn></LogoutBtn>
+        <CurrentUserInfo />
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
+        <LogoutBtn />
       </div>
     </div>
   );

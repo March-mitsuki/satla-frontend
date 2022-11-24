@@ -29,7 +29,7 @@ const IndexNavi = () => {
         </Link>
         <Switch>
           <Match when={rootCtx.currentUserCtx.currentUser().permission === 2}>
-            <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+            <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
             <Link
               href="/account"
               class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-neutral-600 "
@@ -55,7 +55,7 @@ const IndexNavi = () => {
               </svg>
               账号设置
             </Link>
-            <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+            <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
             <Link
               href="/admin"
               class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-neutral-600 "
@@ -78,7 +78,7 @@ const IndexNavi = () => {
             </Link>
           </Match>
           <Match when={rootCtx.currentUserCtx.currentUser().permission === 1}>
-            <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+            <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
             <Link
               href="/account"
               class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-neutral-600 "
@@ -109,9 +109,9 @@ const IndexNavi = () => {
         <div>当前项目: {rootCtx.currentProjectCtx.currentProject()?.project_name}</div>
       </div>
       <div class="flex justify-center items-center gap-5">
-        <CurrentUserInfo></CurrentUserInfo>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
-        <LogoutBtn></LogoutBtn>
+        <CurrentUserInfo />
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
+        <LogoutBtn />
       </div>
     </>
   );

@@ -126,7 +126,7 @@ const AccountPage = () => {
     <>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="flex justify-between items-center shadow-lg text-xl py-3 px-5">
-          <IndexNavi></IndexNavi>
+          <IndexNavi />
         </div>
         <div class="flex-auto flex flex-col justify-center items-center">
           <div class="w-[30%] text-center text-2xl pb-10">修改密码</div>

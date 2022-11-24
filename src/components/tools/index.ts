@@ -1,4 +1,4 @@
-import { ErrJsonRes } from "@/interfaces";
+export * as logger from "./logger";
 
 export const sleep = (msec: number) => {
   return new Promise<string>((resolve) => {
@@ -92,30 +92,6 @@ export const popFileSelector = () => {
     }
     return;
   });
-};
-
-type UnknownObject<T extends object> = {
-  [P in keyof T]: unknown;
-};
-
-export const isErrJsonRes = (obj: unknown): obj is ErrJsonRes => {
-  if (typeof obj !== "object") {
-    return false;
-  }
-  if (obj === null) {
-    return false;
-  }
-  const { code, status, msg } = obj as UnknownObject<ErrJsonRes>;
-  if (code !== -1 && code !== 0) {
-    return false;
-  }
-  if (typeof status !== "number") {
-    return false;
-  }
-  if (typeof msg !== "string") {
-    return false;
-  }
-  return true;
 };
 
 export const STORAGE_STYLE = "send_style";

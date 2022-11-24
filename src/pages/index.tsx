@@ -27,7 +27,7 @@ const Home: Component = () => {
       <Title>Vvvorld</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="flex justify-between items-center shadow-lg text-xl py-3 px-5">
-          <IndexNavi></IndexNavi>
+          <IndexNavi />
         </div>
         <div class="flex-auto">
           <PaneX
@@ -38,7 +38,7 @@ const Home: Component = () => {
                 <div class="flex justify-end gap-5 p-2 border-x-2 border-t-2">
                   {projects.loading && (
                     <div class="flex gap-2 items-center">
-                      <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                      <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent" />
                       <div>connecting...</div>
                     </div>
                   )}
@@ -60,12 +60,12 @@ const Home: Component = () => {
                     <div>刷新项目列表</div>
                   </button>
                 </div>
-                <ProjectOverview type="nomal" projects={projects()}></ProjectOverview>
+                <ProjectOverview type="nomal" projects={projects()} />
               </div>
             }
-            rightElem={<ProjectDetail></ProjectDetail>}
+            rightElem={<ProjectDetail />}
             dragLineClass="bg-neutral-500 hover:bg-sky-500"
-          ></PaneX>
+           />
         </div>
       </div>
     </>

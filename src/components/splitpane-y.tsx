@@ -65,7 +65,7 @@ const PaneY: Component<{
               : "min-width:5px; min-height:5px; cursor:row-resize;"
           }
           class={props.dragLineClass}
-        ></div>
+         />
         <div
           style={{
             height: `${

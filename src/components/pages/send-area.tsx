@@ -14,6 +14,7 @@ import type {
   s2cReorderSubBody,
   s2cAddTranslatedSubtitleBody,
   s2cSendSubtitleBody,
+  s2cBatchAddSubsBody,
 } from "@/interfaces/ws";
 
 // for test
@@ -29,6 +30,7 @@ const SendArea: ParentComponent<{
 }> = (props) => {
   const { subtitles, setSubtitles, attachedInfo, setAttachedInfo } = rootCtx.subtitlesCtx;
   const { currentUser } = rootCtx.currentUserCtx;
+  const { setIsBatchAdding } = rootCtx.pageTypeCtx;
 
   // 各种初始化操作
   if (typeof subtitles() === "undefined") {
@@ -49,7 +51,7 @@ const SendArea: ParentComponent<{
     idx: number,
     subtitle: Subtitle,
   ) => {
-    // 点击发送发送字幕
+    // 点击发送字幕
     e.stopPropagation();
     e.preventDefault();
     const formElem = e.currentTarget;
@@ -286,6 +288,15 @@ const SendArea: ParentComponent<{
           }
           break;
         }
+        case "sBatchAddSubs": {
+          const body = data.body as s2cBatchAddSubsBody;
+          if (!body.status) {
+            window.alert("批量添加出错,请检查文件是否合规后刷新重试");
+          }
+          setIsBatchAdding(false);
+          wsSend.getRoomSubtitles(props.ws, props.room_id);
+          break;
+        }
         case "heartBeat":
           console.log("--heartbeat--");
           break;
@@ -340,7 +351,7 @@ const SendArea: ParentComponent<{
                         <div class="flex gap-3 w-[180px] items-center px-1 rounded-md bg-red-500/70 select-none">
                           <div class="flex gap-1 justify-between items-center flex-1 truncate">
                             <div class="flex-1">
-                              <div class="shrink-0 animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                              <div class="shrink-0 animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent" />
                             </div>
                             <div class="flex-1">
                               {(attachedInfo() as AttachedInfo[])[idx()].editingUser}
@@ -461,7 +472,7 @@ const SendArea: ParentComponent<{
                       name="subtitle"
                       autocomplete="off"
                       placeholder="请输入翻译"
-                      onfocus={() => wsSend.editStart(props.ws, elem.id)}
+                      onFocus={() => wsSend.editStart(props.ws, elem.id)}
                       onBlur={() => wsSend.editEnd(props.ws, elem.id)}
                       value={elem.subtitle}
                       class={inputStyle}
@@ -472,7 +483,7 @@ const SendArea: ParentComponent<{
                       name="origin"
                       autocomplete="off"
                       placeholder="请输入原文"
-                      onfocus={() => wsSend.editStart(props.ws, elem.id)}
+                      onFocus={() => wsSend.editStart(props.ws, elem.id)}
                       onBlur={() => wsSend.editEnd(props.ws, elem.id)}
                       value={elem.origin}
                       class={inputStyle}

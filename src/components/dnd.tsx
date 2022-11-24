@@ -22,6 +22,7 @@ const Dragpage = () => {
   const startDragHandler = () => {
     let belowElem: Element | null;
 
+    // eslint-disable-next-line solid/reactivity
     onmousemove = (e: MouseEvent) => {
       e.preventDefault();
       setDragElem({

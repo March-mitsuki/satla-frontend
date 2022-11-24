@@ -31,7 +31,7 @@ const Navi: Component<{
           </svg>
           主页
         </Link>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
         <Link
           href={`/stream/${props.currentProject}`}
           class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-neutral-600 "
@@ -52,7 +52,7 @@ const Navi: Component<{
           </svg>
           直播
         </Link>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
         <Link
           href={`/translate/${props.currentProject}`}
           class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-neutral-600 "
@@ -73,7 +73,7 @@ const Navi: Component<{
           </svg>
           同传
         </Link>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
         <Link
           href={`/send/${props.currentProject}`}
           class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-neutral-600 "
@@ -98,12 +98,12 @@ const Navi: Component<{
       <div class="flex justify-center items-center gap-5">
         {props.userList && (
           <>
-            <WsUsers userList={props.userList}></WsUsers>
-            <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+            <WsUsers userList={props.userList} />
+            <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
           </>
         )}
-        <CurrentUserInfo></CurrentUserInfo>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+        <CurrentUserInfo />
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
         <button
           onClick={() => {
             localStorage.clear();
@@ -127,8 +127,8 @@ const Navi: Component<{
           </svg>
           <div class="pl-[2px]">清空缓存</div>
         </button>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
-        <LogoutBtn></LogoutBtn>
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
+        <LogoutBtn />
       </div>
     </div>
   );

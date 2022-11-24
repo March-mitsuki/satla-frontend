@@ -3,6 +3,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:solid/typescript",
     "prettier",
   ],
   parser: "@typescript-eslint/parser",

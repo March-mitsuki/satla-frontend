@@ -64,7 +64,7 @@ const currentUserInfo = () => {
     <div>
       <span>
         {cUserInfo.loading && (
-          <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+          <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent" />
         )}
       </span>
       {cUserInfo()?.user_name}

@@ -28,7 +28,7 @@ const AdminNavi: Component = () => {
           </svg>
           主页
         </Link>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
         <Link
           href="/admin"
           class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-neutral-600 "
@@ -54,7 +54,7 @@ const AdminNavi: Component = () => {
           </svg>
           后台页面
         </Link>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
         <Link
           href="/admin/signup"
           class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-neutral-600 "
@@ -75,7 +75,7 @@ const AdminNavi: Component = () => {
           </svg>
           新建用户
         </Link>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
         <Link
           href="/admin/new_project"
           class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-neutral-600 "
@@ -98,9 +98,9 @@ const AdminNavi: Component = () => {
         </Link>
       </div>
       <div class="flex justify-center items-center gap-5">
-        <CurrentUserInfo></CurrentUserInfo>
-        <div class="h-6 w-[2px] bg-gray-400 rounded-full"></div>
-        <LogoutBtn></LogoutBtn>
+        <CurrentUserInfo />
+        <div class="h-6 w-[2px] bg-gray-400 rounded-full" />
+        <LogoutBtn />
       </div>
     </div>
   );

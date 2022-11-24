@@ -79,6 +79,7 @@ const NewProjectForm = () => {
       created_by: currentUser().user_name,
     };
     poster(newProject)
+      // eslint-disable-next-line solid/reactivity
       .then(async (res) => {
         if (res.status === 200) {
           const body = (await res.json()) as NewProjectResponseBody;
@@ -173,7 +174,7 @@ const NewProjectForm = () => {
               placeholder="100字以内,不可换行"
               autocomplete="off"
               class="rounded-lg bg-neutral-700 p-3 border-2 border-gray-500 focus:border-white focus:ring-0 focus:outline-0 focus:bg-neutral-600"
-            ></textarea>
+            />
           </label>
           <label class="flex flex-col">
             <div>负责人</div>

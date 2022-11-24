@@ -27,7 +27,7 @@ const AdminHome = () => {
       <Title>Admin Page</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="shadow-lg mb-2 text-xl py-3 px-5">
-          <AdminNavi></AdminNavi>
+          <AdminNavi />
         </div>
         <div class="flex-auto">
           <PaneX
@@ -43,7 +43,7 @@ const AdminHome = () => {
                     <div class="flex justify-end gap-5 p-2 border-x-2 border-t-2">
                       {projects.loading && (
                         <div class="flex gap-2 items-center">
-                          <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                          <div class="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent" />
                           <div>connecting...</div>
                         </div>
                       )}
@@ -65,20 +65,20 @@ const AdminHome = () => {
                         <div>刷新项目列表</div>
                       </button>
                     </div>
-                    <ProjectOverview type="admin" projects={projects()}></ProjectOverview>
+                    <ProjectOverview type="admin" projects={projects()} />
                   </div>
                 }
-                bottomElem={<ProjectDetail></ProjectDetail>}
+                bottomElem={<ProjectDetail />}
                 dragLineClass="bg-neutral-500 hover:bg-sky-500"
-              ></PaneY>
+               />
             }
             rightElem={
               <div class="h-full flex items-center ">
-                <NewRoomForm></NewRoomForm>
+                <NewRoomForm />
               </div>
             }
             dragLineClass="bg-neutral-500 hover:bg-sky-500"
-          ></PaneX>
+           />
         </div>
       </div>
     </>

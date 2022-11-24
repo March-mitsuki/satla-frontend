@@ -31,7 +31,7 @@ const AutoPlay = () => {
   if (isNaN(room_id)) {
     window.alert("错误的url: " + JSON.stringify(param.wsroom.split("_")));
     console.log("wrong params: ", param.wsroom.split("_"));
-    return;
+    return; // eslint-disable-line
   }
 
   createEffect(() => {
@@ -46,7 +46,8 @@ const AutoPlay = () => {
       return;
     }
     ws.onopen = () => {
-      console.log("ws connect");
+      wsSend.heartBeat({ ws: ws, roomType: "auto", roomId: room_id });
+
       setIsWsconn(true);
       wsAutoSend.getRoomAutoList({
         ws: ws,
@@ -64,7 +65,7 @@ const AutoPlay = () => {
     };
 
     const heartBeatTimer = setInterval(() => {
-      wsSend.heartBeat(ws);
+      wsSend.heartBeat({ ws: ws, roomType: "auto", roomId: room_id });
     }, 1000 * 30);
 
     onCleanup(() => {
@@ -81,37 +82,37 @@ const AutoPlay = () => {
       <Title>Auto Player</Title>
       <div class="h-full flex flex-col bg-neutral-700 text-white">
         <div class="mb-2 text-xl py-3 px-5">
-          <AutoNavi userList={userList()}></AutoNavi>
+          <AutoNavi userList={userList()} />
         </div>
         <div class="sticky border-t-2 shadow-lg flex items-center">
-          <AutoPreview ws={_ws()}></AutoPreview>
+          <AutoPreview ws={_ws()} />
         </div>
         <div class="py-3 px-5 flex gap-5 items-center justify-center">
-          <AssUploader ws={_ws()} room_id={room_id}></AssUploader>
-          <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
-          <OperationRecover ws={_ws()} room_id={room_id}></OperationRecover>
-          <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
+          <AssUploader ws={_ws()} room_id={room_id} />
+          <div class="h-8 w-[2px] bg-gray-400 rounded-full" />
+          <OperationRecover ws={_ws()} room_id={room_id} />
+          <div class="h-8 w-[2px] bg-gray-400 rounded-full" />
           <button
             class="h-full items-center gap-1 px-2 py-1 rounded-md bg-green-500/70 hover:bg-green-700/70 "
             onClick={() => window.open(`/auto/display/${param.wsroom}`, "_blank")}
           >
             打开视窗
           </button>
-          <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
-          <AutoStyleChanger ws={_ws()} wsroom={param.wsroom}></AutoStyleChanger>
-          <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
-          <StylePreviewPane ws={_ws()}></StylePreviewPane>
-          <div class="h-8 w-[2px] bg-gray-400 rounded-full"></div>
-          <OperationBlank ws={_ws()}></OperationBlank>
+          <div class="h-8 w-[2px] bg-gray-400 rounded-full" />
+          <AutoStyleChanger ws={_ws()} wsroom={param.wsroom} />
+          <div class="h-8 w-[2px] bg-gray-400 rounded-full" />
+          <StylePreviewPane ws={_ws()} wsroom={param.wsroom} />
+          <div class="h-8 w-[2px] bg-gray-400 rounded-full" />
+          <OperationBlank ws={_ws()} />
         </div>
         <div class="py-3 px-5 flex gap-5 items-center justify-center w-full">
-          <Operation ws={_ws()}></Operation>
+          <Operation ws={_ws()} />
         </div>
         {isWsconn() === false && (
           <Modal>
             <div class="flex gap-3 justify-center items-center">
-              <div>正在连接服务器, 若一直无法连接请刷新重试</div>
-              <div class="animate-spin h-8 w-8 bg-neutral-400 rounded-xl"></div>
+              <div>正在连接服务器, 若一直无法连接请检查url是否正确</div>
+              <div class="animate-spin h-8 w-8 bg-neutral-400 rounded-xl" />
             </div>
           </Modal>
         )}

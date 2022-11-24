@@ -16,6 +16,8 @@ import {
   c2sGetAutoPlayStat,
   c2sRecoverAutoPlayStat,
   c2sChangeAutoMemo,
+  c2sManualToAuto,
+  c2sAutoToManual,
 } from "@/interfaces/ws-auto";
 
 export const getRoomAutoList = ({
@@ -312,6 +314,44 @@ export const changeAutoMemo = (ws: WebSocket | undefined, listId: number, memo: 
     body: {
       list_id: listId,
       memo: memo,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+  return;
+};
+
+export const autoToManual = (ws: WebSocket | undefined, listId: number) => {
+  if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait");
+    return;
+  }
+  const _postData: c2sAutoToManual = {
+    head: {
+      cmd: "autoToManual",
+    },
+    body: {
+      list_id: listId,
+    },
+  };
+  const postData = new TextEncoder().encode(JSON.stringify(_postData));
+  ws.send(postData);
+  return;
+};
+
+export const manualToAuto = (ws: WebSocket | undefined, listId: number) => {
+  if (typeof ws === "undefined" || ws.readyState === ws.CLOSED) {
+    // window.alert("正在连接到服务器, 请稍等")
+    console.log("ws is closed or not connected, please wait");
+    return;
+  }
+  const _postData: c2sManualToAuto = {
+    head: {
+      cmd: "manualToAuto",
+    },
+    body: {
+      list_id: listId,
     },
   };
   const postData = new TextEncoder().encode(JSON.stringify(_postData));
