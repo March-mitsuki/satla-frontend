@@ -13,8 +13,9 @@ https://github.com/March-mitsuki/satla-backend
 
 1. create a file named `.env.production` in root dir
 1. set up `VITE_WS_BASE_URL` and `VITE_API_BASE_URL` in `.env.production` file
-1. `npm run build` build a production version
-1. `cp -r dist /path/to/your/backend/root/dir` cp the static dir to your backend server
+   1. *url must be end with `/`
+2. `npm run build` build a production version
+3. `cp -r dist /path/to/your/backend/root/dir` cp the static dir to your backend server
 
 ## 实现方式
 

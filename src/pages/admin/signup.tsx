@@ -139,7 +139,7 @@ const SignUpPage = () => {
           <AdminNavi />
         </div>
         <div class="flex-auto flex flex-col justify-center items-center">
-          <div class="w-[30%] text-center text-2xl pb-10">新建vvvorld账号</div>
+          <div class="w-[30%] text-center text-2xl pb-10">新建账号</div>
           <form
             id="signup-form"
             onSubmit={(e) => onSubmitHandler(e)}
